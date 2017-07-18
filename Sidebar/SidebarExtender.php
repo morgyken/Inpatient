@@ -37,15 +37,17 @@ class SidebarExtender implements Panda
      */
     public function extendWith(Menu $menu)
     {
-        $menu->group('Inpatient', function(Group $group){
-            $group->item('Details', function(Item $item){
-                $item->weight(2);
-                $item->icon('fa fa-users');
+        $menu->group('Dashboard', function(Group $group){
+            $group->item('In-Patient', function(Item $item){
+                $item->weight(4);
+                $item->icon('fa fa-address-book');
+                $item->item('Admit Patient', function (Item $item) {
+                    $item->icon('fa fa-check-square-o');
+                    $item->route('admissions.index');
+                });
+
             });
-            $group->item('Details', function(Item $item){
-                $item->weight(2);
-                $item->icon('fa fa-users');
-            });
+
 
         });
 
