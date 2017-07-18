@@ -18,9 +18,15 @@ class CreateAdmissionproceduresTable extends Migration
             $table->integer('admission_id')->unsigned(); //fk to admissions
             $table->integer('admission_category_id')->unsigned();
             $table->json('notes');
-            $table->integer('performed_by');
+            $table->integer('performed_by'); //Auth::user()->id;
             $table->timestamps();
         });
+
+        Schema::table('admission_procedures', function(Blueprint $table){
+            $table->foreign('admission_category_id')->references('id')->on('admission_procedure_category');
+        });
+
+
     }
 
     /**
