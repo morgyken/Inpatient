@@ -1,0 +1,15 @@
+{
+    "name": "samueldervis/inpatient",
+    "description": "",
+    "authors": [
+        {
+            "name": "Samuel Dervis",
+            "email": "samueldervis@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Ignite\\Inpatient\\": ""
+        }
+    }
+}
