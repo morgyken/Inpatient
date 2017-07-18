@@ -5,15 +5,14 @@ namespace Ignite\Inpatient\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
-use Ignite\Inpatient\Entities\Admission;
 
 class AdmissionsController extends Controller
 {
-    protected $admission;
 
-    public function __construct( Admission $admission)
+
+    public function __construct( )
     {
-        $this->admission = $admission;
+
     }
 
     /**
@@ -22,9 +21,9 @@ class AdmissionsController extends Controller
      */
     public function index()
     {
-        $items = $this->admission->all();
 
-        return view('inpatient::index', compact('items'));
+
+        return view('inpatient::index');
     }
 
     /**
