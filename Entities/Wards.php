@@ -17,7 +17,7 @@ class Wards extends Model
     const CAT_MATERNITY = 'Maternity';
     const CAT_EMERGENCY= 'Emergency';
     const CAT_SURGERY = 'Surgery';
-    
+
     protected $table = 'wards';
     protected $fillable = ['name', 'slug', 'is_available', 'category', 'capacity'];
     protected $slug_source = 'name';
