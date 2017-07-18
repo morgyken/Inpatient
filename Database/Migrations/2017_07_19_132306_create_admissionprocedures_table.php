@@ -23,6 +23,7 @@ class CreateAdmissionproceduresTable extends Migration
         });
 
         Schema::table('admission_procedures', function(Blueprint $table){
+            $table->foreign('admission_id')->references('id')->on('admission');
             $table->foreign('admission_category_id')->references('id')->on('admission_procedure_category');
         });
 
