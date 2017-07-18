@@ -39,7 +39,7 @@ class SidebarExtender implements Panda
     {
         $menu->group('Dashboard', function(Group $group){
             $group->item('In-Patient', function(Item $item){
-                $item->weight(4);
+                $item->weight(3);
                 $item->icon('fa fa-address-book');
                 $item->item('Admit Patient', function (Item $item) {
                     $item->icon('fa fa-check-square-o');
