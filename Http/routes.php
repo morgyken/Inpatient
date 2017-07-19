@@ -1,6 +1,11 @@
 <?php
 
-Route::group(['middleware' => 'web', 'prefix' => 'inpatient', 'namespace' => 'Ignite\Inpatient\Http\Controllers'], function()
-{
-    Route::get('/details', 'AdmissionsController@index')->name('admissions.index');
+use Ignite\Core\Contracts\Authentication;
+use Illuminate\Routing\Router;
+/**
+ * Collabmed Inpatient Routes
+ *
+*/
+Route::group(['prefix' => 'inpatient', 'as' => 'inpatient'], function(Router $router){
+    $router->get('/admit', ['uses' => 'InpatientController@admit' , 'as' =>'admit']);
 });
