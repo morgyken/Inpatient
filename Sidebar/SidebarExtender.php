@@ -40,10 +40,30 @@ class SidebarExtender implements Panda
         $menu->group('Dashboard', function(Group $group){
             $group->item('In-Patient', function(Item $item){
                 $item->weight(3);
+
                 $item->icon('fa fa-address-book');
                 $item->item('Admit Patient', function (Item $item) {
                     $item->icon('fa fa-check-square-o');
-                    $item->route('admissions.index');
+                    $item->url('/');
+                });
+                $item->item('Awaiting admission', function(Item $item) {
+                    $item->icon('fa fa-user-plus');
+                    $item->url('/');
+                    //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
+                    $item->weight(4);
+                });
+                $item->item('Patient Management', function(Item $item) {
+                    $item->icon('fa fa-users');
+                    $item->url('/inpatient/admissions');
+                    //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
+                    $item->weight(4);
+                });
+                //patients waiting admissions
+                $item->item('Requested Discharge ', function(Item $item) {
+                    $item->icon('fa fa-exclamation-circle');
+                    $item->url('/inpatient/request_discharge');
+                    //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
+                    $item->weight(4);
                 });
 
             });
