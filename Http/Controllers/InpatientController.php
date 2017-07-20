@@ -2,7 +2,11 @@
 
 namespace Ignite\Inpatient\Http\Controllers;
 
+use Ignite\Inpatient\Entities\Deposit;
+use Ignite\Inpatient\Entities\DischargeNote;
+use Ignite\Inpatient\Entities\NursingCharge;
 use Ignite\Inpatient\Entities\RequestAdmission;
+use Ignite\Reception\Entities\Patients;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
@@ -20,20 +24,26 @@ class InpatientController extends Controller
     protected $roles;
     protected $user_roles;
     protected $user;
+    /**
+     * @var Patients
+     */
+    private $patients;
 
     /**
      * InpatientController constructor.
+     * @param Patients $patients
      * @param RequestAdmission $request_admission
      * @param Roles $roles
      * @param User $user
      * @param UserRoles $user_roles
      */
-    public function __construct(RequestAdmission $request_admission, Roles $roles, User $user, UserRoles $user_roles)
+    public function __construct(Patients $patients, RequestAdmission $request_admission, Roles $roles, User $user, UserRoles $user_roles)
     {
         $this->request_admission = $request_admission;
         $this->roles = $roles;
         $this->user_roles = $user_roles;
         $this->user = $user;
+        $this->patients = $patients;
     }
 
     /**
@@ -60,7 +70,7 @@ class InpatientController extends Controller
         $doctors = $this->user->findMany($doctor_ids);
 
 
-        $patient = Patients::find($id);
+        $patient = $this->patients->find($id);
         $visit = $this->visit->find($visit_id);
         $wards = $this->wards->all();
         $beds = $this->beds->all();
@@ -69,5 +79,28 @@ class InpatientController extends Controller
         $admissions = NursingCharge::all();
         return view('evaluation::inpatient.admit_form', compact('doctors', 'patient', 'wards', 'deposits', 'visit', 'beds', 'request_id', 'admissions'));
     }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postDischargeNote(Request $request) {
+        if ($request->type == 'discharge') {
+            DischargeNote::create([
+                'summary_note' => $request->summaryNote,
+                'doctor_id' => \Auth::user()->id,
+                'visit_id' => $request->visit_id
+            ]);
+        } else {
+            DischargeNote::create(array(
+                'case_note' => $request->caseNote,
+                'doctor_id' => \Auth::user()->id,
+                'visit_id' => $request->visit_id,
+            ));
+        }
+        return redirect()->back()->with('success', 'Successfully saved discharge note..');
+
+    }
+
 
 }
