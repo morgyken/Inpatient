@@ -29,6 +29,7 @@ if(!function_exists('get_next_bed_number')){
 
     /**
      * @param $ward
+     * @return string
      */
     function get_next_bed_number($id){
         $ward_id = \Ignite\Inpatient\Entities\Ward::findOrfail($id);
