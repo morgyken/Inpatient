@@ -92,7 +92,7 @@ class InpatientController extends Controller
         $deposits = Deposit::all();
         $request_id = $this->request_admission->where('visit_id', $visit_id)->first()->id;
         $admissions = NursingCharge::all();
-        return view('evaluation::inpatient.admit_form', compact('doctors', 'patient', 'wards', 'deposits', 'visit', 'beds', 'request_id', 'admissions'));
+        return view('inpatient::admission.form', compact('doctors', 'patient', 'wards', 'deposits', 'visit', 'beds', 'request_id', 'admissions'));
     }
 
     /**
