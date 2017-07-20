@@ -16,6 +16,8 @@ use Ignite\Users\Entities\User;
 
 /**
  * @property Roles roles
+ * @property  beds
+ * @property  beds
  */
 class InpatientController extends Controller
 {
