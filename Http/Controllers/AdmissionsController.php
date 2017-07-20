@@ -5,6 +5,8 @@ namespace Ignite\Inpatient\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use Ignite\Inpatient\Entities\Admission;
+use Ignite\Inpatient\Entities\RequestAdmission;
 
 class AdmissionsController extends Controller
 {

@@ -1,9 +1,16 @@
+<?php
+/*
+ *  Collabmed Solutions Ltd
+ *  Project: iClinic
+ *  Author: Odhiambo Dormnic <dodhiambo@collabmed.com>
+ */
+?>
+
 @extends('layouts.app')
+@section('content_title','InPatient Records ')
+@section('content_description','All records of inpatient patients')
 
 @section('content')
-    <h1>Hello World</h1>
 
-    <p>
-        This view is loaded from module: {!! config('inpatient.name') !!}
-    </p>
-@stop
+
+@endsection
