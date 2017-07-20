@@ -8,6 +8,7 @@
 
 
 use Ignite\Inpatient\Entities\Admission;
+use Carbon\Carbon;
 
 if(!function_exists('generate_ip_number')){
     /**
@@ -15,6 +16,11 @@ if(!function_exists('generate_ip_number')){
      */
     function generate_ip_number(){
         //R-H 001/07/2017
+        $dateOfAdmission = Carborn::now()->startOfYear();
+        $hospitalInitials = 'RH';
+        $number = substr($dateOfAdmission, 5);
+
+        return $hospitalInitials . sprintf(intval($number)+ 1);
 
     }
 }
