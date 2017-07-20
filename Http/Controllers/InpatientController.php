@@ -56,7 +56,7 @@ class InpatientController extends Controller
     {
         $patientIds = $this->request_admission->where('id', '!=', null)->get(['patient_id'])->toArray();
         $patients = $this->request_admission->all();
-        return view('inpatient:admit', compact('patients', 'patientIds'));
+        return view('inpatient:admission.admit', compact('patients', 'patientIds'));
     }
 
     /**

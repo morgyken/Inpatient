@@ -9,7 +9,17 @@
 namespace Ignite\Inpatient\Http\Controllers;
 
 
-class BaseController
-{
+use Illuminate\Routing\Controller;
 
+class BaseController extends Controller
+{
+        //TODO::work out a breadcrumb logic
+    /**
+     * BaseController constructor.
+     *
+     */
+    public function  __construct()
+    {
+
+    }
 }

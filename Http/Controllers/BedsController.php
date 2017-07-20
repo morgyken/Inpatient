@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Ignite\Inpatient\Entities\Bed;
 use Ignite\Inpatient\Entities\BedPosition;
+use Session;
 
 class BedsController extends Controller
 {
@@ -56,10 +57,10 @@ class BedsController extends Controller
 
             $item->save();
 
-            \Session::flash('message', 'Bed Added Successfully!');
+            Session::flash('message', 'Bed Added Successfully!');
 
         }catch (Exception $e){
-            \Session::flash('message', 'Oops Something Went Wrong!');
+            Session::flash('message', 'Oops Something Went Wrong!');
 
         }
 
@@ -92,13 +93,42 @@ class BedsController extends Controller
      */
     public function update(Request $request)
     {
+        try{
+            $item = $this->bed->find($request->bed_id);
+            $this->validate($request,[
+                'number' => 'required',
+                'type' => 'required',
+                'ward' => 'required'
+            ]);
+
+            $item->update($request->all());
+            Session::flash('message', 'Bed Updated Sucessfully!');
+
+            return redirect()->route('inpatient.beds.index');
+        }catch(\Exception $e){
+            Session::flas('message', 'Oops Something Went Wrong!');
+            //return an error page or redirect back()
+            return redirect()->route('inpatient.index.beds');
+        }
+
     }
 
     /**
      * Remove the specified resource from storage.
+     * @param $id
      * @return Response
      */
-    public function destroy()
+    public function destroy($id)
     {
+        if (!empty($this->bed)) {
+            $item = $this->bed->find($id);
+
+            $item->delete();
+        }
+        /** @var TYPE_NAME $this */
+        $this->bed->find($id)->delete();
+        Session::flash('message', 'Bed Deleted Sucessfully!');
+
+        return redirect()->route('inpatient.beds.index');
     }
 }
