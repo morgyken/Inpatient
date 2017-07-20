@@ -22,4 +22,19 @@ class BedPosition extends Model
     {
         return $this->belongsTo(Ward::class, 'ward_id');
     }
+
+    /**
+     * @param $query
+     * @return mixed
+     */
+    public function scopeIsTaken($query)
+    {
+        if($query->where('status', 1) == true){
+            return true;
+        }
+
+        return false;
+    }
+
+
 }
