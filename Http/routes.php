@@ -2,10 +2,14 @@
 
 use Ignite\Core\Contracts\Authentication;
 use Illuminate\Routing\Router;
+
 /**
  * Collabmed Inpatient Routes
+ *  Odhiambo Dormnic <dodhiambo@collabmed.net>
  *
 */
 Route::group(['prefix' => 'inpatient', 'as' => 'inpatient'], function(Router $router){
     $router->get('/admit', ['uses' => 'InpatientController@admit' , 'as' =>'admit']);
+    $router->resource('beds', 'BedsController');
+    $router->resource('wards', 'WardsController');
 });
