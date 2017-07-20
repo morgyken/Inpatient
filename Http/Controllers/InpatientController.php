@@ -6,7 +6,9 @@ use Ignite\Inpatient\Entities\Deposit;
 use Ignite\Inpatient\Entities\DischargeNote;
 use Ignite\Inpatient\Entities\NursingCharge;
 use Ignite\Inpatient\Entities\RequestAdmission;
+use Ignite\Inpatient\Entities\Visit;
 use Ignite\Reception\Entities\Patients;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
@@ -18,18 +20,28 @@ use Ignite\Users\Entities\User;
  * @property Roles roles
  * @property  beds
  * @property  beds
+ * @property  wards
+ * @property  wards
+ * @property  visit
+ * @property  visit
  */
 class InpatientController extends Controller
 {
 
-    protected $request_admission;
-    protected $roles;
-    protected $user_roles;
-    protected $user;
+    private $request_admission;
+    private $roles;
+    private $user_roles;
+    private $user;
     /**
      * @var Patients
      */
     private $patients;
+    /**
+     * @var Visit
+     */
+    private $visit;
+    private $wards;
+    private $beds;
 
     /**
      * InpatientController constructor.
@@ -39,13 +51,14 @@ class InpatientController extends Controller
      * @param User $user
      * @param UserRoles $user_roles
      */
-    public function __construct(Patients $patients, RequestAdmission $request_admission, Roles $roles, User $user, UserRoles $user_roles)
+    public function __construct(Patients $patients, RequestAdmission $request_admission, Roles $roles, User $user, UserRoles $user_roles, Visit $visit)
     {
         $this->request_admission = $request_admission;
         $this->roles = $roles;
         $this->user_roles = $user_roles;
         $this->user = $user;
         $this->patients = $patients;
+        $this->visit = $visit;
     }
 
     /**
@@ -62,10 +75,10 @@ class InpatientController extends Controller
     /**
      * @param $id
      * @param $visitId
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * @return Factory|\Illuminate\View\View
+     * @return Factory|\Illuminate\View\View
      */
-    public function admit_patient($id , $visitId)
+    public function admit_patient($id ,  $visit_id)
     {
         $doctor_rule = $this->roles->where('name', 'Doctor')->first();
         $doctor_ids = $this->user_roles->where('role_id', $doctor_rule->id)->get(['user_id'])->toArray();
