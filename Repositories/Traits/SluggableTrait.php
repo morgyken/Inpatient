@@ -10,7 +10,7 @@ namespace Ignite\Inpatient\Repositories\Traits;
 use Cocur\Slugify\Slugify;
 
 
-trait SlugableTrait {
+trait SluggableTrait {
 
     /**
      * Get the models slug's source column

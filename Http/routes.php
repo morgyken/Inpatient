@@ -9,7 +9,7 @@ use Illuminate\Routing\Router;
  *
 */
 Route::group(['prefix' => 'inpatient', 'as' => 'inpatient'], function(Router $router){
-    $router->get('/admit', ['uses' => 'InpatientController@admit' , 'as' =>'admit']);
+    $router->get('/admit', 'InpatientController@admit')->name('admit');
     $router->resource('beds', 'BedsController');
     $router->resource('wards', 'WardsController');
 });

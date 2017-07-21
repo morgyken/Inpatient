@@ -44,7 +44,7 @@ class SidebarExtender implements Panda
                 $item->icon('fa fa-address-book');
                 $item->item('Admit Patient', function (Item $item) {
                     $item->icon('fa fa-check-square-o');
-                    $item->url('/');
+                    $item->url('/inpatient/admit');
                 });
                 $item->item('Awaiting admission', function(Item $item) {
                     $item->icon('fa fa-user-plus');

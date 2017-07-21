@@ -60,6 +60,7 @@ class InpatientOperationsController extends Controller
      */
     public function update(Request $request)
     {
+
     }
 
     /**
@@ -68,5 +69,6 @@ class InpatientOperationsController extends Controller
      */
     public function destroy()
     {
+
     }
 }
