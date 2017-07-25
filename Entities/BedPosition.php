@@ -36,5 +36,31 @@ class BedPosition extends Model
         return false;
     }
 
+    /**
+     * @param $beds
+     */
+    public function getAvailableBeds($beds)
+    {
+        $beds = $this->findOrFail();
+        if (!$beds){
+            return $this->errorMessage();
+        }
+        return $beds;
+    }
+
+    public function errorMessage()
+    {
+        try{
+            echo '';
+        }catch(\Exception $e){
+            echo '';
+        }
+    }
+
+    private function findOrFail($id)
+    {
+        Bed::find($id);
+    }
+
 
 }

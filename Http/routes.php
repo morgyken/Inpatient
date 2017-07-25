@@ -8,8 +8,9 @@ use Illuminate\Routing\Router;
  *  Odhiambo Dormnic <dodhiambo@collabmed.net>
  *
 */
-Route::group(['prefix' => 'inpatient', 'as' => 'inpatient'], function(Router $router){
-    $router->get('/admit', 'InpatientController@admit')->name('admit');
-    $router->resource('beds', 'BedsController');
-    $router->resource('wards', 'WardsController');
+Route::group(['prefix'=>'inpatient', 'as'=>'inpatient'],function(Router $router){
+
+    $router->match(['get', 'post'], 'admit', ['uses' => 'InpatientController@index', 'as' => 'admit']);
 });
+
+
