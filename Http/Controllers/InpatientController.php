@@ -2,6 +2,7 @@
 
 namespace Ignite\Inpatient\Http\Controllers;
 
+use Ignite\Core\Http\Controllers\AdminBaseController;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
@@ -16,7 +17,7 @@ use Ignite\Users\Entities\Roles;
 use Ignite\Users\Entities\UserRoles;
 use Ignite\Users\Entities\User;
 
-class InpatientController extends Controller
+class InpatientController extends AdminBaseController
 {
     private $request_admission;
     private $roles;
@@ -56,9 +57,10 @@ class InpatientController extends Controller
      */
     public function index()
     {
-        $patientIds = $this->request_admission->where('id', '!=', null)->get(['patient_id'])->toArray();
-        $patients = $this->request_admission->all();
-        return view('inpatient::index' ['patientIds'=>$patientIds, 'patients' => $patients]);
+       // $patientIds = $this->request_admission->where('id', '!=', null)->get(['patient_id'])->toArray();
+        //$patients = $this->request_admission->all();
+        //return view('inpatient::index', ['patientIds'=>$patientIds, 'patients' => $patients]);
+        return view('inpatient::temp');
     }
 
     /**

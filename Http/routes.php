@@ -1,16 +1,5 @@
 <?php
 
-use Ignite\Core\Contracts\Authentication;
-use Illuminate\Routing\Router;
-
-/**
- * Collabmed Inpatient Routes
- *  Odhiambo Dormnic <dodhiambo@collabmed.net>
- *
-*/
-Route::group(['prefix'=>'inpatient', 'as'=>'inpatient'],function(Router $router){
-
-    $router->match(['get', 'post'], 'admit', ['uses' => 'InpatientController@index', 'as' => 'admit']);
+Route::group(['middleware' => 'web', 'prefix' => 'inpatient', 'as' => 'inpatient.', 'namespace' => 'Ignite\Inpatient\Http\Controllers'], function() {
+    Route::get('/', 'InpatientController@index');
 });
-
-
