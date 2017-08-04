@@ -44,6 +44,7 @@ class InpatientController extends AdminBaseController
      */
     public function __construct(Patients $patients, RequestAdmission $request_admission, Roles $roles, User $user, UserRoles $user_roles, Visit $visit)
     {
+        parent::__construct();
         $this->request_admission = $request_admission;
         $this->roles = $roles;
         $this->user_roles = $user_roles;
