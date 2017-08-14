@@ -2,13 +2,13 @@
 /*
  *  Collabmed Solutions Ltd
  *  Project: iClinic
- *  Author: Odhiambo Dormnic <dodhiambo@collabmed.com>
+ *  Author: David Ngugi <dngugi@collabmed.com>
  */
 ?>
 
 @extends('layouts.app')
-@section('content_title','Admit Patient')
-@section('content_description','Admit Patients')
+@section('content_title','Patients Awaiting Admission')
+@section('content_description','Patients Awaiting Admission')
 
 @section('content')
     <div class="box box-info">
@@ -30,17 +30,16 @@
                     </thead>
                     <tbody>
                     @foreach($patients as $patient)
-                        <tr>
-                            <td>{{$patient->id_no}}</td>
-                            <td>{{($patient->full_name}}
-                            </td>
+                         <tr>
+                            <td>{{$patient->patient->id_no}}</td>
+                            <td>{{$patient->patient->full_name}}</td>
                             <td>
                                 {{(new Date($patient->created_at))->format('m/d/y')}}
                             </td>
                             <td>
-                                <a class="btn btn-primary btn-xs" href="{{url('inpatient/admission/admit/'.$patient->patient_id).'/'.$patient->visit_id}}">Admit</a>
+                                <a class="btn btn-primary btn-xs" href="{{url('inpatient/admit/'.$patient->patient_id).'/'.$patient->visit_id}}">Admit</a>
 
-                                <a class="btn btn-danger btn-xs" href="{{url('inpatient/admission/cancel/'.$patient->id).'/'.$patient->visit_id}}">Cancel Request</a>
+                                <a class="btn btn-danger btn-xs" href="{{url('inpatient/admission/cancel/'.$patient->id)}}">Cancel Request</a>
                             </td>
                         </tr>
                     @endforeach

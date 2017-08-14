@@ -48,7 +48,7 @@ class SidebarExtender implements Panda
                 });
                 $item->item('Awaiting admission', function(Item $item) {
                     $item->icon('fa fa-user-plus');
-                    $item->url('/');
+                    $item->url('/inpatient/awaiting');
                     //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
                     $item->weight(4);
                 });

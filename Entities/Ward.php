@@ -19,4 +19,8 @@ class Ward extends Model
         'age_group',
         'gender'
     ];
+
+    public function patients(){
+    	return $this->hasMany(Patients::class, 'patients');
+    }
 }

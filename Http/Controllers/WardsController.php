@@ -80,13 +80,43 @@ class WardsController extends Controller
         return view('inpatient::edit');
     }
 
+    public function getRecordWard($id) {
+        return Ward::findorfail($id);
+    }
+
     /**
      * Update the specified resource in storage.
      * @param  Request $request
      * @return Response
      */
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
+         try{
+            $this->validate($request, [
+                'name' => 'required',
+                'number' => 'required',
+                'age_group' => 'required',
+                'cost' => 'required',
+                'gender' => 'required',
+            ]);
+
+            $ward = Ward::findOrFail($id);
+
+            if (!$request->has('number')){
+                $ward->number = random_int(4);
+            }
+
+            $ward->update($request->all());
+
+            \Session::flash('message', 'Ward updated Sucesfully!');
+
+            return redirect()->url('inpatient/wards');
+
+        }catch (\Exception $e){
+
+            \Session::flash('message', 'Something went Wrong');
+            return back();
+        }
 
     }
 
