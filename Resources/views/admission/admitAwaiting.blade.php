@@ -1,82 +1,57 @@
+<?php
+/*
+ *  Collabmed Solutions Ltd
+ *  Project: iClinic
+ *  Author: David Ngugi <dngugi@collabmed.com>
+ */
+?>
+
 @extends('layouts.app')
-@section('content_title','Admissions Requests')
-@section('content_description','Requests sent for patient admission')
+@section('content_title','Patients Awaiting Admission')
+@section('content_description','Patients Awaiting Admission')
 
 @section('content')
-
-    <div class="">
-        <div class="">
-            @if(! count($patient_awaiting))
-                <div class="box box-info">
-                    <div class="box-body">
-                        <span class="text-warning">The are no admission request</span>
-                    </div>
+    <div class="box box-info">
+        <div class="box-body">
+            @if(! count($patients))
+                <div class="alert text-warning">
+                    <span>The are no patient recorded</span>
                 </div>
 
             @else
-                <div class="box box-info">
-                    <div class="box-body">
 
-                        <table class="table table-stripped table-condensed">
-                            <thead>
-                            <th>Name.</th>
-                            <th>External Doc.</th>
-                            <th>Payment Mode</th>
-                            <th>Date</th>
-                            <th>Option</th>
-                            </thead>
-                            <tbody>
-                            @foreach($patient_awaiting as $admission)
-                                <tr>
-                                    <td>{{\Ignite\Reception\Entities\Patients::find($admission->patient)->full_name}}
-                                    </td>
-                                    <td>{{$admission->external_doctor}}</td>
-                                    <td>{{$admission->payment_mode}}</td>
-                                    <td>{{(new Date($admission->created_at))->format('m/d/y')}}</td>
-                                    <td>
-                                        <a href="{{url('/evaluation/inpatient/admit/'.$admission->patient.'/'.$admission->id)}}" class="btn btn-primary btn-xs" >Admit</a></td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-{{--                <table class="table table-stripped condensed">
-                    <caption>The Beds List: All The Beds</caption>
+                <table class="table table-stripped table-condensed">
+                    <caption>The Patient List: All The Patients awaiting admission</caption>
                     <thead>
-                    <th>Name.</th>
-                    <th>External Doc.</th>
-                    <th>Payment Mode</th>
+                    <th>ID/Passport</th>
+                    <th>Name</th>
                     <th>Date</th>
-                    <th>Option</th>
+                    <th>Options</th>
                     </thead>
                     <tbody>
-                    @foreach($patient_awaiting as $admission)
-                        <tr>
-                            <td>{{\Ignite\Reception\Entities\Patients::find($admission->patient)->first_name}}
-                                {{\Ignite\Reception\Entities\Patients::find($admission->patient)->last_name}}
-                            </td>
-                            <td>{{$admission->external_doctor}}</td>
-                            <td>{{$admission->payment_mode}}</td>
-                            <td>{{$admission->created_at}}</td>
+                    @foreach($patients as $patient)
+                         <tr>
+                            <td>{{$patient->patient->id_no}}</td>
+                            <td>{{$patient->patient->full_name}}</td>
                             <td>
-                                <a href="{{url('/evaluation/inpatient/admit/'.$admission->patient)}}" class="btn btn-primary btn-small" >Admit</a></td>
+                                {{(new Date($patient->created_at))->format('m/d/y')}}
+                            </td>
+                            <td>
+                                <a class="btn btn-primary btn-xs" href="{{url('inpatient/admit/'.$patient->patient_id).'/'.$patient->visit_id}}">Admit</a>
+
+                                <a class="btn btn-danger btn-xs" href="{{url('inpatient/admission/cancel/'.$patient->id)}}">Cancel Request</a>
+                            </td>
                         </tr>
                     @endforeach
                     </tbody>
-                </table>--}}
+                </table>
             @endif
+            <script>
+                $(function () {
+                    $("table").dataTable();
+                })
+            </script>
         </div>
     </div>
-    <script>
-        $(function () {
-            $("table").dataTable();
-            $("button.addBed").click(function () {
-                $("div.addBed").toggle();
-            })
-        });
-
-    </script>
 
 @endsection

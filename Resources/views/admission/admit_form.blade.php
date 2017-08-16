@@ -11,20 +11,20 @@
             <div class="col-md-6">
                 <h4>Patient Information</h4>
                 <dl class="dl-horizontal">
-                    <dt>Name:</dt><dd>{{$patient->full_name}}</dd>
-                    <dt>Date of Birth:</dt><dd>{{(new Date($patient->dob))->format('m/d/y')}}
-                        <strong>({{(new Date($patient->dob))->age}} years old)</strong></dd>
-                    <dt>Gender:</dt><dd>{{$patient->sex}}</dd>
-                    <dt>Mobile Number:</dt><dd>{{$patient->mobile}}</dd>
-                    <dt>ID number:</dt><dd>{{$patient->id_no}}</dd>
-                    <dt>Email:</dt><dd>{{$patient->email}}</dd>
-                    <dt>Telephone:</dt><dd>{{$patient->telephone}}</dd>
-                    <dt>Admission Time:</dt><dd id="time"><?php echo new Date() ?></dd>
+                    <dt>Name:</dt><dd>{{ $patient->full_name }}</dd>
+                    <dt>Date of Birth:</dt><dd>{{ (new Date($patient->dob))->format('m/d/y') }}
+                        <strong>({{ (new Date($patient->dob))->age }} years old)</strong></dd>
+                    <dt>Gender:</dt><dd>{{ $patient->sex }}</dd>
+                    <dt>Mobile Number:</dt><dd>{{ $patient->mobile }}</dd>
+                    <dt>ID number:</dt><dd>{{ $patient->id_no }}</dd>
+                    <dt>Email:</dt><dd>{{ $patient->email }}</dd>
+                    <dt>Telephone:</dt><dd>{{ $patient->telephone }}</dd>
+                    <dt>Admission Time:</dt><dd id="time">{{ new Date() }}</dd>
                      <strong><dt>Account Balance:</dt><dd style="font-size: bold">Kshs.
             @if($patient->account)
-            {{number_format($patient->account->balance)}}
+            {{ number_format($patient->account->balance) }}
             @else
-            {{number_format(0.00)}}
+            {{ number_format(0.00) }}
             @endif
             </dd></strong>
 
@@ -32,7 +32,7 @@
                 @if(!empty($patient->image))
                     <hr/>
                     <h5>Patient Image</h5>
-                    <img src="{{$patient->image}}"  alt="Patient Image" height="100px"/>
+                    <img src="{{ $patient->image }}"  alt="Patient Image" height="100px"/>
                 @else
                     <strong class="text-info">No image</strong>
                 @endif
@@ -43,18 +43,18 @@
             <h4>Check-in details</h4>
             <div class="form-horizontal">
                 {!! Form::open(['url'=>['/inpatient/admit_patient'], 'method' => 'POST'])!!}
-                <input type="hidden" name="patient_id" value="{{$patient->id}}"/>
-                <input type="hidden" name="visit_id" value="{{$visit->id}}"/>
-                <input type="hidden" name="request_id" value="{{$request_id}}"/>
-                <div class="form-group req {{ $errors->has('admission_doctor') ? ' has-error' : '' }}">
+                <input type="hidden" name="patient_id" value="{{ $patient->id }}"/>
+                @if(isset($visit))<input type="hidden" name="visit_id" value="{{ $visit->id }}"/>@endif
+                @if(isset($request_id))<input type="hidden" name="request_id" value="{{ $request_id }}"/>@endif
+                <div class="form-group req {{  $errors->has('admission_doctor') ? ' has-error' : ''  }}">
                     {!! Form::label('Admission Doctor', 'Admission Doctor'
                     ,['class'=>'control-label col-md-4']) !!}
                     <div class="col-md-8">
                         <select name="admission_doctor" class="form-control" id="admission_doc">
                             @foreach($doctors as $doc)
-                                <option value="{{$doc->id}}">
-                                    {{$doc->profile->last_name}}
-                                    {{$doc->profile->first_name}}
+                                <option value="{{ $doc->id }}">
+                                    {{ $doc->profile->last_name }}
+                                    {{ $doc->profile->first_name }}
                                 </option>
                                 @endforeach
                                 <option value="other">Other</option>
@@ -75,19 +75,19 @@
                     </div>
                 </div>
 
-                <div class="form-group req {{ $errors->has('clinic') ? ' has-error' : '' }}">
+                <div class="form-group req {{  $errors->has('clinic') ? ' has-error' : ''  }}">
                     {!! Form::label('clinic', 'Clinic',['class'=>'control-label col-md-4']) !!}
                     <div class="col-md-8">
-                        <p class="form-control-static">{{get_clinic_name()}}</p>
+                        <p class="form-control-static">{{ get_clinic_name() }}</p>
                     </div>
                 </div>
 
-                <div class="form-group req {{ $errors->has('purpose') ? ' has-error' : '' }}">
+                <div class="form-group req {{  $errors->has('purpose') ? ' has-error' : ''  }}">
                     {!! Form::label('selectedWard', 'Ward',['class'=>'control-label col-md-4']) !!}
                     <div class="col-md-8">
-                        <select name="ward_id" required id="selectedWard" class="form-control">
+                        <select name="ward_id" required id="selectedWard" class="form-control" required>
                             @foreach($wards as $ward)
-                                <option value="{{$ward->id}}">{{$ward->name}} @Kshs. {{$ward->cost}} </option>
+                                <option value="{{ $ward->id }}">{{ $ward->name }} @Kshs. {{ $ward->cost }} </option>
                             @endforeach
                         </select>
                         {!! $errors->first('ward', '<span class="help-block">:message</span>') !!}
@@ -95,31 +95,31 @@
                 </div>
 
 
-                <div class="form-group req {{ $errors->has('bedposition') ? ' has-error' : '' }}">
+                <div class="form-group req {{  $errors->has('bedposition') ? ' has-error' : ''  }}">
                     {!! Form::label('Bed Position', 'Bed Position',['class'=>'control-label col-md-4']) !!}
                     <div class="col-md-8">
-                        <select name="bed_position_id" id="selectPos" required class="form-control">
+                        <select name="bedposition_id" id="selectPos" required class="form-control">
                         @foreach($bedpositions as $bedp)
-                        <option value="{{$bedp->id}}">{{$bedp->name}}</option>
+                            <option value="{{ $bedp->id }}">{{ $bedp->name }}</option>
                         @endforeach()
                         </select>
                         {!! $errors->first('bedposition', '<span class="help-block">:message</span>') !!}
                     </div>
                 </div>
 
-                <div class="form-group req {{ $errors->has('bed') ? ' has-error' : '' }}">
+                <div class="form-group req {{  $errors->has('bed') ? ' has-error' : ''  }}">
                     {!! Form::label('Bed', 'bed',['class'=>'control-label col-md-4']) !!}
                     <div class="col-md-8">
                         <select name="bed_id" id="selectPos" required class="form-control">
                         @foreach($beds as $bed)
-                        <option value="{{$bed->id}}">{{$bed->number}}</option>
+                            <option value="{{ $bed->id }}">{{ $bed->number }}</option>
                         @endforeach()
                         </select>
                         {!! $errors->first('bed', '<span class="help-block">:message</span>') !!}
                     </div>
                 </div>
 
-                <div class="form-group {{ $errors->has('payment_mode') ? ' has-error' : '' }}">
+                <div class="form-group {{  $errors->has('payment_mode') ? ' has-error' : ''  }}">
                     {!! Form::label('name', 'Payment Mode',['class'=>'control-label col-md-4']) !!}
                     <div class="col-md-8" id="mode">
                         <input checked name="payment_mode" type="radio" value="cash" id="cash_option"> Cash
@@ -129,7 +129,7 @@
                         {!! $errors->first('payment_mode', '<span class="help-block">:message</span>') !!}
                     </div>
                 </div>
-                <div class="ins form-group {{ $errors->has('scheme') ? ' has-error' : '' }}" id="schemes">
+                <div class="ins form-group {{  $errors->has('scheme') ? ' has-error' : ''  }}" id="schemes">
                     {!! Form::label('scheme', 'Insurance Scheme',['class'=>'control-label col-md-4']) !!}
                     <div class="col-md-8">
                         {!! Form::select('scheme',get_patient_insurance_schemes($patient->id), old('scheme'), ['class' => 'form-control', 'placeholder' => 'Choose...']) !!}
@@ -138,25 +138,25 @@
                 </div>
 
 
-                <div class="ins form-group {{ $errors->has('scheme') ? ' has-error' : '' }}" id="schemes">
+                <div class="ins form-group {{  $errors->has('scheme') ? ' has-error' : ''  }}" id="schemes">
                     {!! Form::label('scheme', 'Upload Authorization Letter',['class'=>'control-label col-md-4']) !!}
                     <div class="col-md-8">
                         <input type="file" class="form-control">
                     </div>
                 </div>
 
-                <div class="ins form-group {{ $errors->has('max-allowed') ? ' has-error' : '' }}" id="schemes">
+                <div class="ins form-group {{  $errors->has('max-allowed') ? ' has-error' : ''  }}" id="schemes">
                     {!! Form::label('scheme', 'Maximum Amount Allowed By Insurance:',['class'=>'control-label col-md-4']) !!}
                     <div class="col-md-8">
                         <input type="number" name="max-allowed" class="form-control">
                     </div>
                 </div>
-                <div class="cash form-group {{ $errors->has('deposit') ? ' has-error' : '' }}" id="schemes">
+                <div class="cash form-group {{  $errors->has('deposit') ? ' has-error' : ''  }}" id="schemes">
                     {!! Form::label('deposit', 'Charge Deposit',['class'=>'control-label col-md-4']) !!}
                     <div class="col-md-8">
                         <select name="deposit" id="depositSel" class="form-control">
                             @foreach($deposits as $deposit)
-                                <option value="{{$deposit->id}}">{{$deposit->name}} @Kshs. {{$deposit->cost}}</option>
+                                <option value="{{ $deposit->id }}">{{ $deposit->name }} @Kshs. {{ $deposit->cost }}</option>
                                 @endforeach
                         </select>
                         <div id="errorRe"></div>
@@ -165,17 +165,18 @@
                 </div>
 <!-- the admission and nursing charges -->
                     
-            @foreach($admissions as $adm)
+                {{--  @foreach($admissions as $adm)
 
-                  <div class="form-group ">
-                    {!! Form::label($adm->name, $adm->name,['class'=>'control-label col-md-4']) !!}
-                    <div class="col-md-8">
-                        <input name="recurrent_charge[]" class="admission" type="checkbox" value="{{$adm->id}}">
-                        {{$adm->name}} @ price {{$adm->cost}}
+                      <div class="form-group ">
+                        {!! Form::label($adm->name, $adm->name,['class'=>'control-label col-md-4']) !!}
+                        <div class="col-md-8">
+                            <input name="recurrent_charge[]" class="admission" type="checkbox" value="{{ $adm->id }}">
+                            {{ $adm->name }} @ price {{ $adm->cost }}
+                        </div>
                     </div>
-                </div>
 
-            @endforeach()
+                @endforeach  --}}
+                
                 <div class="pull-right">
                     <button type="submit" id="admitPatient" class="btn btn-success"><i class="fa fa-user-plus"></i> Admit Patient</button>
                 </div>
@@ -209,7 +210,7 @@
 
                 //on submit check if the button has class inactive.
                 $("#admitPatient").click(function(e){
-                    if($("#admitPatient").hasClass('disabled') & $('input[name=payment_mode]:checked').val()=='cash' ){
+                    if($("#admitPatient").hasClass('disabled') && $('input[name=payment_mode]:checked').val()=='cash' ){
                         e.preventDefault();
                     }
                 })
@@ -231,7 +232,7 @@
                 }
 
                 var loadBeds = function(){
-                    var urlAvailableBeds = '{{url('/inpatient/availableBeds/')}}';
+                    var urlAvailableBeds = '{{ url('/inpatient/availableBeds/') }}';
                     urlAvailableBeds = urlAvailableBeds + '/' + ($("#selectedWard").val());
                     $.ajax({
                         url:urlAvailableBeds,
@@ -260,9 +261,9 @@
             });
 
             var checkBalance = function () {
-                var url = '{{url('/inpatient/admit_check')}}';
+                var url = '{{ url('/inpatient/admit_check') }}';
                 var deposit_type =  ($("#depositSel").val());
-                var patient_id = '{{$patient->id}}';
+                var patient_id = '{{ $patient->id }}';
                 var ward = $("select#selectedWard").val();
 
                 $.ajax({

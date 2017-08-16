@@ -5,7 +5,6 @@
 @section('content')
     @include('Evaluation::inpatient.success')
 
-
     <div class="box box-info">
         <div class="box-body">
             <h2>Patient Details</h2>
@@ -22,12 +21,10 @@
             </div>
 
 
-
-
-             <div class="form-horizontal">
+            <div class="form-horizontal">
         {!! Form::open(['url'=>'evaluation/inpatient/change_bed']) !!}
         <div class="col-md-6">
-       <input type="hidden" name="admission_id" value='{{$admission->id}}'>
+            <input type="hidden" name="admission_id" value='{{$admission->id}}'>
             <div class="">
                 <div class="form-group {{ $errors->has('cash') ? ' has-error' : '' }}">
                     <label class="control-label col-md-4">Ward:</label>
@@ -82,26 +79,28 @@
             $("table").dataTable();
 
            var getbedp = function () {
-                var ward = $("#ward").val();
-            $("#bedPosition").html('');
-        
-                var url = '{{url('/evaluation/inpatient/getAvailableBedPosition')}}'+'/'+ward;
-                $.ajax({
-                    url:url
-                }).done(function (data) {
-                   $.each(data, function (index,value) {
-                            console.info("index=>"+index+'value=>'+value.number);
-                            $("#bedPosition").append("<option value='"+value.id+"'>"+value.name+"</option>")
-                        })
 
-           })
-               }
+                var ward = $("#ward").val();
+                $("#bedPosition").html('');
+            
+                    var url = '{{url('/inpatient/getAvailableBedPosition')}}'+'/'+ward;
+                    
+                    $.ajax({
+                        url:url
+                    }).done(function (data) {
+                       $.each(data, function (index,value) {
+                                console.info("index=>"+index+'value=>'+value.number);
+                                $("#bedPosition").append("<option value='"+value.id+"'>"+value.name+"</option>")
+                            });
+                    });
+            }
+
                getbedp();
+
                $("#ward").change(function () {
                    getbedp();
-               })
-           }) 
-           
+               });
+           }); 
 
     </script>
 

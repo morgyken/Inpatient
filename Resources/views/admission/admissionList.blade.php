@@ -31,24 +31,24 @@
                             <tbody>
                             @foreach($admissions as $admission)
                                 <tr>
-                                    <td>{{\Ignite\Reception\Entities\Patients::find($admission->patient_id)->first_name}}
-                                        {{\Ignite\Reception\Entities\Patients::find($admission->patient_id)->last_name}}
+                                    <td>{{ $admission->patient->first_name }}
+                                        {{ $admission->patient->last_name }}
                                     </td>
                                     @if(is_null($admission->doctor_id))
-                                        <td>{{$admission->external_doctor}}</td>
+                                        <td>{{ $admission->external_doctor}}</td>
                                         @else
-                                        <td>{{\Ignite\Users\Entities\UserProfile::where('user_id',$admission->doctor_id)->first()->first_name}} {{\Ignite\Users\Entities\UserProfile::where('user_id',$admission->doctor_id)->first()->last_name}}</td>
+                                        <td>{{ $admission->doctor->profile->first_name }} {{ $admission->doctor->profile->last_name }}</td>
                                         @endif
-                                    <td>{{\Ignite\Evaluation\Entities\Ward::find($admission->ward_id)->name}}</td>
-                                    <td>{{\Ignite\Evaluation\Entities\Bed::find($admission->bed_id)->number}}</td>
-                                    <td>{{$admission->cost}}</td>
-                                    <td>{{$admission->created_at}}</td>
+                                    <td>{{ $admission->ward->name }}</td>
+                                    <td>{{ $admission->bed->number }}</td>
+                                    <td>{{ $admission->cost }}</td>
+                                    <td>{{ $admission->created_at }}</td>
                                     <td>
-                                       <a href="{{url('/evaluation/patients/visit/'.$admission->visit_id.'/evaluate/nurse')}}"
+                                       <a href="{{url('/inpatient/manage/'.$admission->patient->id.'/visit/'.$admission->visit_id.'/nurse')}}"
                                            class="btn btn-success btn-xs"> <i class="fa fa-ellipsis-h"></i> Manage</a>
-                                        <a href="{{url('/evaluation/patients/visit/'.$admission->visit_id.'/move')}}"
+                                        <a href="{{url('/inpatient/manage/'.$admission->patient->id.'/visit/'.$admission->visit_id.'/move')}}"
                                            class="btn btn-primary btn-xs"> <i class="fa fa-share"></i> Move</a>
-                                        <a class="btn btn-warning btn-xs" href="{{url('/evaluation/inpatient/request_discharge/'.$admission->visit_id)}}">Request Discharge</a>   
+                                        <a class="btn btn-warning btn-xs" href="{{url('/inpatient/manage/'.$admission->patient->id.'/requestDischarge/'.$admission->visit_id)}}">Request Discharge</a>   
                                     </td>
                                 </tr>
                             @endforeach
@@ -78,36 +78,6 @@
                     </div>
                 </div>
 
-
-{{--                <table class="table table-stripped">
-                    <caption>The Beds List: All The Beds</caption>
-                    <thead>
-                    <th>Name.</th>
-                    <th>Admission Doc.</th>
-                    <th>Ward</th>
-                    <th>Bed</th>
-                    <th>Cost</th>
-                    <th>Admitted At</th>
-                    <th>Option</th>
-                    </thead>
-                    <tbody>
-                    @foreach($admissions as $admission)
-                        <tr>
-                            <td>{{\Ignite\Reception\Entities\Patients::find($admission->patient_id)->first_name}}
-                                {{\Ignite\Reception\Entities\Patients::find($admission->patient_id)->last_name}}
-                            </td>
-                            <td>{{\Ignite\Users\Entities\User::find($admission->doctor_id)->username}}</td>
-                            <td>{{\Ignite\Evaluation\Entities\Ward::find($admission->ward_id)->name}}</td>
-                            <td>{{\Ignite\Evaluation\Entities\Bed::find($admission->bed_id)->number}}</td>
-                            <td>{{$admission->cost}}</td>
-                            <td>{{$admission->created_at}}</td>
-                            <td>
-                                <a href="{{url('/evaluation/inpatient/manage/'.$admission->patient_id)}}" class="btn btn-primary">Manage</a>
-                            </td>
-                        </tr>
-                    @endforeach
-                    </tbody>
-                </table>--}}
             @endif
         </div>
     </div>
@@ -118,18 +88,17 @@
                 $("div.addBed").toggle();
             });
 
-            $("button.checkOut").click(function () {
+            $("button.checkOut").click(function (e) {
+                e.preventDefault();
                 var valu = this.value;
                 $('#myModal').modal('show');
 
                 $("#checkout").click(function () {
                     $('#myModal').modal('hide');
-                    var SIGN_OUT = "{{url('/evaluation/inpatient/cancel_checkin')}}" +'/'+valu;
+                    var SIGN_OUT = "{{ url('/inpatient/admission/cancel/') }}" + valu;
                     $.ajax({
-//                        url:'/evaluation/inpatient/checkoutPatient'+'/'+valu
                         type: 'GET',
-                        url: SIGN_OUT,
-
+                        url: SIGN_OUT
                     });
                     location.reload();
                 })

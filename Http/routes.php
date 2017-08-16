@@ -11,17 +11,18 @@ Route::group(['middleware' => 'web', 'prefix' => 'inpatient', 'as' => 'inpatient
     Route::get('/admit', 'InpatientController@index');
     Route::get('/awaiting', 'InpatientController@awaiting');
     Route::post('/requestAdmission', 'InpatientController@requestAdmission');
+    Route::get('/admit/{id}', 'InpatientController@admitWalkInPatient');
     Route::get('/admit/{id}/{visit_id}', 'InpatientController@admitPatientForm');
     Route::post('/admit_patient', 'InpatientController@admit');
     Route::get('/admit_check', 'InpatientController@admit_check');
     Route::get('/admissions', 'InpatientController@admissionList');
     Route::get('/admission/cancel/{id}', 'InpatientController@cancel');
     //manage patient
-    Route::get('/manage/{patient_id}', 'InpatientController@managePatient');
-    Route::post('/manage/{patient_id}', 'InpatientController@recordVitals');
+    Route::get('/manage/{id}/visit/{visit_id}/nurse', 'InpatientController@managePatient');
+    Route::post('/manage/vitals', 'InpatientController@recordVitals');
     //admit patient awaiting
     Route::get('/awaitingAdmission', 'InpatientController@admitAwaiting');
-    // Route::post('/admit_patientPostForm', 'InpatientController@admit_patientPostForm');
+    Route::get('/manage/{id}/visit/{visit_id}/move', 'InpatientController@movePatient');
 
    /*
     |--------------------------------------------------------------------------
@@ -65,8 +66,6 @@ Route::group(['middleware' => 'web', 'prefix' => 'inpatient', 'as' => 'inpatient
     |--------------------------------------------------------------------------
     */
 
-	// ancel request admission
-    Route::get('/cancel/{id}',['uses'=>'InpatientController@cancel']);
     /*nursing charges*/
     Route::get('/Nursing_services',['uses'=>'InpatientController@Nursing_services']);
     //add recurrent charge

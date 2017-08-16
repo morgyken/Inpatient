@@ -22,4 +22,8 @@ class Bed extends Model
 
     protected $table = 'beds';
 
+    public function ward(){
+    	return $this->belongsTo(Ward::class, 'ward_id', 'id');
+    }
+
 }

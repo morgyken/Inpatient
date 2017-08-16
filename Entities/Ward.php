@@ -2,6 +2,7 @@
 
 namespace Ignite\Inpatient\Entities;
 
+use Ignite\Reception\Entities\Patients;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -22,5 +23,9 @@ class Ward extends Model
 
     public function patients(){
     	return $this->hasMany(Patients::class, 'patients');
+    }
+
+    public function assigned(){
+        return $this->hasMany(WardAssigned::class);
     }
 }

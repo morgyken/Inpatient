@@ -4,14 +4,10 @@ namespace Ignite\Inpatient\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property int $id
- */
 class WardAssigned extends Model
 {
     protected $fillable = [
+        // 'patient_id',
         'visit_id',
         'ward_id',
         'admitted_at',
@@ -19,5 +15,18 @@ class WardAssigned extends Model
         'price',
         'status'
     ];
+    
     protected $table = 'ward_assigned';
+
+    // public function patient(){
+    //     $this->belongsTo(Patients::class, "patient_id", "id");
+    // }
+
+    public function ward(){
+    	$this->belongsTo(Ward::class, "ward_id", "id");
+    }
+
+    public function visit(){
+    	$this->belongsTo(Visit::class, "visit_id", "id");
+    }
 }

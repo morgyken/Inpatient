@@ -17,31 +17,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 
-/**
- * @property \Carbon\Carbon $deleted_at
- * @property \Carbon\Carbon $created_at
- * @property int $id
- * @property \Carbon\Carbon $updated_at
- * @property  $unpaid_amount
- * @property mixed investigations
- * @property mixed dispensing
- * @property string $visit_destination
- * @property bool $signed_out
- * @property mixed $destinations
- * @property mixed|string $mode
- * @property mixed $total_bill
- * @property mixed patient_scheme
- * @property mixed $payment_mode
- * @property mixed $clinics
- * @property mixed $patients
- * @property mixed $vitals
- * @property mixed $notes
- * @property mixed $drawings
- * @property mixed $prescriptions
- * @property mixed $opnotes
- * @property mixed $appointments
- * @property mixed|string $doctor
- */
 class Visit extends Model
 {
     use SoftDeletes;
@@ -92,7 +67,7 @@ class Visit extends Model
                     $this->patient_scheme->schemes->name;
             }
             catch(\Exception $exc){
-                return ($this->payment_mode);
+                return ucfirst($this->payment_mode);
             }
 
         }
@@ -118,6 +93,10 @@ class Visit extends Model
      */
     public function patients() {
         return $this->belongsTo(Patients::class, 'patient');
+    }
+
+    public function admissions(){
+        return $this->hasMany(Admission::class, 'id');
     }
 
     /**
@@ -245,6 +224,10 @@ class Visit extends Model
 
     public function external_doctors() {
         return $this->belongsTo(User::class, 'external_doctor');
+    }
+
+    public function wardsAssigned(){
+        return $this->hasMany(WardAssigned::class, "visit_id");
     }
 
 
