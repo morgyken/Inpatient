@@ -1,4 +1,8 @@
 <?php
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods:GET,POST,PUT,DELETE,OPTIONS');
+header('Access-Control-Allow-Headers:Origin, Content-Type, X-XSRF-TOKEN, X-CSRF-TOKEN');
+header('Access-Control-Allow-Credentials: true');
 
 Route::group(['middleware' => 'web', 'prefix' => 'inpatient', 'as' => 'inpatient.', 'namespace' => 'Ignite\Inpatient\Http\Controllers'], function() {
 
@@ -20,6 +24,7 @@ Route::group(['middleware' => 'web', 'prefix' => 'inpatient', 'as' => 'inpatient
     //manage patient
     Route::get('/manage/{id}/visit/{visit_id}/nurse', 'InpatientController@managePatient');
     Route::post('/manage/vitals', 'InpatientController@recordVitals');
+     // Route::post('/manage/notes', 'InpatientController@recordVitals');
     //admit patient awaiting
     Route::get('/awaitingAdmission', 'InpatientController@admitAwaiting');
     Route::get('/manage/{id}/visit/{visit_id}/move', 'InpatientController@movePatient');
@@ -118,4 +123,33 @@ Route::group(['middleware' => 'web', 'prefix' => 'inpatient', 'as' => 'inpatient
     Route::get('/print',['uses'=>'InpatientController@print']);
     //post discharge note
     Route::post('/postDischargeNote',['uses'=>'InpatientController@postDischargeNote']);
+
+
+
+// ********************************************* API ****************************************************************** \\
+
+    Route::group(['prefix' => 'api/v1'], function() {
+
+        // Get all Patients
+        Route::get('/patients', 'InpatientApiController@getAllPatients');
+
+        // Get all Patients Awaiting Admission
+        Route::get('/patients/awaiting', 'InpatientApiController@getPatientsAwaitingAdmission');
+
+        // Get all Patients Awaiting Admission
+        Route::get('/patients/admitted', 'InpatientApiController@getPatientsAdmitted');
+
+        // Get patient Temperature for plotting
+        
+
+        // Get patient blood pressure for plotting
+        
+
+        // Get patient weight for plotting
+        
+
+        // Get patient height for plotting
+        
+
+    });
 });

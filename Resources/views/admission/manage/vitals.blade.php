@@ -1,19 +1,28 @@
 <div id="vitals" class="tab-pane fade in active col-lg-12">
 
     <!--If not recorded add to db else display and enable edit -->
-    @if(! count($vitals))
-        <h2>Record Patient's Vitals</h2>
+    @if(!count($vitals))
+       
         <div class="col-xs-12 col-sm-12 col-md-6">
-            <form  method="post" action="" id = "vitals_form">
-                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+             <h2>Record Patient's Vitals</h2>
+            <form  method="post" action="{{ url('/manage/vitals') }}" id = "vitals_form">
+
+                {{ csrf_field() }}
+
+                <input type="hidden" name="visit" value="{{ $admission->visit_id }}" required>
+
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding:0 !important;">
+                    <label for="" class="control-label">Nurse's Notes</label>
+                    <textarea name="nurses_notes" id="nurses_notes" class="form-control" rows="3" placeholder="Nurses Notes"></textarea>
+                </div>
 
                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding:0 !important;">
-
+                    <br>
                     <label for="" class="control-label">Weight:(Kgs)</label>
-                    <input type="number" class="form-control" name="weight" id ="weight">
+                    <input type="number" class="form-control" name="weight" id ="weight" required>
 
-                    <label for="" class="control-label">height:(Metres)</label>
-                    <input type="number" class="form-control" name="height" id ="height">
+                    <label for="" class="control-label">Height:(Metres)</label>
+                    <input type="text" class="form-control" name="height" id ="height" required>
 
                     <label for="" class="control-label">BP Systolic:[mm/hg]</label>
                     <input type="number" class="form-control" name="bp_systolic">
@@ -45,6 +54,7 @@
 
 
                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding:0 0 0 5px !important;">
+                    <br>
                     <label for="" class="control-label">Waist Circumference:[cm]</label>
                     <input type="number" class="form-control" name="waist" id = "waist">
 
@@ -73,8 +83,9 @@
 
                 </div>
 
-                <div class="col-xs-12 col-sm-12 col-md-12">
-                    <button class="btn btn-primary">Record</button>
+                <div class="col-xs-12 col-sm-12 col-md-12" style="padding: 0 !important;">
+                    <br>
+                    <button class="btn  btn-primary">Record</button>
                 </div>
             </form>
         </div>
@@ -84,10 +95,78 @@
         </div>
        
     @else
-        <div class="col-xs-12 col-sm-12 col-lg-8">
+        <div class="col-xs-12 col-sm-12 col-lg-12">
+            <h3>Previous Vitals</h3>
+            @if(count($vitals) > 0)
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>DateTime</th>
+                            <th>Height</th>
+                            <th>Weight</th>
+                            <th>BMI</th>
+                            <th>Status</th>
+                            <th>Temp</th>
+                            <th>BP</th>
+                            <th>Resp</th>
+                            <th>Pulse</th>
+                            <th>O<sub>2</sub></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($vitals as $v)
+                            <tr>
+                                <td>{{ \Carbon\Carbon::parse($v->created_at)->format('ds M,Y') }}</td>
+                                <td>{{ $v->height }}</td>
+                                <td>{{ $v->weight }}</td>
+                                <td>{{ $v->weight / ($v->height * $v->height) }}</td>
+                                <td>
+                                    @if( ($v->weight / ($v->height * $v->height)) > 29.9)
+                                        Obese
+                                    @elseif( ($v->weight / ($v->height * $v->height)) < 30 && ($v->weight / ($v->height * $v->height)) > 24.9)
+                                        Overweight
+                                    @elseif( ($v->weight / ($v->height * $v->height)) < 24.8 && ($v->weight / ($v->height * $v->height)) > 18.5)
+                                        Normal
+                                    @elseif( ($v->weight / ($v->height * $v->height)) < 18.5)
+                                        Underweight
+                                    @endif
+                                </td>
+                                <td>{{ $v->temperature }}</td>
+                                <td>{{ $v->bp_systolic }}/{{ $v->bp_diastolic }}</td>
+                                <td>{{ $v->resperation }}</td>
+                                <td>{{ $v->pulse }}</td>
+                                <td>{{ $v->oxygen }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
 
-            @include('inpatient::admission.graphs.input');
+                <br>
 
+                <h3>Nurses Notes</h3>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>DateTime</th>
+                            <th>Notes</th>
+                            <th>Nurse</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($vitals as $v)
+                            <tr>
+                                <td>{{ \Carbon\Carbon::parse($v->created_at)->format('ds M,Y') }}</td>
+                                <td>{{ $v->nurse_notes }}</td>
+                                <td>{{ $v->user->full_name }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            @else
+                <div class="alert">
+                    There are no vitals recorded for this patient
+                </div>
+           @endif
         </div>
 
     @endif

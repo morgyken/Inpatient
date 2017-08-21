@@ -1,4 +1,4 @@
- <h3>Graphs</h3>
+<h2 class="text-center">Vital Charts</h2>
 <!-- Temperature Chart Canvas -->
 <div class="chart">
 	<div id="temp_chart"></div>
@@ -8,7 +8,7 @@
 {{-- Blood Pressure Chart --}}
 <div class="chart">
 	<div id="bp_chart"></div>
-	{{-- @areachart('bpChart', 'bp_chart') --}}
+	@areachart('bpChart', 'bp_chart')
 	
 </div>
 

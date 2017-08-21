@@ -31,6 +31,15 @@ use Ignite\Users\Entities\Roles;
 use Ignite\Users\Entities\UserRoles;
 use Ignite\Users\Entities\User;
 
+use Ignite\Evaluation\Entities\Prescriptions;
+// use Ignite\Evaluation\Entities\;
+// use Ignite\Evaluation\Entities\;
+// use Ignite\Evaluation\Entities\;
+// use Ignite\Evaluation\Entities\;
+// use Ignite\Evaluation\Entities\;
+// use Ignite\Evaluation\Entities\;
+// use Ignite\Evaluation\Entities\;
+
 class InpatientController extends AdminBaseController
 {
     private $request_admission;
@@ -61,6 +70,7 @@ class InpatientController extends AdminBaseController
         parent::__construct();
         $this->__require_assets();
 
+        $this->request_admission = $request_admission;
         $this->roles = $roles;
         $this->user_roles = $user_roles;
         $this->user = $user;
@@ -112,8 +122,8 @@ class InpatientController extends AdminBaseController
 
     public function awaiting()
     {
-        $patientIds = $request_admission->where('id', '!=', null)->get(['patient_id'])->toArray();
-        $patients = $request_admission->all();
+        $patientIds = $this->request_admission->where('id', '!=', null)->get(['patient_id'])->toArray();
+        $patients = $this->request_admission->all();
         return view('inpatient::admission.admitAwaiting', ['patientIds'=>$patientIds, 'patients' => $patients]);
     }
 
@@ -358,19 +368,31 @@ class InpatientController extends AdminBaseController
 
     public function managePatient($id, $visit_id) {
 
-        $tempTable = Lava::DataTable(); 
+        $tempTable = Lava::DataTable();
+        $bpTable = Lava::DataTable(); 
 
         $tempTable->addDateColumn('Day of Month')
                     ->addNumberColumn('Temp in Celcius');
 
+        $bpTable->addDateColumn('Day of Month')
+                    ->addNumberColumn('BP in mm/hg');
+
         // Random Data For Example
         for ($a = 1; $a < 30; $a++) {
             $tempTable->addRow([
-              '2015-10-' . $a, rand(10,60)
+              '2015-10-' . $a, rand(10, 60)
+            ]);
+        }
+
+        for ($a = 1; $a < 30; $a++) {
+            $bpTable->addRow([
+              '2015-10-' . $a, rand(0, 240)
             ]);
         }
 
         $tempChart = Lava::AreaChart('tempChart',$tempTable);
+
+        $bpChart = Lava::AreaChart('bpChart',$bpTable);
 
         $patient = Patients::findorFail($id)->first();
 
@@ -386,14 +408,27 @@ class InpatientController extends AdminBaseController
         if (count(Visit::where('patient', $id)->get()) > 0) {
             $visit_id = Visit::where('patient', $id)->orderBy('created_at', 'desc')->first()->id;
             $vitals = Vitals::where('visit', $visit_id)->get();
+            $prescriptions = Prescriptions::where('visit', $visit_id)->get();
             $doctor_note = DoctorNotes::where('visit', $visit_id)->first();
         }
-        return view('Inpatient::admission.manage_patient', compact('patient', 'ward', 'admission', 'vitals', 'doctor_note'));
+        return view('Inpatient::admission.manage_patient', compact('tempChart','bpChart','patient', 'ward', 'admission', 'vitals', 'doctor_note', 'prescriptions'));
     }
 
     public function recordVitals(Request $request) {
-        Vitals::create($request->all());
-        return redirect()->back()->with('success', 'Recorded patient\'s vitals successfully.');
+        \DB::beginTransaction();
+        try{
+            $v = Vitals::find("visit", $request->visit);
+            if($v == null){
+                Vitals::create($request->all());
+            }else{
+                $v->update($request->all());
+            }
+            \DB::commit();
+            return redirect()->back()->with('success', 'Recorded patient\'s vitals successfully.');
+        }catch(\Exception $e){
+            \DB::rollback();
+            redirect()->back()->with('error', 'An error occured. '. $e->getMessage());
+        }
     }
 
     public function movePatient($id, $visit_id) {
