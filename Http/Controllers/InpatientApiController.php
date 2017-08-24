@@ -10,6 +10,7 @@ use Response;
 use Validator;
 use Session;
 use Lava;
+use DB;
 
 use Ignite\Inpatient\Entities\Admission;
 use Ignite\Inpatient\Entities\Deposit;
@@ -69,15 +70,39 @@ class InpatientApiController extends Controller
 		return $patients;
 	}
 
+	public function getPatientDetails($id){
+
+        $patient_details = $this->admission->where('patient_id', $id)->get()->map(function($admission) {
+        	return 
+        	[
+				"id"			=> $admission->patient->id,
+				"visit_id"		=> $admission->visit_id,
+				"id_number" 	=> (isset($admission->patient->id_no)) ? $admission->patient->id_no  : "No ID number",
+				"age"			=> $admission->patient->age,
+				"profile"		=> $admission->patient->image,
+				"fullname" 		=> $admission->patient->fullName,
+				"registered" 	=> \Carbon\Carbon::parse($admission->patient->created_at)->format('d/m/y H:i A'),
+				"ward"			=> $admission->ward->name,
+				"bed"			=> $admission->bed->number,
+				"balance"		=> $admission->patient->account->balance,
+				"deposit"		=> null,
+				"admitted_at"	=> \Carbon\Carbon::parse($admission->created_at)->format('d/m/y H:i A')
+			];
+		})->toJson();
+	
+		return $patient_details;
+	}
+
 	public function getPatientsAwaitingAdmission(){
 		$patients = $this->request_admission->latest()->get()->map(function ($item){
 			return $items['results'] = 
 			[
 				"id"			=> $item->id,
+				"visit_id"		=> $item->visit_id,
 				"id_number" 	=> $item->patient->id_no,
 				"profile"		=> $item->patient->image,
 				"fullname" 		=> $item->patient->fullName,
-				"requested" 	=> \Carbon\Carbon::parse($item->created_at)->format('m/d/y')
+				"requested" 	=> \Carbon\Carbon::parse($item->created_at)->format('d/m/y')
 			];
 		})->toJson();
 
@@ -89,16 +114,117 @@ class InpatientApiController extends Controller
 			return $items['results'] = 
 			[
 				"id" 			=> $item->id,
+				"visit_id"		=> $item->visit_id,
 				"fullname" 		=> $item->patient->fullName,
 				"doctor"		=> (is_null($item->doctor_id)) ? $item->external_doctor : $item->doctor->profile->first_name." ".$item->doctor->profile->last_name,
 				"ward"			=> $item->ward->name,
 				"bed"			=> $item->bed->number,
 				"cost"			=> $item->cost,
-				"admitted" 	=> \Carbon\Carbon::parse($item->created_at)->format('m/d/y')
+				"admitted" 		=> \Carbon\Carbon::parse($item->created_at)->format('d/m/y H:i A')
 			];
 		})->toJson();
 
 		return $patients;
+	} 
+
+	private function calculateBMI($weight, $height){
+		return $weight / ($height * $height);
+	}
+
+	private function getBMIStatus($bmi){
+		if( ( $bmi > 29.9))
+            return "Obese";
+        else if( $bmi < 30 && $bmi > 24.9)
+            return "Overweight";
+        else if( $bmi < 24.8 && $bmi > 18.5)
+            return "Normal";
+        else if( $bmi < 18.5)
+            return "Underweight";
+	}
+
+	public function getPatientVitals($patient_id, $visit_id){
+		 if (count(Visit::where('patient', $patient_id)->get()) > 0) {
+		 	$vitals = Vitals::where('visit', $visit_id)->get()->map(function($item){
+		 		return $items['results'] = 
+		 		[
+		 			"id" 					=> $item->id,
+		 			"visit_id"				=> $item->visit_id,
+		 			"patient_id"			=> $patient_id,
+		 			"height"				=> $item->height,
+		 			"weight"				=> $item->weight,
+		 			"bmi"					=> $this->calculateBMI($item->weight, $item->height),
+		 			"bmi_status"			=> $this->getBMIStatus($this->calculateBMI($item->weight, $item->height)),
+		 			"bp"					=> $item->bp_systolic."/".$item->bp_diastolic,
+		 			"pulse"					=> $item->pulse,
+		 			"respiration"			=> $item->respiration,
+		 			"temperature"			=> $item->temperature,
+		 			"temperature_location"	=> $item->temperature_location,
+		 			"oxygen"				=> $item->oxygen,
+		 			"waist"					=> $item->waist,
+		 			"hip"					=> $item->hip,
+		 			"blood_sugar"			=> $item->blood_sugar,
+		 			"blood_sugar_units"		=> $item->blood_sugar_units,
+		 			"allergies"				=> $item->allergies,
+		 			"chronic_illnesses"		=> $item->chronic_illnesses,
+		 			"nurse_notes"			=> $item->nurse_notes,
+		 			"nurse"					=> $item->user->nurse->fullName,
+		 			"timestamp"				=> \Carbon\Carbon::parse('created_at')->format('d/m/y H:i A')
+		 		];
+		 	})->toJson();
+
+		 	return json_encode(['type' => 'success', 'data' => $vitals]);
+		}else{
+			 Response::json(['type' => 'error', 'message' => 'The patient visits data could not be found']);
+		}
+	}
+
+	public function savePatientVitals(Request $request){
+		 \DB::beginTransaction();
+        try{
+            $v = Vitals::find("visit", $request->visit);
+            if($v == null){
+                Vitals::create($request->all());
+            }else{
+                $v->update($request->all());
+            }
+            \DB::commit();
+            return Response::json(['type' => 'success', 'message' => 'Recorded patient\'s vitals successfully']);
+        }catch(\Exception $e){
+            \DB::rollback();
+            return Response::json(['type' => 'error', 'message' => 'An error occured. '. $e->getMessage()]);
+        }
+	}
+
+	public function updatePatientVitals(Request $request){
+
+	}
+
+	public function deletePatientVitals($id){
+
+	}
+
+	public function getPatientInvestigations($id){
+
+	}
+
+	public function getPatientPrescriptions($id){
+
+	}
+
+	public function getPatientDiagnosis($id){
+
+	}
+
+	public function getPatientPerfomedProcedures($id){
+
+	}
+
+	public function getPatientQueuedProcedures($id){
+
+	}
+
+	public function addInvestigation(Request $request){
+		
 	}
 
 }

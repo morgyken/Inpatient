@@ -133,11 +133,35 @@ Route::group(['middleware' => 'web', 'prefix' => 'inpatient', 'as' => 'inpatient
         // Get all Patients
         Route::get('/patients', 'InpatientApiController@getAllPatients');
 
+        // Get all Patients
+        Route::get('/patients/{id}', 'InpatientApiController@getPatientDetails');
+
         // Get all Patients Awaiting Admission
         Route::get('/patients/awaiting', 'InpatientApiController@getPatientsAwaitingAdmission');
 
         // Get all Patients Awaiting Admission
         Route::get('/patients/admitted', 'InpatientApiController@getPatientsAdmitted');
+
+        // Get Patient Vitals
+        Route::get('/patients/{id}/visits/{visit_id}/vitals', 'InpatientApiController@getPatientVitals');
+
+        // Get Patient Investigations
+        Route::get('/patients/{id}/visits/{visit_id}/investigations', 'InpatientApiController@getPatientInvestigations');
+
+        // Get all investigations
+        Route::get('/investigations/patient/{id}/visit/{visit_id}', 'InpatientApiController@getAllInvestigations');
+
+        // Get all prescriptions
+        Route::get('/prescriptions/patient/{id}/visit/{visit_id}', 'InpatientApiController@getAllPrescriptions');
+
+        // Get all diagnosis
+        Route::get('/diagnosis/patient/{id}/visit/{visit_id}', 'InpatientApiController@getAllDiagnosis');
+
+        // Get all diagnosis
+        Route::get('/procedures/performed/patient/{id}/visit/{visit_id}', 'InpatientApiController@getAllPerformedProcedures');
+
+        // Get all diagnosis
+        Route::get('/procedures/queued/patient/{id}/visit/{visit_id}', 'InpatientApiController@getAllQueuedProcedures');
 
         // Get patient Temperature for plotting
         

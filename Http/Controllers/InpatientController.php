@@ -427,7 +427,7 @@ class InpatientController extends AdminBaseController
             return redirect()->back()->with('success', 'Recorded patient\'s vitals successfully.');
         }catch(\Exception $e){
             \DB::rollback();
-            redirect()->back()->with('error', 'An error occured. '. $e->getMessage());
+            return redirect()->back()->with('error', 'An error occured. '. $e->getMessage());
         }
     }
 
