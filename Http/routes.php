@@ -131,22 +131,19 @@ Route::group(['middleware' => 'web', 'prefix' => 'inpatient', 'as' => 'inpatient
     Route::group(['prefix' => 'api/v1'], function() {
 
         // Get all Patients
-        Route::get('/patients', 'InpatientApiController@getAllPatients');
+        // Route::get('/patients', 'InpatientApiController@getAllPatients');
 
         // Get all Patients
         Route::get('/patients/{id}', 'InpatientApiController@getPatientDetails');
 
         // Get all Patients Awaiting Admission
-        Route::get('/patients/awaiting', 'InpatientApiController@getPatientsAwaitingAdmission');
+        // Route::get('/patients/awaiting', 'InpatientApiController@getPatientsAwaitingAdmission');
 
         // Get all Patients Awaiting Admission
         Route::get('/patients/admitted', 'InpatientApiController@getPatientsAdmitted');
 
         // Get Patient Vitals
-        Route::get('/patients/{id}/visits/{visit_id}/vitals', 'InpatientApiController@getPatientVitals');
-
-        // Get Patient Investigations
-        Route::get('/patients/{id}/visits/{visit_id}/investigations', 'InpatientApiController@getPatientInvestigations');
+        Route::get('/vitals/patient/{id}/visit/{visit_id}', 'InpatientApiController@getPatientVitals');
 
         // Get all investigations
         Route::get('/investigations/patient/{id}/visit/{visit_id}', 'InpatientApiController@getAllInvestigations');
@@ -154,14 +151,24 @@ Route::group(['middleware' => 'web', 'prefix' => 'inpatient', 'as' => 'inpatient
         // Get all prescriptions
         Route::get('/prescriptions/patient/{id}/visit/{visit_id}', 'InpatientApiController@getAllPrescriptions');
 
+        // Administer prescription
+        Route::post('/prescriptions/administer', 'InpatientApiController@administerPrescription');
+        
         // Get all diagnosis
         Route::get('/diagnosis/patient/{id}/visit/{visit_id}', 'InpatientApiController@getAllDiagnosis');
 
-        // Get all diagnosis
+        // Get all Performed Procedures
         Route::get('/procedures/performed/patient/{id}/visit/{visit_id}', 'InpatientApiController@getAllPerformedProcedures');
 
-        // Get all diagnosis
+        // Get all Queued Procedures
         Route::get('/procedures/queued/patient/{id}/visit/{visit_id}', 'InpatientApiController@getAllQueuedProcedures');
+
+        // Get doctor's notes
+        Route::get('/notes/doctor/patient/{id}/visit/{visit_id}', 'InpatientApiController@getDoctorsNotes');
+
+        // Get nurses notes
+         // Get doctor's notes
+        Route::get('/notes/nurse/patient/{id}/visit/{visit_id}', 'InpatientApiController@getNursesNotes');
 
         // Get patient Temperature for plotting
         
