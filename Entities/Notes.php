@@ -4,6 +4,8 @@ namespace Ignite\Inpatient\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 
+use Ignite\Users\Entities\User;
+
 class Notes extends Model
 {
     public $table = 'inpatient_notes';

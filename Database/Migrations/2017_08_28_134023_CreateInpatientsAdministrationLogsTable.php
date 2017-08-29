@@ -1,27 +1,28 @@
 <?php
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class InpatientNotesTable extends Migration {
-
+class CreateInpatientsAdministrationLogsTable extends Migration
+{
     /**
      * Run the migrations.
      *
      * @return void
      */
     public function up() {
-        Schema::create('inpatient_notes', function(Blueprint $column) {
+        Schema::create('inpatient_administration_logs', function(Blueprint $column) {
             $column->increments('id');
-            $column->integer('visit_id')->unsigned();
-            $column->longText('notes')->nullable();
-            $column->integer('user')->unsigned()->nullable();
-            $column->integer('type')->default(0); // 0 - nurse's , 1- doctor's
+            $column->integer('prescription_id')->unsigned();
+            $column->string('time');
+            $column->string('am_pm');
+            $column->integer('user')->unsigned();
             $column->timestamps();
 
-            $column->foreign('visit_id')
+            $column->foreign('prescription_id')
                     ->references('id')
-                    ->on('evaluation_visits')
+                    ->on('evaluation_prescriptions')
                     ->onUpdate('cascade')
                     ->onDelete('cascade');
             $column->foreign('user')->references('id')->on('users')
@@ -36,7 +37,6 @@ class InpatientNotesTable extends Migration {
      * @return void
      */
     public function down() {
-        Schema::drop('inpatient_notes');
+        Schema::drop('inpatient_administration_logs');
     }
-
 }
