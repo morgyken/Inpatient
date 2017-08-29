@@ -157,7 +157,7 @@
                             <tr>
                                 <td>{{ \Carbon\Carbon::parse($v->created_at)->format('ds M,Y') }}</td>
                                 <td>{{ $v->nurse_notes }}</td>
-                                <td>{{ $v->user->full_name }}</td>
+                                <td></td>
                             </tr>
                         @endforeach
                     </tbody>

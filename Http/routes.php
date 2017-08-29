@@ -188,17 +188,20 @@ Route::group(['middleware' => 'web', 'prefix' => 'inpatient', 'as' => 'inpatient
 
         });
 
-        Route::group(['prefix' => 'headinjury'], function() {
+        Route::group(['prefix' => 'headinjuries'], function() {
             // Get Head Injury Data
-        
+            Route::get('', 'InpatientApiController@getHeadInjuries');
+
+            // Save head Injury data
+            Route::post('', 'InpatientApiController@addHeadInjury');
         });
 
-        Route::group(['prefix' => 'fluidbalance'], function() {
+        Route::group(['prefix' => 'fluidbalances'], function() {
             // Get Fluid Balance Data
 
         });
         
-        Route::group(['prefix' => 'transfusion'], function() {
+        Route::group(['prefix' => 'transfusions'], function() {
             // Get Blood Transfusion Data
 
         });

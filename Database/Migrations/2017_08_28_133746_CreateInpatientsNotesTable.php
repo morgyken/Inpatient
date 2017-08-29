@@ -14,18 +14,26 @@ class CreateInpatientsNotesTable extends Migration
     public function up() {
         Schema::create('inpatient_notes', function(Blueprint $column) {
             $column->increments('id');
+            $column->unsignedInteger('admission_id');
             $column->integer('visit_id')->unsigned();
             $column->longText('notes');
             $column->unsignedInteger('user');
             $column->integer('type')->default(0); // 0 - nurse's , 1- doctor's
             $column->timestamps();
 
+            $column->foreign('admission_id')
+                    ->references('id')
+                    ->on('admissions')
+                    ->onUpdate('cascade')
+                    ->onDelete('cascade');
             $column->foreign('visit_id')
                     ->references('id')
                     ->on('evaluation_visits')
                     ->onUpdate('cascade')
                     ->onDelete('cascade');
-            $column->foreign('user')->references('id')->on('users')
+            $column->foreign('user')
+                    ->references('id')
+                    ->on('users')
                     ->onUpdate('cascade')
                     ->onDelete('cascade');
         });

@@ -114,28 +114,27 @@ class InpatientApiController extends Controller
 	// }
 
 	public function getPatientsAdmitted(){
-		return Admission::all();
-		// try{
-		// 	$data = $this->admission->get()->map(function ($item){
+		try{
+			$data = $this->admission->get()->map(function ($item){
 
-		// 		return 
-		// 		[
-		// 			"id" 			=> $item->id,
-		// 			"visit_id"		=> $item->visit_id,
-		// 			"fullname" 		=> $item->patient->fullName,
-		// 			"doctor"		=> (is_null($item->doctor_id)) ? $item->external_doctor : $item->doctor->profile->fullName,
-		// 			"ward"			=> $item->ward->name,
-		// 			"bed"			=> $item->bed->number,
-		// 			"cost"			=> $item->cost,
-		// 			"admitted" 		=> \Carbon\Carbon::parse($item->created_at)->format('d/m/y H:i A')
-		// 		];
-		// 	})->toJson();
+				return 
+				[
+					"id" 			=> $item->id,
+					"visit_id"		=> $item->visit_id,
+					"fullname" 		=> $item->patient->fullName,
+					"doctor"		=> (is_null($item->doctor_id)) ? $item->external_doctor : $item->doctor->profile->fullName,
+					"ward"			=> $item->ward->name,
+					"bed"			=> $item->bed->number,
+					"cost"			=> $item->cost,
+					"admitted" 		=> \Carbon\Carbon::parse($item->created_at)->format('d/m/y H:i A')
+				];
+			})->toArray();
 
-		// 	return json_encode(['type' => 'success', 'data' => $data]);
+			return json_encode(['type' => 'success', 'data' => $data]);
 
-		// }catch(\Exception $e){
-		// 	return json_encode(['type' => 'error', 'message' => 'No patient vitals found']);
-		// }
+		}catch(\Exception $e){
+			return json_encode(['type' => 'error', 'message' => 'No patient vitals found']);
+		}
 	} 
 
 	private function calculateBMI($weight, $height){
@@ -332,7 +331,20 @@ class InpatientApiController extends Controller
 		}
 	}
 
+	public function getHeadInjuries($id, $visit_id){
+
+	}
+
+	public function getFluidBalances($id, $visit_id){
+		
+	}
+
+	public function getBloodTransfusions($id, $visit_id){
+		
+	}
+
 	public function addNote(Request $request){
+		// dd($request);
 		try{
 			$n = new Notes;
 			$n->visit_id = $request->visit_id;

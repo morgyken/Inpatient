@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateInpatientHeadInjuryAndCraniotomyTable extends Migration
+class CreateBloodTransfusionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,17 +12,16 @@ class CreateInpatientHeadInjuryAndCraniotomyTable extends Migration
      * @return void
      */
     public function up() {
-        Schema::create('inpatient_headinjury_and_craniotomy', function(Blueprint $column) {
+        Schema::create('inpatient_blood_transfusion', function(Blueprint $column) {
             $column->increments('id');
             $column->unsignedInteger('admission_id');
             $column->unsignedInteger('user_id');
-            $column->string('bp_systolic')->nullable();
-            $column->string('bp_diastolic')->nullable();
-            $column->string('pulse')->nullable();
-            $column->string('respiration')->nullable();
-            $column->string('temperature')->nullable();
-            $column->text('conscious_status');
-            $column->text('pupil_status');
+            $column->integer('bp_systolic')->nullable();
+            $column->integer('bp_diastolic')->nullable();
+            $column->integer('temperature')->nullable();
+            $column->integer('pulse')->nullable();
+            $column->integer('respiration')->nullable();
+            $column->longText('remarks')->nullable();
             $column->timestamps();
 
            
@@ -41,6 +40,6 @@ class CreateInpatientHeadInjuryAndCraniotomyTable extends Migration
      * @return void
      */
     public function down() {
-        Schema::drop('inpatient_headinjury_and_craniotomy');
+        Schema::drop('inpatient_blood_transfusion');
     }
 }
