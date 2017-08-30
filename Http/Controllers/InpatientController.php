@@ -23,7 +23,8 @@ use Ignite\Inpatient\Entities\Ward;
 use Ignite\Inpatient\Entities\WardAssigned;
 use Ignite\Inpatient\Entities\Bed;
 use Ignite\Inpatient\Entities\BedPosition;
-use Ignite\Evaluation\Entities\Vitals;
+use Ignite\Inpatient\Entities\Vitals;
+use Ignite\Evaluation\Entities\VisitDestinations;
 use Ignite\Evaluation\Entities\DoctorNotes;
 use Ignite\Reception\Entities\Patients;
 use Illuminate\Contracts\View\Factory;
@@ -411,13 +412,14 @@ class InpatientController extends AdminBaseController
             $prescriptions = Prescriptions::where('visit', $visit_id)->get();
             $doctor_note = DoctorNotes::where('visit', $visit_id)->first();
         }
+
         return view('Inpatient::admission.manage_patient', compact('tempChart','bpChart','patient', 'ward', 'admission', 'vitals', 'doctor_note', 'prescriptions'));
     }
 
     public function recordVitals(Request $request) {
         \DB::beginTransaction();
         try{
-            $v = Vitals::find("visit", $request->visit);
+            $v = Vitals::find("visit_id", $request->visit);
             if($v == null){
                 Vitals::create($request->all());
             }else{

@@ -8,17 +8,17 @@
         <div class="box-body">
             <h2>Patient Details</h2>
             <div class="col-lg-6">
-                <strong>Name: </strong> {{ $patient->full_name }}<br>
-                <strong>Number:</strong> @if($patient->patient_no != null) {{ $patient->patient_no }} @else No Number Assigned @endif<br>
-                <strong>Ward Name:</strong>  {{ $ward->name }}<br>
-                <strong>Account Balance:</strong> Ksh. {{ $patient->account->balance }} <br>
+                <strong>Name: </strong> {{ $admission->patient->full_name }}<br>
+                <strong>Number:</strong> @if($patient->patient_no != null) {{ $admission->patient->patient_no }} @else No Number Assigned @endif<br>
+                <strong>Ward Name:</strong>  {{ $admission->ward->name }}<br>
+                <strong>Account Balance:</strong> Ksh. {{ $admission->patient->account->balance }} <br>
             </div>
             <div class="col-lg-6">
 
                 <strong>Age: </strong> {{ $patient->age }} years<br>
                 <strong>Admission Date:</strong> {{ date_format($admission->created_at,'l dS M, Y') }}<br>
-                <strong>Bed Number:</strong> {{ $patient->admission->bed->number }}<br>
-                <strong>Deposit:</strong> Ksh. {{ $patient->account->balance }}<br>
+                <strong>Bed Number:</strong> {{ $admission->bed->number }}<br>
+                <strong>Deposit:</strong> Ksh. {{ $admission->patient->account->balance }}<br>
             </div>
         </div>
 

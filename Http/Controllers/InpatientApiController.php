@@ -28,7 +28,7 @@ use Ignite\Inpatient\Entities\WardAssigned;
 use Ignite\Inpatient\Entities\Bed;
 use Ignite\Inpatient\Entities\BedPosition;
 use Ignite\Inpatient\Entities\Notes;
-use Ignite\Evaluation\Entities\Vitals;
+use Ignite\Inpatient\Entities\Vitals;
 use Ignite\Reception\Entities\Patients;
 use Ignite\Users\Entities\Roles;
 use Ignite\Users\Entities\UserRoles;
@@ -70,7 +70,7 @@ class InpatientApiController extends Controller
 
 	public function getPatientDetails($id){
 		try{
-	        $data = $this->admission->where('patient_id', $id)->get()->map(function($item) {
+	        $data = $this->admission->where('id', $id)->get()->map(function($item) {
 	        	return 
 	        	[
 					"id"			=> $item->id,
@@ -152,11 +152,11 @@ class InpatientApiController extends Controller
             return "Underweight";
 	}
 
-	public function getPatientVitals($id, $visit_id){
+	public function getPatientVitals($admission_id, $id, $visit_id){
 		try{
-			if(count(Vitals::where('patient_id', $id)->get()) > 0){
+			if(count(Vitals::where('admission_id', $admission_id)->get()) > 0){
 				$dataArr = [];
-				$data = Vitals::where('patient_id', $id)->get()->map(function($item){
+				$data = Vitals::where('admission_id', $admission_id)->get()->map(function($item){
 					//  return [\Carbon\Carbon::parse($item->created_at)->format('H:i A d/m/Y ') => [
 					// 	"id" 					=> $item->id,
 					// 	"height"				=> $item->height,
@@ -214,7 +214,7 @@ class InpatientApiController extends Controller
 	public function savePatientVitals(Request $request){
 		 \DB::beginTransaction();
         try{
-            $v = Vitals::find("visit", $request->visit);
+            $v = Vitals::find("admission_id", $request->admission_id);
             if($v == null){
                 Vitals::create($request->all());
             }else{
@@ -236,7 +236,7 @@ class InpatientApiController extends Controller
 
 	}
 
-	public function getAllInvestigations($id, $visit_id){
+	public function getAllInvestigations($admission_id, $id, $visit_id){
 		try{
 			$data = Investigations::where("visit", $visit_id)->where("type", 1)->get()->map(function($item){
 				return 
@@ -254,7 +254,7 @@ class InpatientApiController extends Controller
 		}
 	}
 
-	public function getAllPrescriptions($id, $visit_id){
+	public function getAllPrescriptions($admission_id, $id, $visit_id){
 		try {
 			$data = Prescriptions::where("visit", $visit_id)->get()->map(function($item){
 			return 
@@ -283,19 +283,19 @@ class InpatientApiController extends Controller
 		}
 	}
 
-	public function getAllDiagnosis($id, $visit_id){
-		//
-	}
+	// public function getAllDiagnosis($admission_id, $id, $visit_id){
+	// 	//
+	// }
 
-	public function getAllPerfomedProcedures($id, $visit_id){
-
-	}
-
-	public function getAllQueuedProcedures($id, $visit_id){
+	public function getAllPerfomedProcedures($admission_id, $id, $visit_id){
 
 	}
 
-	public function getDoctorsNotes($id, $visit_id){
+	public function getAllQueuedProcedures($admission_id, $id, $visit_id){
+
+	}
+
+	public function getDoctorsNotes($admission_id, $id, $visit_id){
 		try{
 			$data = Notes::where("visit_id", $visit_id)->where("type", 1)->get()->map(function($item){
 				return 
@@ -313,7 +313,7 @@ class InpatientApiController extends Controller
 		}
 	}
 
-	public function getNursesNotes($id, $visit_id){
+	public function getNursesNotes($admission_id, $id, $visit_id){
 		try{
 			$data = Notes::where("visit_id", $visit_id)->where("type", 0)->get()->map(function($item){
 				return 
@@ -331,20 +331,31 @@ class InpatientApiController extends Controller
 		}
 	}
 
-	public function getHeadInjuries($id, $visit_id){
-
+	public function getHeadInjuries($admission_id, $id, $visit_id){
+		try{
+			
+		}catch(\Exception $e){
+			return Response::json(['type' => 'error', 'message' => 'An error occured during fetching. '. $e->getMessage()]);
+		}
 	}
 
-	public function getFluidBalances($id, $visit_id){
-		
+	public function getFluidBalances($admission_id, $id, $visit_id){
+		try{
+			
+		}catch(\Exception $e){
+			return Response::json(['type' => 'error', 'message' => 'An error occured during fetching. '. $e->getMessage()]);
+		}
 	}
 
-	public function getBloodTransfusions($id, $visit_id){
-		
+	public function getBloodTransfusions($admission_id, $id, $visit_id){
+		try{
+			
+		}catch(\Exception $e){
+			return Response::json(['type' => 'error', 'message' => 'An error occured during fetching. '. $e->getMessage()]);
+		}
 	}
 
 	public function addNote(Request $request){
-		// dd($request);
 		try{
 			$n = new Notes;
 			$n->visit_id = $request->visit_id;
@@ -359,6 +370,10 @@ class InpatientApiController extends Controller
 	}
 
 	public function addInvestigation(Request $request){
+		
+	}
+
+	public function addBloodTransfusions(Request $request){
 		
 	}
 

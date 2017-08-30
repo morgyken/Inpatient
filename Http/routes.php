@@ -146,42 +146,44 @@ Route::group(['middleware' => 'web', 'prefix' => 'inpatient', 'as' => 'inpatient
 
         Route::group(['prefix' => 'vitals'], function() {
             // Get Patient Vitals
-            Route::get('/patient/{id}/visit/{visit_id}', 'InpatientApiController@getPatientVitals');
+            Route::get('/admission/{admission_id}/patient/{id}/visit/{visit_id}', 'InpatientApiController@getPatientVitals');
+
+            Route::post('', 'InpatientApiController@addVitals');
         });
 
         Route::group(['prefix' => 'investigations'], function() {
             // Get all investigations
-            Route::get('/patient/{id}/visit/{visit_id}', 'InpatientApiController@getAllInvestigations');
+            Route::get('/admission/{admission_id}/patient/{id}/visit/{visit_id}', 'InpatientApiController@getAllInvestigations');
         });
 
         Route::group(['prefix' => 'prescriptions'], function() {
             // Get all prescriptions
-            Route::get('/patient/{id}/visit/{visit_id}', 'InpatientApiController@getAllPrescriptions');
+            Route::get('/admission/{admission_id}/patient/{id}/visit/{visit_id}', 'InpatientApiController@getAllPrescriptions');
 
             // Administer prescription
             Route::post('/administer', 'InpatientApiController@administerPrescription');
         });
         
-        Route::group(['prefix' => 'diagnosis'], function() {
-            // Get all diagnosis
-            Route::get('/patient/{id}/visit/{visit_id}', 'InpatientApiController@getAllDiagnosis');
+        // Route::group(['prefix' => 'diagnosis'], function() {
+        //     // Get all diagnosis
+        //     Route::get('/patient/{id}/visit/{visit_id}', 'InpatientApiController@getAllDiagnosis');
 
-        });
+        // });
 
         Route::group(['prefix' => 'procedures'], function() {
             // Get all Performed Procedures
-            Route::get('/performed/patient/{id}/visit/{visit_id}', 'InpatientApiController@getAllPerformedProcedures');
+            Route::get('/performed/admission/{admission_id}/patient/{id}/visit/{visit_id}', 'InpatientApiController@getAllPerformedProcedures');
 
             // Get all Queued Procedures
-            Route::get('/queued/patient/{id}/visit/{visit_id}', 'InpatientApiController@getAllQueuedProcedures');
+            Route::get('/queued/admission/{admission_id}/patient/{id}/visit/{visit_id}', 'InpatientApiController@getAllQueuedProcedures');
         });
 
         Route::group(['prefix' => 'notes'], function() {
             // Get doctor's notes
-            Route::get('/doctor/patient/{id}/visit/{visit_id}', 'InpatientApiController@getDoctorsNotes');
+            Route::get('/doctor/admission/{admission_id}/patient/{id}/visit/{visit_id}', 'InpatientApiController@getDoctorsNotes');
 
             // Get nurses notes
-            Route::get('/nurse/patient/{id}/visit/{visit_id}', 'InpatientApiController@getNursesNotes');
+            Route::get('/nurse/admission/{admission_id}/patient/{id}/visit/{visit_id}', 'InpatientApiController@getNursesNotes');
 
             // Save Doctor's and Nurse's notes
             Route::post('', 'InpatientApiController@addNote');
@@ -190,7 +192,7 @@ Route::group(['middleware' => 'web', 'prefix' => 'inpatient', 'as' => 'inpatient
 
         Route::group(['prefix' => 'headinjuries'], function() {
             // Get Head Injury Data
-            Route::get('', 'InpatientApiController@getHeadInjuries');
+            Route::get('/admission/{admission_id}/patient/{id}/visit/{visit_id}', 'InpatientApiController@getHeadInjuries');
 
             // Save head Injury data
             Route::post('', 'InpatientApiController@addHeadInjury');
@@ -198,12 +200,20 @@ Route::group(['middleware' => 'web', 'prefix' => 'inpatient', 'as' => 'inpatient
 
         Route::group(['prefix' => 'fluidbalances'], function() {
             // Get Fluid Balance Data
+            // Get Head Injury Data
+            Route::get('/admission/{admission_id}/patient/{id}/visit/{visit_id}', 'InpatientApiController@getFluidBalances');
 
+            // Save head Injury data
+            Route::post('', 'InpatientApiController@addFluidBalances');
         });
         
         Route::group(['prefix' => 'transfusions'], function() {
             // Get Blood Transfusion Data
+            // Get Head Injury Data
+            Route::get('/admission/{admission_id}/patient/{id}/visit/{visit_id}', 'InpatientApiController@getBloodTransfusions');
 
+            // Save head Injury data
+            Route::post('', 'InpatientApiController@addBloodTransfusions');
         });
         
 
