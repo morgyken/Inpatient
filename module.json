@@ -6,7 +6,8 @@
     "active": 1,
     "order": 11,
     "providers": [
-        "Ignite\\Inpatient\\Providers\\InpatientServiceProvider"
+        "Ignite\\Inpatient\\Providers\\InpatientServiceProvider",
+        "Ignite\\Inpatient\\Providers\\RouteServiceProvider"
     ],
     "aliases": {},
     "files": [

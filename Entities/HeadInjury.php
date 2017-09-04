@@ -18,7 +18,7 @@ class HeadInjury extends Model
     ];
 
     public function admission(){
-        return $this->belongsTo(Admission:class, "admission_id", "id");
+        return $this->belongsTo(Admission::class, "admission_id", "id");
     }
 
     public function user(){

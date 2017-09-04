@@ -2,6 +2,9 @@
 
 namespace Ignite\Inpatient\Entities;
 
+use Ignite\Inpatient\Entities\Admission;
+use Ignite\Inpatient\Entities\Prescription;
+use Ignite\Users\Entities\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Administration extends Model
@@ -12,10 +15,16 @@ class Administration extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
+    public function admission() {
+        return $this->belongsTo(Admission::class, 'admission_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function prescription() {
         return $this->belongsTo(Prescription::class, 'prescription_id');
     }
-
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

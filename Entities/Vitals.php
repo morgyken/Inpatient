@@ -18,7 +18,7 @@ class Vitals extends Model {
         return $this->belongsTo(Patients::class, 'admission_id');
     }
 
-    public function nurse(){
+    public function user(){
     	return $this->hasOne(User::class, 'id', 'user_id');
     }
 
