@@ -3,18 +3,18 @@
 namespace Ignite\Inpatient\Http\Controllers;
 
 use Ignite\Core\Http\Controllers\AdminBaseController;
+use Ignite\Finance\Entities\PatientAccount;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Validator;
 use Session;
 use Lava;
-
 use Ignite\Inpatient\Entities\Admission;
 use Ignite\Inpatient\Entities\Deposit;
 use Ignite\Inpatient\Entities\RequestDischarge;
 use Ignite\Inpatient\Entities\DischargeNote;
-use Ignite\Inpatient\Entities\PatientAccount;
+//use Ignite\Inpatient\Entities\PatientAccount;
 use Ignite\Evaluation\Entities\FinancePatientAccounts;
 use Ignite\Inpatient\Entities\NursingCharge;
 use Ignite\Inpatient\Entities\RequestAdmission;
@@ -145,8 +145,12 @@ class InpatientController extends AdminBaseController
     }
 
     public function admitWalkInPatient($id){
+        //dd($id);
         $doctor_rule = Roles::where('name', 'Doctor')->first();
-        $doctor_ids = UserRoles::where('role_id', $doctor_rule->id)->get(['user_id'])->toArray();
+        $doctor_ids = UserRoles::where('role_id', $doctor_rule->id)
+            ->get(['user_id'])
+            ->toArray();
+
         $doctors = User::findMany($doctor_ids);
 
         $patient = Patients::find($id);
@@ -179,9 +183,7 @@ class InpatientController extends AdminBaseController
     }
 
     public function admit(Request $request){
-
-      try{
-       
+      //try{
         $admitted = Admission::where("patient_id", $request->patient_id)->get();
         $visit = Visit::where("patient", $request->patient_id)->first();
 
@@ -189,16 +191,16 @@ class InpatientController extends AdminBaseController
 
         if(count($admitted) > 0) { return redirect("/inpatient/admit")->with('error', "Patient already admitted"); }
 
-        $account = PatientAccount::where('patient_id', $request->patient_id)->first();
+        $account = PatientAccount::where('patient', $request->patient_id)->first();
 
-        if (count($account)) {
-            $account_balance = $account->balance;
-        } else {
-            PatientAccount::create([
-                'patient_id' => $request->patient_id,
+       if (count($account)) {
+           $account_balance = $account->balance;
+       } else {
+           PatientAccount::create([
+                'patient' => $request->patient_id,
                 'balance' => 0,
             ]);
-            $account_balance = 0;
+           $account_balance = 0;
         }
 
         if ($request->admission_doctor == 'other') {
@@ -209,16 +211,12 @@ class InpatientController extends AdminBaseController
             $request['doctor_id'] = $request->admission_doctor;
         }
         
-        $ward_cost = Ward::find($request->ward_id)->first()->cost;
-
-        $deposit = Deposit::find($request->deposit)->first();
-
-        $deposit_amount = $deposit->cost;
-
+        $ward_cost = Ward::find($request->ward_id)->cost;
+        $deposit_amount = Deposit::find($request->deposit)->cost;
         $request['cost'] = $ward_cost + $deposit_amount;
 
-
         /* Apply charges - Cash for now */
+        /*
         if ($request->payment_mode == 'cash') {
 
             // $acc = PatientAccount::where('patient_id', $request->patient_id)->first();
@@ -238,17 +236,17 @@ class InpatientController extends AdminBaseController
             //     'patient' => $request->patient_id
             // ]);
             
-            // /* debit the patient account */
+            // debit the patient account
             // if($acc != null){
             //     $acc->update(['balance' => $acc->balance - $request['cost']]);
             // }
         }
+        */
 
-       
-        $adm_request = (isset($request->visit_id)) ? RequestAdmission::whereRaw("patient_id = '".$request->patient_id."' AND visit_id = '".$request->visit_id."'")->first() : RequestAdmission::where("patient_id", $request->patient_id)->first();
+        $adm_request = (isset($request->visit_id)) ? RequestAdmission::whereRaw("patient_id = '".$request->patient_id."' AND visit_id = '".$request->visit_id."'")
+            ->first() : RequestAdmission::where("patient_id", $request->patient_id)->first();
 
         $request['reason'] = (count($adm_request) > 0) ? $adm_request->reason : null;
-
         // Let's admit our guy
         Admission::create([
             'patient_id'        => $request->patient_id,
@@ -282,19 +280,18 @@ class InpatientController extends AdminBaseController
         ]);
 
         return redirect('inpatient/admissions')->with('success', 'Successfully admitted a patient');
-      }catch(\Exception $e){
-        return back()->with('error', 'A problem occured while admitting the patient. '. $e->getMessage());
-      }
+      //}catch(\Exception $e){
+       // return back()->with('error', 'A problem occured while admitting the patient. '. $e->getMessage());
+      //}
     }
 
     public function checkInPatient(Request $request){
         $visit = new Visit;
         $visit->patient = $request->patient_id;
         $visit->clinic = session('clinic', 1);
-
-        $visit->inpatient = 'on';
-
+        $visit->inpatient = true;
         $req = RequestAdmission::where("patient_id", $request->patient_id)->first();
+
         if ($request->has('purpose')) {
             $visit->purpose = null;
         }
@@ -350,7 +347,7 @@ class InpatientController extends AdminBaseController
     }
 
     public function admit_check(Request $request) {
-        $account_balance = PatientAccount::where('patient_id', $request->patient_id)->first();
+        $account_balance = PatientAccount::where('patient', $request->patient_id)->first();
 
         if (count($account_balance)) {
             $account_balance = $account_balance->balance;
@@ -359,7 +356,6 @@ class InpatientController extends AdminBaseController
         }
         /* get the cost of the ward.. */
         // $ward_cost = Ward::find($request->ward_id)->cost;
-
         $deposit_amount = Deposit::find($request->depositTypeId)->cost;
         if ($account_balance < ($deposit_amount)) {
             return array('status' => 'insufficient', 'description' => 'Your account balance is Kshs. ' . (number_format($account_balance, 2)) . '. Please deposit kshs. ' . number_format(($deposit_amount - $account_balance), 2) . ' for the selected deposit type.');
