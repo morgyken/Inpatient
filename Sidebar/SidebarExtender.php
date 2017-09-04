@@ -74,7 +74,60 @@ class SidebarExtender implements Panda
 
             });
 
+            $group->item('Setup', function (Item $item) {
+                /* add recurrent services */
+                $item->item('Inpatient', function(Item $item) {
+                    $item->icon('fa fa-bed');
+                    $item->weight(4);
 
+                    /* add recurrent services */
+                    $item->item('Nursing & Admission Fees', function(Item $item) {
+                        $item->icon('fa fa-paypal');
+                        $item->url('/evaluation/inpatient/Nursing_services');
+                        $item->weight(4);
+                    });
+                    //wards
+                    $item->item('Wards', function(Item $item) {
+                        $item->icon('fa fa-home');
+                        $item->url('/evaluation/inpatient/list');
+                        //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
+                        $item->weight(4);
+                    });
+                    $item->item('Bed Positions', function(Item $item) {
+                        $item->icon('fa fa-bed');
+                        $item->url('/evaluation/inpatient/bedPosition');
+                        //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
+                        $item->weight(4);
+                    });
+
+                    //there should be a way of adding beds and listing them
+                    $item->item('Beds', function(Item $item) {
+                        $item->icon('fa fa-bed');
+                        $item->url('/evaluation/inpatient/bedList');
+                        //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
+                        $item->weight(4);
+                    });
+
+                    //list wards
+                    //types of deposits
+                    $item->item('Deposit', function(Item $item) {
+                        $item->icon('fa fa-gear');
+                        $item->url('/evaluation/inpatient/deposit');
+                        //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
+                        $item->weight(4);
+                    });
+                    //list wards
+                    //types of deposits
+                    $item->item('Deposit', function(Item $item) {
+                        $item->icon('fa fa-gear');
+                        $item->url('/evaluation/inpatient/deposit');
+                        //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
+                        $item->weight(4);
+                    });
+
+
+                });
+            });
         });
 
         return $menu;
