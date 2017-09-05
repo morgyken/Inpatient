@@ -2,15 +2,31 @@
 
 namespace Ignite\Inpatient\Entities;
 
+use Ignite\Evaluation\Entities\ProcedureCategoryTemplates;
+use Ignite\Evaluation\Entities\Procedures;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * Ignite\Inpatient\Entities\ProcedureCategory
+ *
  * @property int $id
- * @property array|\ArrayAccess|\Illuminate\Container\Container|mixed|void $applied_to
- * @property mixed $procedures
- * @property mixed $templates
+ * @property string $name
+ * @property string $applies_to
+ * @property string|null $deleted_at
+ * @property-read mixed $applied_to
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ignite\Evaluation\Entities\Procedures[] $procedures
+ * @property-read \Ignite\Evaluation\Entities\ProcedureCategoryTemplates $templates
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Query\Builder|\Ignite\Inpatient\Entities\ProcedureCategory onlyTrashed()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\ProcedureCategory whereAppliesTo($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\ProcedureCategory whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\ProcedureCategory whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\ProcedureCategory whereName($value)
+ * @method static \Illuminate\Database\Query\Builder|\Ignite\Inpatient\Entities\ProcedureCategory withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\Ignite\Inpatient\Entities\ProcedureCategory withoutTrashed()
+ * @mixin \Eloquent
  */
 class ProcedureCategory extends Model
 {

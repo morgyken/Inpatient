@@ -5,10 +5,22 @@ namespace Ignite\Inpatient\Entities;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property string number
- * @property \Carbon\Carbon $created_at
+ * Ignite\Inpatient\Entities\Bed
+ *
  * @property int $id
- * @property \Carbon\Carbon $updated_at
+ * @property string $number
+ * @property string $type
+ * @property string $status
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read \Ignite\Inpatient\Entities\Ward $ward
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Bed whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Bed whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Bed whereNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Bed whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Bed whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Bed whereUpdatedAt($value)
+ * @mixin \Eloquent
  */
 class Bed extends Model
 {

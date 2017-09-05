@@ -6,9 +6,23 @@ use Illuminate\Database\Eloquent\Model;
 
 use Ignite\Reception\Entities\Patients;
 /**
- * @property \Carbon\Carbon $created_at
+ * Ignite\Inpatient\Entities\RequestAdmission
+ *
  * @property int $id
- * @property \Carbon\Carbon $updated_at
+ * @property int|null $visit_id
+ * @property string|null $reason
+ * @property int $patient_id
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read \Ignite\Reception\Entities\Patients $patient
+ * @property-read \Ignite\Inpatient\Entities\Visit|null $visits
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\RequestAdmission whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\RequestAdmission whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\RequestAdmission wherePatientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\RequestAdmission whereReason($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\RequestAdmission whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\RequestAdmission whereVisitId($value)
+ * @mixin \Eloquent
  */
 class RequestAdmission extends Model
 {

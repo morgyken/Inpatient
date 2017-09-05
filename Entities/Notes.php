@@ -7,6 +7,30 @@ use Illuminate\Database\Eloquent\Model;
 
 use Ignite\Users\Entities\User;
 
+/**
+ * Ignite\Inpatient\Entities\Notes
+ *
+ * @property int $id
+ * @property int $admission_id
+ * @property int $visit_id
+ * @property string $notes
+ * @property int $user
+ * @property int $type
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read \Ignite\Inpatient\Entities\Admission $admission
+ * @property-read \Ignite\Users\Entities\User $users
+ * @property-read \Ignite\Inpatient\Entities\Visit $visit
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Notes whereAdmissionId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Notes whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Notes whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Notes whereNotes($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Notes whereType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Notes whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Notes whereUser($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Notes whereVisitId($value)
+ * @mixin \Eloquent
+ */
 class Notes extends Model
 {
     public $table = 'inpatient_notes';
