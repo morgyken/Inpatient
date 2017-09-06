@@ -1,4 +1,4 @@
-<div id="doctor" class="tab-pane fade active col-md-12">
+<div id="doctor" class="tab-pane fade in active col-md-12">
 
     <div class="container demo col-md-12">
         <br>
@@ -10,14 +10,19 @@
 
             <input type="hidden" name="visit_id" value="{{ $admission->visit_id }}" required>
 
-            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="form-group">
+                 <label>Write your notes here:</label>
+                <textarea name="notes" id="notes" class="form-control" rows="10" placeholder="Doctor's Notes..." required autofocus></textarea>
+            </div>
+           
+           {{--  <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 
                 <div class="panel panel-default">
                     <div class="panel-heading" role="tab" id="headingOne">
                         <h4 class="panel-title">
                             <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                 <i class="more-less fa fa-caret-down"></i>
-                                Patient Complaints
+                                Notes
                             </a>
                         </h4>
                     </div>
@@ -107,11 +112,38 @@
                            <textarea name="treatment_plan" id="treatment_plan" class="form-control" rows="3" placeholder="Treatment Plan">@if($doctor_note != null) {{ $doctor_note->treatment_plan }} @endif</textarea>
                         </div>
                     </div>
-                </div>
+                </div> --}}
+            {{-- </div>--}}
 
-            </div><!-- panel-group -->
+            <button type="button" class="btn btn-lg btn-primary"><i class = "fa fa-save"></i> Save</button>
         </form>
+
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding:0;">
+            <h3>Previous Notes</h3>
+            <table class="table table-hover datatable">
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Note</th>
+                        <th>Recorded By</th>
+                        <th>Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         
     </div><!-- container -->
-       
+   <script type="text/javascript">
+        $(function () {
+        CKEDITOR.replaceAll();
+    });
+   </script>
 </div>

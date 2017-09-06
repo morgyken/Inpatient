@@ -1,10 +1,8 @@
 <div id="prescription" class="tab-pane fade">
-    <h3>Prescription 
-    {{-- <small><a class="btn btn-primary" data-toggle="modal" href='#modal-id'>Add prescription</a></small> --}}
-	</h3>
+    <h3 class="text-center">Request and Administer Prescriptions</h3>
 	{!! Form::open(['class'=>'form-horizontal', 'route'=>'evaluation.evaluate.pharmacy.prescription']) !!}
-		<input type="hidden" name="visit" value="{{ $admission->visit_id }}">
-		<table class="table" style="width: 70%">
+		<input type="hidden" name="admission_id" value="{{ $admission->id }}">
+		<table class="table" style="width: 100%">
 		    <tr>
 		        <th>Drug</th>
 		        <td><select name="drug" id="item_0" class="form-control select2-single" style="width: 100%" required></select></td>
@@ -40,43 +38,94 @@
 		    </tr>
 		    <tr>
 		        <th>Substitution Allowed?</th>
-		        <td>
-		            Yes <input type="checkbox" name="allow_substitution" value="1"/>
+		        <td style="font-size:1.5em;">
+		            Yes <input type="checkbox" name="allow_substitution" style="width: 100px !important;" value="1"/>
+		        </td>
+		    </tr>
+
+		    <tr>
+		        <th>Regular prescription?</th>
+		        <td style="font-size:1.5em;">
+		            Yes <input type="checkbox" name="is_regular" style="width: 100px !important;" value="1"/>
 		        </td>
 		    </tr>
 		</table>
-		<button type="submit" class="btn btn-medium btn-primary " id="savePrescription">
+		<button type="submit" class="btn btn-lg btn-primary " id="savePrescription">
 		    <i class="fa fa-save"></i> Save
 		</button>
 	{!! Form::close() !!}
 
-    <table class="table table-hover">
-    	<thead>
-    		<tr>
-    			<th>Drug</th>
-    			<th>Dosage & Duration</th>
-    			<th>Prescribed By</th>
-    			<th>Prescribed On</th>
-    		</tr>
-    	</thead>
-    	@if(count($prescriptions) > 0)
-    	<tbody>
-    	
-    		@foreach($prescriptions as $p)
-    		<tr>
-    			<td>{{ $p->drug }}</td>
-    			<td>{{ $p->dose }}</td>
-    			<td>{{ $p->users->full_name }}</td>
-    			<td>{{ \Carbon\Carbon::parse($p->created_at)->format('ds M,Y') }}</td>
-    		</tr>
-    		@endforeach
-    	</tbody>
+	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+		<h3>ONCE ONLY PRESCRIPTIONS, STAT DOSES, PRE-MED Etc.</h3>
+		@if(count($prescriptions) > 0)
+		 <table class="table table-hover">
+	    	<thead>
+	    		<tr>
+	    			<th>Drug</th>
+	    			<th>Dosage & Duration</th>
+	    			<th>Prescribed By</th>
+	    			<th>Prescribed On</th>
+	    		</tr>
+	    	</thead>
+	    	
+	    	<tbody>
+	    	
+	    		@foreach($prescriptions as $p)
+	    		<tr>
+	    			<td>{{ $p->drug }}</td>
+	    			<td>{{ $p->dose }}</td>
+	    			<td>{{ $p->users->full_name }}</td>
+	    			<td>{{ \Carbon\Carbon::parse($p->created_at)->format('ds M,Y') }}</td>
+	    		</tr>
+	    		@endforeach
+	    	</tbody>
+	    	
+	    </table>
     	@else
     		<div class="alert alert-info" style="padding-top: 10px !important;">
-    			 There are no previous prescriptions for this patient
+    			 There are no previous once only prescriptions for this patient
     		</div>
     	@endif
-    </table>
+	</div>
+
+	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+		<h3>REGULAR PRESCRIPTIONS</h3>	
+		@if(count($prescriptions) > 0)
+		    <table class="table table-hover">
+		    	<thead>
+		    		<tr>
+		    			<th>Drug</th>
+		    			<th>Dosage & Duration</th>
+		    			<th>Prescribed By</th>
+		    			<th>Prescribed On</th>
+		    			<th>Options</th>
+		    		</tr>
+		    	</thead>
+		    	<tbody>
+		    		@foreach($prescriptions as $p)
+			    		<tr>
+			    			<td>{{ $p->drug }}</td>
+			    			<td>{{ $p->dose }}</td>
+			    			<td>{{ $p->users->full_name }}</td>
+			    			<td>{{ \Carbon\Carbon::parse($p->created_at)->format('ds M,Y') }}</td>
+			    			<td>
+			    				<div class="btn-group">
+			    					<button type="button" class="btn btn-primary"><i class = "fa fa-plus"></i> Administer</button>
+			    					<button type="button" class="btn btn-success"><i class = "fa fa-pencil"></i> Edit</button>
+			    					<button type="button" class="btn btn-danger"><i class = "fa fa-trash-o"> Delete</button>
+			    				</div>
+			    			</td>
+			    		</tr>
+		    		@endforeach
+		    	</tbody>
+		    </table>
+		    @else
+	    		<div class="alert alert-info" style="padding-top: 10px !important;">
+	    			 There are no previous regular prescriptions for this patient
+	    		</div>
+	    	@endif
+    </div>
+
 </div>
 
 {{-- <div class="modal fade" id="modal-id">

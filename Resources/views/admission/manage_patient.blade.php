@@ -28,7 +28,7 @@
     <div class="box box-info">
         <div class="box-body">
 
-            <ul class="nav nav-tabs" id = "inpatient_tabs">
+            <ul class="nav nav-tabs inpatient-tabs">
                 <li class="active"><a data-toggle="tab" href="#doctor">Doctor's Notes</a></li>
                 <li><a data-toggle="tab" href="#prescription">Prescriptions</a></li>
                 <li><a data-toggle="tab" href="#vitals">Patient Vitals</a></li>

@@ -25,7 +25,7 @@ use Ignite\Inpatient\Entities\Bed;
 use Ignite\Inpatient\Entities\BedPosition;
 use Ignite\Inpatient\Entities\Vitals;
 use Ignite\Evaluation\Entities\VisitDestinations;
-use Ignite\Evaluation\Entities\DoctorNotes;
+use Ignite\Inpatient\Entities\Notes;
 use Ignite\Reception\Entities\Patients;
 use Illuminate\Contracts\View\Factory;
 use Ignite\Users\Entities\Roles;
@@ -415,7 +415,7 @@ class InpatientController extends AdminBaseController
             $visit_id = Visit::where('patient', $id)->orderBy('created_at', 'desc')->first()->id;
             $vitals = Vitals::where('visit_id', $visit_id)->get();
             $prescriptions = Prescriptions::where('visit', $visit_id)->get();
-            $doctor_note = DoctorNotes::where('visit', $visit_id)->first();
+            $doctor_note = Notes::where('visit_id', $visit_id)->first();
         }
 
         return view('Inpatient::admission.manage_patient', compact('tempChart','bpChart','patient', 'ward', 'admission', 'vitals', 'doctor_note', 'prescriptions'));
