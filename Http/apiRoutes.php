@@ -138,6 +138,16 @@ Route::group([ 'prefix' => 'v1'], function() {
             Route::post('', 'InpatientApiController@addBloodTransfusions');
         });
         
+        Route::group(['prefix' => 'plans'], function() {
+            Route::get('/admission/{admission_id}', 'InpatientApiController@getNursingCarePlans');
+
+            Route::post('', 'InpatientApiController@addNursingCarePlans');
+
+            Route::post('/update', 'InpatientApiController@updateNursingCarePlans');
+
+            Route::post('/delete', 'InpatientApiController@deleteNursingCarePlans');
+        });
+
 
         // Get patient Temperature for plotting
         

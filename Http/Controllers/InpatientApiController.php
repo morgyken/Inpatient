@@ -85,7 +85,6 @@ class InpatientApiController extends Controller
 
 	public function getPatientDetails($id){
 		try{
-		    return $this->admission->where('id', $id)->get();
 	        $data = $this->admission->where('id', $id)->get()->map(function($item) {
 	        	return 
 	        	[
@@ -95,23 +94,21 @@ class InpatientApiController extends Controller
 					"visit_id"		=> $item->visit_id,
 					"id_number" 	=> (isset($item->patient->id_no)) ? $item->patient->id_no  : "No ID number",
 					"age"			=> $item->patient->age,
-					"profile_img"		=> $item->patient->image,
+					"profile_img"	=> $item->patient->image,
 					"fullname" 		=> $item->patient->fullName,
 					"sex"			=> $item->patient->sex,
 					"registered" 	=> $this->carbon->parse($item->patient->created_at)->format('d/m/y H:i A'),
 					"ward"			=> $item->ward->name,
 					"bed"			=> $item->bed->number,
-					"balance"		=> $item->patient->account->balance,
+					"balance"		=> (isset($item->patient->account->balance)) ? $item->patient->account->balance : 0,
 					"deposit"		=> null,
 					"admitted_at"	=> $this->carbon->parse($item->created_at)->format('d/m/y H:i A')
 				];
 			})->toArray();
 
-
-
 			return (count($data) > 0) ? Response::json(['type' => 'success', 'data' => $data]) : Response::json(['type' => 'error', 'message' => 'No patient data found']);
 		}catch(\Exception $e){
-			return Response::json(['type' => 'error', 'message' => 'An error occured. No patient data could be retrieved']);
+			return Response::json(['type' => 'error', 'message' => 'An error occured. No patient data could be retrieved.'. $e->getMessage()]);
 		}
 	
 	}
@@ -235,7 +232,8 @@ class InpatientApiController extends Controller
 	        	$v->temperature				= $request['temperature'];
 	        	$v->temperature_location 	= $request['temperature_location'];
 	        	$v->oxygen 					= $request['oxygen'];
-	        	$v->user_id  				= 4;
+	        	$v->user_id  				= $request['user_id'];
+	        	$v->date_recorded			= $this->carbon->now();
 	        	$v->save();
 
 	        	if($v->id > 0 ){
@@ -637,6 +635,7 @@ class InpatientApiController extends Controller
 	}
 
 	public function addPrescription(Request $request){
+		\DB::beginTransaction();
 		try {
 			$request = $request->json()->all();
 			$p = new Prescription;
@@ -651,27 +650,40 @@ class InpatientApiController extends Controller
 			$p->time_measure 		= ($request['time_measure'] == null) ? 0 : $request['time_measure'];
 			$p->user 				= $request['user'];
 			$p->save();
+			\DB::commit(); 
 
-			return ($p->id > 0) ? Response::json(['type' => 'success', 'message' => 'The prescription has been added. ']): Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be added.']);
+			if($p->id > 0) { 	
+				return Response::json(['type' => 'success', 'message' => 'The prescription has been added.']);
+			}else{
+				\DB::rollback();
+				return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be added.']);
+			}
 		} catch (\Exception $e) {
 			return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be added. '. $e->getMessage()]);
 		}
 	}
 
 	public function updatePrescription(Request $request, $id){
+		\DB::beginTransaction();
 		try {
 			$request = $request->json()->all();
 			$p = Prescription::find($id);
 			$p->admission_id 		= $request['admission_id']; 
 			$p->drug 				= $request['drug']; 
-			$p->whereto 			= $request['whereto']; 
-			$p->method 				= $request['method']; 
+			$p->whereto 			= 1; 
+			$p->method 				= 1; 
 			$p->duration 			= $request['duration'];
 			$p->allow_substitution 	= $request['allow_substitution'];
 			$p->time_measure 		= $request['time_measure'];
 			$p->save();
 			
-			return ($p) ? Response::json(['type' => 'success', 'message' => 'The prescription has been updated. ']): Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be updated.']);
+			if($p) { 
+				\DB::commit();
+				return Response::json(['type' => 'success', 'message' => 'The prescription has been updated. ']);
+			}else{
+				\DB::rollback();
+				return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be updated.']);
+			}
 		} catch (\Exception $e) {
 			return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be added. '. $e->getMessage()]);
 		}
@@ -740,6 +752,51 @@ class InpatientApiController extends Controller
 			return ($a) ? Response::json(['type' => 'success', 'message' => 'The drug administration log has been deleted!']) : Response::json(['type' => 'error', 'message' => 'The drug administration log could not be deleted']);
 		}catch(\Exception $e){
 			return Response::json(['type' => 'error', 'message' => 'An error occured. The drug administration logs could not be deleted. '. $e->getMessage()]);
+		}
+	}
+
+	public function getNursingCarePlans($id){
+		try{
+			$request = $request->json()->all();
+			// $data = ::where("admission_id", $id)->get()->map(function($item){
+			// 	return 
+			// })->toArray();
+			
+			// return ($data) ? Response::json(['type' => 'success', 'data' => $data]) : Response::json(['type' => 'error', 'message' => 'The nursing care plans could not be deleted']);
+		}catch(\Exception $e){
+			return Response::json(['type' => 'error', 'message' => 'An error occured. The nursing care plans could not be retrieved. '. $e->getMessage()]);
+		}
+	}
+
+	public function addNursingCarePlan(Request $request){
+		try{
+			$request = $request->json()->all();
+			// $n = ::find($request['id']);
+			
+			// return ($n) ? Response::json(['type' => 'success', 'message' => 'The drug administration log has been saved!']) : Response::json(['type' => 'error', 'message' => 'The drug administration log could not be saved']);
+		}catch(\Exception $e){
+			return Response::json(['type' => 'error', 'message' => 'An error occured. The nursing care plan could not be saved. '. $e->getMessage()]);
+		}
+	}
+
+	public function updateNursingCarePlan(Request $request){
+		try{
+			$request = $request->json()->all();
+			// $n = ::find($request['id']);
+			// return ($n) ? Response::json(['type' => 'success', 'message' => 'The nursing care plan has been updated!']) : Response::json(['type' => 'error', 'message' => 'The nursing care plan could not be updated']);
+		}catch(\Exception $e){
+			return Response::json(['type' => 'error', 'message' => 'An error occured. The nursing care plan could not be updated. '. $e->getMessage()]);
+		}
+	}
+
+	public function deleteNursingCarePlan(Request $request){
+		try{
+			$request = $request->json()->all();
+			// $n = ::find($request['id']);
+			// $n->delete();
+			// return ($n) ? Response::json(['type' => 'success', 'message' => 'The nursing care plan has been deleted!']) : Response::json(['type' => 'error', 'message' => 'The nursing care plan could not be deleted']);
+		}catch(\Exception $e){
+			return Response::json(['type' => 'error', 'message' => 'An error occured. The nursing care plan could not be deleted. '. $e->getMessage()]);
 		}
 	}
 

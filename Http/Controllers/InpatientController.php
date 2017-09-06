@@ -3,7 +3,7 @@
 namespace Ignite\Inpatient\Http\Controllers;
 
 use Ignite\Core\Http\Controllers\AdminBaseController;
-use Ignite\Finance\Entities\PatientAccount;
+use Ignite\inpatient\Entities\PatientAccount;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
@@ -191,16 +191,15 @@ class InpatientController extends AdminBaseController
 
         if(count($admitted) > 0) { return redirect("/inpatient/admit")->with('error', "Patient already admitted"); }
 
-        $account = PatientAccount::where('patient', $request->patient_id)->first();
+        $account = PatientAccount::where('patient_id', $request->patient_id)->first();
 
        if (count($account)) {
            $account_balance = $account->balance;
        } else {
-           PatientAccount::create([
-                'patient' => $request->patient_id,
-                'balance' => 0,
-            ]);
-           $account_balance = 0;
+            $p = new PatientAccount;
+            $p->patient_id = $request->patient_id;
+            $p->balance = 0;
+            $account_balance = 0;
         }
 
         if ($request->admission_doctor == 'other') {
@@ -248,7 +247,7 @@ class InpatientController extends AdminBaseController
 
         $request['reason'] = (count($adm_request) > 0) ? $adm_request->reason : null;
         // Let's admit our guy
-        Admission::create([
+        $a = Admission::create([
             'patient_id'        => $request->patient_id,
             'doctor_id'         => $request->doctor_id,
             'ward_id'           => $request->ward_id,
@@ -272,6 +271,7 @@ class InpatientController extends AdminBaseController
         }
 
         WardAssigned::create([
+            'admission_id' => $a->id,
             'visit_id' => $request->visit_id,
             'ward_id' => $request->ward_id,
             /* 'admitted_at'=> $request->admitted_at, */
