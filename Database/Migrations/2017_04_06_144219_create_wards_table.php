@@ -17,9 +17,8 @@ class CreateWardsTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->string('number');
-            $table->string('category')->default();
+            $table->string('category');
             $table->string('cost');
-
             $table->string('age_group');
             $table->string('gender');
 

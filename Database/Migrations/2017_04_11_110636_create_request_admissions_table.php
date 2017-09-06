@@ -15,9 +15,9 @@ class CreateRequestAdmissionsTable extends Migration
     {
         Schema::create('request_admissions', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('visit_id')->unsigned()->nullable();
+            $table->unsignedInteger('patient_id');
+            $table->unsignedInteger('visit_id')->nullable();
             $table->longText('reason')->nullable();
-            $table->integer('patient_id')->unsigned();
             $table->timestamps();
 
             $table->foreign('visit_id')

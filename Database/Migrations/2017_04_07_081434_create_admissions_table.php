@@ -24,6 +24,9 @@ class CreateAdmissionsTable extends Migration
             $table->longText('reason')->nullable();
             $table->string('external_doctor')->nullable();
             $table->integer('visit_id')->nullable()->unsigned();
+            $table->integer('is_discharged')->default(0); // 0 - not discharged, 1- discharged
+            $table->timestamps();
+
             //foreign keys
             $table->foreign('patient_id')
                 ->references('id')
@@ -36,9 +39,6 @@ class CreateAdmissionsTable extends Migration
                 ->on('bed_position')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-
-    
-
 
             $table->foreign('visit_id')
                 ->references('id')
@@ -63,8 +63,7 @@ class CreateAdmissionsTable extends Migration
                 ->on('beds')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-
-            $table->timestamps();
+            
         });
     }
 

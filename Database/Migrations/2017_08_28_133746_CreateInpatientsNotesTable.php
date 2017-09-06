@@ -15,7 +15,7 @@ class CreateInpatientsNotesTable extends Migration
         Schema::create('inpatient_notes', function(Blueprint $column) {
             $column->increments('id');
             $column->unsignedInteger('admission_id');
-            $column->integer('visit_id')->unsigned();
+            $column->unsignedInteger('visit_id');
             $column->longText('notes');
             $column->unsignedInteger('user');
             $column->integer('type')->default(0); // 0 - nurse's , 1- doctor's

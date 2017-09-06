@@ -4,7 +4,7 @@ namespace Ignite\Inpatient\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Ignite\Users\Entities\User;
-use Ignite\Reception\Entities\Patients;
+use Ignite\Inpatient\Entities\Admission;
 
 class Vitals extends Model {
 
@@ -15,7 +15,7 @@ class Vitals extends Model {
     }
 
     public function admissions() {
-        return $this->belongsTo(Patients::class, 'admission_id');
+        return $this->belongsTo(Admission::class, 'admission_id');
     }
 
     public function user(){

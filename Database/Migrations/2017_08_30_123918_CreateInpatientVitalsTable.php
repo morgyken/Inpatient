@@ -31,7 +31,9 @@ class CreateInpatientVitalsTable extends Migration
             $column->string('blood_sugar_units')->default('mmol/L');
             $column->string('allergies')->nullable();
             $column->longText('chronic_illnesses')->nullable();
-            $column->integer('user_id')->unsigned()->nullable();
+            $column->unsignedInteger('user_id')->nullable();
+            $column->date('date_recorded');
+            $column->time('time_recorded');
             $column->timestamps();
 
             $column->foreign('user_id')->references('id')->on('users')

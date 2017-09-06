@@ -44,7 +44,7 @@
                                     <td>{{ $admission->cost }}</td>
                                     <td>{{ $admission->created_at }}</td>
                                     <td>
-                                       <a href="{{url('/inpatient/manage/'.$admission->patient->id.'/visit/'.$admission->visit_id.'/nurse')}}"
+                                       <a href="{{url('http://localhost:3000/manage/'.$admission->id )}}"
                                            class="btn btn-success btn-xs"> <i class="fa fa-ellipsis-h"></i> Manage</a>
                                         <a href="{{url('/inpatient/manage/'.$admission->patient->id.'/visit/'.$admission->visit_id.'/move')}}"
                                            class="btn btn-primary btn-xs"> <i class="fa fa-share"></i> Move</a>

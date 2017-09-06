@@ -15,7 +15,7 @@ class CreateInpatientsAdministrationLogsTable extends Migration
         Schema::create('inpatient_administration_logs', function(Blueprint $column) {
             $column->increments('id');
             $column->unsignedInteger('admission_id');
-            $column->integer('prescription_id')->unsigned();
+            $column->unsignedInteger('prescription_id');
             $column->string('time');
             $column->string('am_pm');
             $column->integer('user')->unsigned();

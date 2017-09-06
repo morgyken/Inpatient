@@ -19,12 +19,13 @@ class CreateNursingChargesTable extends Migration
             $table->double('cost',2)->default(0.00);
             $table->integer('ward_id')->unsigned()->nullable();
             $table->enum('type',['nursing','admission']);
+            $table->timestamps();
             //foreign keys
             $table->foreign('ward_id')
                 ->references('id')
                 ->on('wards')
                 ->onDelete('cascade')->onUpdate('cascade');
-            $table->timestamps();
+            
         });
     }
 

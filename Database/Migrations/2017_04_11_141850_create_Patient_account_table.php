@@ -16,7 +16,7 @@ class CreatePatientAccountTable extends Migration
         Schema::create('Patient_account', function (Blueprint $table) {
             $table->increments('id');
             $table->double('balance')->default(0.00);
-            $table->integer('patient_id')->unsigned();
+            $table->unsignedInteger('patient_id');
             $table->timestamps();
 
             $table->foreign('patient_id')

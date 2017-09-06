@@ -27,20 +27,49 @@ Route::group([ 'prefix' => 'v1'], function() {
             Route::post('/update', 'InpatientApiController@saveUpdateVitals');
 
             // Delete vitals
-            Route::post('/delete', 'InpatientApiController@deleteVitals');
+            // Route::post('/delete', 'InpatientApiController@deleteVitals');
         });
 
         Route::group(['prefix' => 'investigations'], function() {
             // Get all investigations
-            Route::get('/admission/{admission_id}/patient/{id}/visit/{visit_id}', 'InpatientApiController@getAllInvestigations');
+            Route::get('/admission/{admission_id}', 'InpatientApiController@getAllInvestigations');
+
+            // Get list of procedures
+            Route::get('/procedures', 'InpatientApiController@getAllProcedures');
+
+            // add investigations
+            Route::post('', 'InpatientApiController@addInvestigations');
+
+            // Delete investigation
+            Route::post('/delete', 'InpatientApiController@deleteInvestigations');
         });
 
+         Route::group(['prefix' => 'drugs'], function() {
+            // Get the drugs .... Pablo Escobar style hehe
+            Route::get('/{term}', 'InpatientApiController@getDrug');
+         });
+
         Route::group(['prefix' => 'prescriptions'], function() {
+
             // Get all prescriptions
             Route::get('/admission/{admission_id}', 'InpatientApiController@getAllPrescriptions');
 
-            // Administer prescription
+            // Add Prescription
+            Route::post('', 'InpatientApiController@addPrescription');
+
+            // Update Prescription
+            Route::post('/update', 'InpatientApiController@updatePrescription');
+
+            Route::post('/delete', 'InpatientApiController@deletePrescription');
+
+            // Administer Prescription
             Route::post('/administer', 'InpatientApiController@administerPrescription');
+
+            // Update Administration Log
+            Route::post('/administration/update', 'InpatientApiController@updateAdministeredPrescriptionLog');
+
+            //Delete administration log
+            Route::post('/administration/delete', 'InpatientApiController@deleteAdministeredPrescriptionLog');
         });
         
         // Route::group(['prefix' => 'diagnosis'], function() {
@@ -53,11 +82,13 @@ Route::group([ 'prefix' => 'v1'], function() {
 
             Route::get('/all', 'InpatientApiController@getProcedures');
 
+            // Route::get('/all', 'InpatientApiController@getProcedures');
+
             // Get all Performed Procedures
-            Route::get('/performed/admission/{admission_id}/patient/{id}/visit/{visit_id}', 'InpatientApiController@getAllPerformedProcedures');
+            Route::get('/performed/admission/{admission_id}', 'InpatientApiController@getAllPerformedProcedures');
 
             // Get all Queued Procedures
-            Route::get('/queued/admission/{admission_id}/patient/{id}/visit/{visit_id}', 'InpatientApiController@getAllQueuedProcedures');
+            Route::get('/queued/admission/{admission_id}', 'InpatientApiController@getAllQueuedProcedures');
         });
 
         Route::group(['prefix' => 'notes'], function() {

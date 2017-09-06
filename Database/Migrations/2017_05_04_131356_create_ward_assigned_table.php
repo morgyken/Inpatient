@@ -15,12 +15,17 @@ class CreateWardAssignedTable extends Migration
     {
         Schema::create('ward_assigned', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('visit_id')->unsigned();
-            $table->integer('ward_id')->unsigned();
+            $table->unsignedInteger('admission_id');
+            $table->unsignedInteger('visit_id')->nullable();
+            $table->unsignedInteger('ward_id');
             $table->timestamp('admitted_at')->nullable();
             $table->timestamp('discharged_at')->nullable();
             $table->double('price',2)->default(0);
             $table->string('status')->default('unpaid');
+            $table->timestamps();
+
+            $table->foreign('admission_id')->references('id')
+            ->on('admissions')->onDelete('cascade')->onUpdate('cascade');
 
             $table->foreign('visit_id')
             ->references('id')
@@ -31,7 +36,6 @@ class CreateWardAssignedTable extends Migration
             ->references('id')
             ->on('wards')
             ->onDelete('cascade')->onUpdate('cascade');
-            $table->timestamps();
         });
     }
 

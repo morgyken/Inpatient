@@ -15,11 +15,18 @@ class CreateRequestDischargesTable extends Migration
     {
         Schema::create('request_discharges', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('doctor_id')->unsigned()->nullable();
-            $table->integer('visit_id')->unsigned();
+            $table->unsignedInteger('admission_id');
+            $table->unsignedInteger('visit_id')->nullable();
+            $table->unsignedInteger('doctor_id')->nullable();
             $table->string('reason')->nullable();
             $table->string('status')->default('unconfirmed');
+            $table->timestamps();
 
+            $table->foreign('admission_id')
+            ->references('id')
+            ->on('admissions')
+            ->onDelete('cascade')
+            ->onUpdate('cascade');
 
             $table->foreign('doctor_id')
             ->references('id')
@@ -27,14 +34,13 @@ class CreateRequestDischargesTable extends Migration
             ->onDelete('cascade')
             ->onUpdate('cascade');
 
-
             $table->foreign('visit_id')
             ->references('id')
             ->on('evaluation_visits')
             ->onDelete('cascade')
             ->onUpdate('cascade');
 
-            $table->timestamps();
+            
         });
     }
 
