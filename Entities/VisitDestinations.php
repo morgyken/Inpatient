@@ -6,11 +6,33 @@ use Ignite\Users\Entities\User;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property mixed $visits
- * @property mixed $medics
- * @property \Carbon\Carbon $created_at
+ * Ignite\Inpatient\Entities\VisitDestinations
+ *
  * @property int $id
- * @property \Carbon\Carbon $updated_at
+ * @property int $visit
+ * @property int $user
+ * @property int|null $destination
+ * @property string $department
+ * @property int $checkout
+ * @property string|null $begin_at
+ * @property string|null $finish_at
+ * @property string|null $deleted_at
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ * @property-read \Ignite\Users\Entities\User|null $medics
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ignite\Inpatient\Entities\Visit[] $visits
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\VisitDestinations whereBeginAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\VisitDestinations whereCheckout($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\VisitDestinations whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\VisitDestinations whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\VisitDestinations whereDepartment($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\VisitDestinations whereDestination($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\VisitDestinations whereFinishAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\VisitDestinations whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\VisitDestinations whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\VisitDestinations whereUser($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\VisitDestinations whereVisit($value)
+ * @mixin \Eloquent
  */
 class VisitDestinations extends Model
 {

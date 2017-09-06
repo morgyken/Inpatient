@@ -12,11 +12,9 @@
 
 namespace Ignite\Inpatient\Library;
 
+use Ignite\Inpatient\Repositories\InpatientRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Intervention\Image\Facades\Image;
-use Jenssegers\Date\Date;
 
 
 /**
@@ -24,7 +22,8 @@ use Jenssegers\Date\Date;
  *
  * @author samuel
  */
-class InpatientFunctions implements InpatientRepository {
+class InpatientFunctions implements InpatientRepository
+{
 
     /**
      * Incoming HTTP request
@@ -62,7 +61,8 @@ class InpatientFunctions implements InpatientRepository {
      * @param Request $request
      * @param InventoryRepository $repo
      */
-    public function __construct(Request $request, InpatientRepository $repo) {
+    public function __construct(Request $request, InpatientRepository $repo)
+    {
         $this->request = $request;
         $this->repo = $repo;
         $this->input = $this->request->all();
@@ -82,7 +82,8 @@ class InpatientFunctions implements InpatientRepository {
      * Also remove empty values
      * @param $input
      */
-    private function prepareInput(&$input) {
+    private function prepareInput(&$input)
+    {
         unset($input['_token']);
         foreach ($input as $key => $value) {
             if (empty($value)) {

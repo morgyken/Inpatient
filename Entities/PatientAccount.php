@@ -2,6 +2,7 @@
 
 namespace Ignite\Inpatient\Entities;
 
+use Ignite\Reception\Entities\Patients;
 use Illuminate\Database\Eloquent\Model;
 
 class PatientAccount extends Model

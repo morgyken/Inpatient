@@ -85,6 +85,7 @@ class InpatientApiController extends Controller
 
 	public function getPatientDetails($id){
 		try{
+		    return $this->admission->where('id', $id)->get();
 	        $data = $this->admission->where('id', $id)->get()->map(function($item) {
 	        	return 
 	        	[
