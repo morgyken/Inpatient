@@ -1,4 +1,4 @@
-<div id="vitals" class="tab-pane fade in active col-lg-12">
+<div id="vitals" class="tab-pane fade in col-lg-12">
 
     <!--If not recorded add to db else display and enable edit -->
     @if(!count($vitals))

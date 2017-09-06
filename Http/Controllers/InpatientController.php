@@ -183,106 +183,115 @@ class InpatientController extends AdminBaseController
     }
 
     public function admit(Request $request){
-      //try{
-        $admitted = Admission::where("patient_id", $request->patient_id)->get();
-        $visit = Visit::where("patient", $request->patient_id)->first();
+        \DB::beginTransaction();
+        try{
+            $admitted = Admission::where("patient_id", $request->patient_id)->get();
+            $visit = Visit::where("patient", $request->patient_id)->first();
 
-        $request->visit_id = ($visit != null) ? $visit->id :  $this->checkInPatient($request);
+            $request->visit_id = ($visit != null) ? $visit->id :  $this->checkInPatient($request);
 
-        if(count($admitted) > 0) { return redirect("/inpatient/admit")->with('error', "Patient already admitted"); }
+            if(count($admitted) > 0) { return redirect("/inpatient/admit")->with('error', "Patient already admitted"); }
 
-        $account = PatientAccount::where('patient_id', $request->patient_id)->first();
+            $account = PatientAccount::where('patient_id', $request->patient_id)->first();
 
-       if (count($account)) {
-           $account_balance = $account->balance;
-       } else {
-            $p = new PatientAccount;
-            $p->patient_id = $request->patient_id;
-            $p->balance = 0;
-            $account_balance = 0;
-        }
+           if (count($account)) {
+               $account_balance = $account->balance;
+           } else {
+                $p = new PatientAccount;
+                $p->patient_id = $request->patient_id;
+                $p->balance = 0;
+                $p->save();
+                $account_balance = 0;
+            }
 
-        if ($request->admission_doctor == 'other') {
-            $request['external_doctor'] = $request->external_doc;
-            $request['doctor_id'] = null;
-        } else {
-            $request['external_doctor'] = null;
-            $request['doctor_id'] = $request->admission_doctor;
-        }
-        
-        $ward_cost = Ward::find($request->ward_id)->cost;
-        $deposit_amount = Deposit::find($request->deposit)->cost;
-        $request['cost'] = $ward_cost + $deposit_amount;
-
-        /* Apply charges - Cash for now */
-        /*
-        if ($request->payment_mode == 'cash') {
-
-            // $acc = PatientAccount::where('patient_id', $request->patient_id)->first();
-
-            // if ($deposit_amount > $acc->balance) {
-            //     $validator = Validator::make($request->all(), []);
-            //     $validator->errors()->add('deposit', 'Please top up your account');
-            //     Session::flash('error', 'Please top up your account');
-            //     return back()->withErrors($validator);
-            // }
-
-            // FinancePatientAccounts::create([
-            //     'debit' => $deposit_amount,
-            //     'credit' => 0.00,
-            //     'details' => 'Charged for ' . $deposit->name,
-            //     'reference' => 'deposit_charge_' . str_random(5),
-            //     'patient' => $request->patient_id
-            // ]);
+            if ($request->admission_doctor == 'other') {
+                $request['external_doctor'] = $request->external_doc;
+                $request['doctor_id'] = null;
+            } else {
+                $request['external_doctor'] = null;
+                $request['doctor_id'] = $request->admission_doctor;
+            }
             
-            // debit the patient account
-            // if($acc != null){
-            //     $acc->update(['balance' => $acc->balance - $request['cost']]);
+            $ward_cost = Ward::find($request->ward_id)->first()->cost;
+            $deposit = Deposit::find($request->deposit)->first();
+            $deposit_amount = $deposit->cost;
+            $request['cost'] = $ward_cost + $deposit_amount;
+
+            /* Apply charges - Cash for now */
+            
+            // if ($request->payment_mode == 'cash') {
+
+            //     $acc = PatientAccount::where('patient_id', $request->patient_id)->first();
+
+            //     if ($deposit_amount > $acc->balance) {
+            //         $validator = Validator::make($request->all(), []);
+            //         $validator->errors()->add('deposit', 'Please top up your account');
+            //         Session::flash('error', 'Please top up your account');
+            //         return back()->withErrors($validator);
+            //     }
+
+
+            //     FinancePatientAccounts::create([
+            //         'debit' => $deposit_amount,
+            //         'credit' => 0.00,
+            //         'details' => 'Charged for ' . $deposit->name,
+            //         'reference' => 'deposit_charge_' . str_random(5),
+            //         'patient' => $request->patient_id
+            //     ]);
+                
+            //     // debit the patient account
+            //     if($acc != null){
+            //         $acc->update(['balance' => $acc->balance - $request['cost']]);
+            //     }
             // }
+
+            $adm_request = (isset($request->visit_id)) ? RequestAdmission::whereRaw("patient_id = '".$request->patient_id."' AND visit_id = '".$request->visit_id."'")
+                ->first() : RequestAdmission::where("patient_id", $request->patient_id)->first();
+
+            $request['reason'] = (count($adm_request) > 0) ? $adm_request->reason : null;
+
+            // Let's admit our guy
+            $a = new Admission;
+            $a->patient_id        = $request->patient_id;
+            $a->doctor_id         = $request->doctor_id;
+            $a->ward_id           = $request->ward_id;
+            $a->bed_id            = $request->bed_id;
+            $a->cost              = $request->cost;
+            $a->reason            = $request->reason;
+            $a->external_doctor   = $request->external_doctor;
+            $a->visit_id          = $request->visit_id;
+            $a->bedposition_id    = $request->bedposition_id;
+
+            $a->save();
+
+            if (count($adm_request) > 0) {
+                //remove this admission request
+                $adm_request->delete();
+            }
+
+            //the bed should change status to occupied
+            if (count(Bed::find($request->bed_id)) > 0) {
+                $bed = Bed::find($request->bed_id)->first();
+                $bed->update(['status' => 'occupied']);
+            }
+
+            $admission = $a->where("patient_id", $request->patient_id)->where("visit_id", $request->visit_id)->first();
+
+            $w = new WardAssigned;
+            $w->admission_id = $admission->id;
+            $w->visit_id = $request->visit_id;
+            $w->ward_id = $request->ward_id;
+            $w->price = $ward_cost;
+            $w->admitted_at = $admission->created_at;
+            $w->status = "occupied";
+            $w->save();
+
+            \DB::commit();
+            return redirect('inpatient/admissions')->with('success', 'Successfully admitted a patient');
+        }catch(\Exception $e){
+            \DB::rollback();
+            return back()->with('error', 'A problem occured while admitting the patient. '. $e->getMessage());
         }
-        */
-
-        $adm_request = (isset($request->visit_id)) ? RequestAdmission::whereRaw("patient_id = '".$request->patient_id."' AND visit_id = '".$request->visit_id."'")
-            ->first() : RequestAdmission::where("patient_id", $request->patient_id)->first();
-
-        $request['reason'] = (count($adm_request) > 0) ? $adm_request->reason : null;
-        // Let's admit our guy
-        $a = Admission::create([
-            'patient_id'        => $request->patient_id,
-            'doctor_id'         => $request->doctor_id,
-            'ward_id'           => $request->ward_id,
-            'bed_id'            => $request->bed_id,
-            'cost'              => $request->cost,
-            'reason'            => $request->reason,
-            'external_doctor'   => $request->external_doctor,
-            'visit_id'          => (isset($request->visit_id)) ? $request->visit_id : null,
-            'bedposition_id'    => $request->bedposition_id
-        ]);
-
-        if (count($adm_request) > 0) {
-            //remove this admission request
-            $adm_request->delete();
-        }
-
-        //the bed should change status to occupied
-        if (count(Bed::find($request->bed_id)) > 0) {
-            $bed = Bed::find($request->bed_id)->first();
-            $bed->update(['status' => 'occupied']);
-        }
-
-        WardAssigned::create([
-            'admission_id' => $a->id,
-            'visit_id' => $request->visit_id,
-            'ward_id' => $request->ward_id,
-            /* 'admitted_at'=> $request->admitted_at, */
-            /* 'discharged_at', */
-            'price' => $ward_cost
-        ]);
-
-        return redirect('inpatient/admissions')->with('success', 'Successfully admitted a patient');
-      //}catch(\Exception $e){
-       // return back()->with('error', 'A problem occured while admitting the patient. '. $e->getMessage());
-      //}
     }
 
     public function checkInPatient(Request $request){
@@ -404,7 +413,7 @@ class InpatientController extends AdminBaseController
 
         if (count(Visit::where('patient', $id)->get()) > 0) {
             $visit_id = Visit::where('patient', $id)->orderBy('created_at', 'desc')->first()->id;
-            $vitals = Vitals::where('visit', $visit_id)->get();
+            $vitals = Vitals::where('visit_id', $visit_id)->get();
             $prescriptions = Prescriptions::where('visit', $visit_id)->get();
             $doctor_note = DoctorNotes::where('visit', $visit_id)->first();
         }

@@ -1,4 +1,4 @@
-<div id="doctor" class="tab-pane fade col-md-12">
+<div id="doctor" class="tab-pane fade active col-md-12">
 
     <div class="container demo col-md-12">
         <br>
@@ -6,7 +6,7 @@
 
             {{ csrf_field() }}
 
-            <input type="hidden" name="patient_id" value="{{ $patient->id }}" required>
+            <input type="hidden" name="admission_id" value="{{ $admission->id }}" required>
 
             <input type="hidden" name="visit_id" value="{{ $admission->visit_id }}" required>
 
@@ -16,7 +16,7 @@
                     <div class="panel-heading" role="tab" id="headingOne">
                         <h4 class="panel-title">
                             <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                <i class="more-less glyphicon glyphicon-plus"></i>
+                                <i class="more-less fa fa-caret-down"></i>
                                 Patient Complaints
                             </a>
                         </h4>
@@ -32,7 +32,7 @@
                     <div class="panel-heading" role="tab" id="headingTwo">
                         <h4 class="panel-title">
                             <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                <i class="more-less glyphicon glyphicon-plus"></i>
+                                <i class="more-less fa fa-caret-down"></i>
                                 Past Medical History
                             </a>
                         </h4>
@@ -48,7 +48,7 @@
                     <div class="panel-heading" role="tab" id="headingThree">
                         <h4 class="panel-title">
                             <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                <i class="more-less glyphicon glyphicon-plus"></i>
+                                <i class="more-less fa fa-caret-down"></i>
                                 Examination
                             </a>
                         </h4>
@@ -65,7 +65,7 @@
                     <div class="panel-heading" role="tab" id="headingFour">
                         <h4 class="panel-title">
                             <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                                <i class="more-less glyphicon glyphicon-plus"></i>
+                                <i class="more-less fa fa-caret-down"></i>
                                 Diagnosis
                             </a>
                         </h4>
@@ -81,7 +81,7 @@
                     <div class="panel-heading" role="tab" id="headingFive">
                         <h4 class="panel-title">
                             <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-                                <i class="more-less glyphicon glyphicon-plus"></i>
+                                <i class="more-less fa fa-caret-down"></i>
                                 Investigations
                             </a>
                         </h4>
@@ -97,7 +97,7 @@
                     <div class="panel-heading" role="tab" id="headingSix">
                         <h4 class="panel-title">
                             <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
-                                <i class="more-less glyphicon glyphicon-plus"></i>
+                                <i class="more-less fa fa-caret-down"></i>
                                 Treatment Plan
                             </a>
                         </h4>

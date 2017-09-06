@@ -28,23 +28,23 @@
     <div class="box box-info">
         <div class="box-body">
 
-            <ul class="nav nav-tabs">
-                <li class="active"><a data-toggle="tab" href="#vitals">Patient Vitals</a></li>
-                <li><a data-toggle="tab" href="#doctor">Doctor's Notes</a></li>
+            <ul class="nav nav-tabs" id = "inpatient_tabs">
+                <li class="active"><a data-toggle="tab" href="#doctor">Doctor's Notes</a></li>
+                <li><a data-toggle="tab" href="#prescription">Prescriptions</a></li>
+                <li><a data-toggle="tab" href="#vitals">Patient Vitals</a></li>
                 <li><a data-toggle="tab" href="#investigation">Investigations</a></li>
-                <li><a data-toggle="tab" href="#treatment">Treatment</a></li>
-                <li><a data-toggle="tab" href="#prescription">Prescription</a></li>
+                <li><a data-toggle="tab" href="#procedures">Procedures</a></li>
                 <li><a data-toggle="tab" href="#discharge">Discharge</a></li>
                 <li><a data-toggle="tab" href="#summary">Summary</a></li>
                 <li><a data-toggle="tab" href="#history">History</a></li>
             </ul>
 
             <div class="tab-content">
-                @include("Inpatient::admission.manage.vitals")
                 @include("Inpatient::admission.manage.doctor")
-                @include("Inpatient::admission.manage.investigations")
-                @include("Inpatient::admission.manage.treatment")
                 @include("Inpatient::admission.manage.prescription")
+                @include("Inpatient::admission.manage.vitals")
+                @include("Inpatient::admission.manage.investigations")                
+                @include("Inpatient::admission.manage.procedures")
                 @include("Inpatient::admission.manage.discharge")
                 @include("Inpatient::admission.manage.summary")
                 @include("Inpatient::admission.manage.history")
