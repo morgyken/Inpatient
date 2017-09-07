@@ -91,7 +91,7 @@
         </div>
         
         <div class="col-xs-12 col-sm-12 col-md-6">
-            @include('inpatient::admission.graphs.input');
+            {{--@include('inpatient::admission.graphs.input');--}}
         </div>
        
     @else

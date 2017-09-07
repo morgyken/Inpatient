@@ -23,12 +23,14 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $user
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ * @property int|null $admission_id
  * @property-read \Illuminate\Database\Eloquent\Collection|\Ignite\Evaluation\Entities\Dispensing[] $dispensing
  * @property-read \Ignite\Inventory\Entities\InventoryProducts $drugs
  * @property-read string $dose
  * @property-read string $sub
  * @property-read \Ignite\Users\Entities\User $users
  * @property-read \Ignite\Inpatient\Entities\Visit $visits
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereAdmissionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereAllowSubstitution($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereDrug($value)

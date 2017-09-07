@@ -1,30 +1,33 @@
 {
-    "name": "Inpatient",
-    "alias": "inpatient",
-    "description": "",
-    "keywords": [],
-    "active": 1,
-    "order": 11,
-    "providers": [
-        "Ignite\\Inpatient\\Providers\\InpatientServiceProvider",
-        "Ignite\\Inpatient\\Providers\\RouteServiceProvider"
-    ],
-    "aliases": {},
-    "files": [
-        "start.php",
-        "helpers.php"
-    ],
-    "requires": [],
-    "core": 0,
-    "version": "v1.0.0",
-    "author": [
-        {
-            "name": "David Ngugi",
-            "email": "dngugi@collabmed.com"
-        },
-        {
-            "name": "Kiptoo Bravo",
-            "email": "bkiptoo@collabmed.com"
-        }
-    ]
+  "name": "Inpatient",
+  "alias": "inpatient",
+  "description": "",
+  "keywords": [],
+  "active": 1,
+  "order": 11,
+  "providers": [
+    "Ignite\\Inpatient\\Providers\\InpatientServiceProvider",
+    "Ignite\\Inpatient\\Providers\\RouteServiceProvider",
+    "ConsoleTVs\\Charts\\ChartsServiceProvider"
+  ],
+  "aliases": {
+    "Charts": "ConsoleTVs\\Charts\\Facades\\Charts"
+  },
+  "files": [
+    "start.php",
+    "helpers.php"
+  ],
+  "requires": [],
+  "core": 0,
+  "version": "v1.0.0",
+  "author": [
+    {
+      "name": "David Ngugi",
+      "email": "dngugi@collabmed.com"
+    },
+    {
+      "name": "Kiptoo Bravo",
+      "email": "bkiptoo@collabmed.com"
+    }
+  ]
 }

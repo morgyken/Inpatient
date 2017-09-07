@@ -57,23 +57,28 @@ class Admission extends Model
 
     protected $table = "admissions";
 
-    public function patient(){
+    public function patient()
+    {
         return $this->belongsTo(Patients::class, "patient_id", "id");
     }
 
-    public function doctor(){
-        return $this->hasOne(User::class,'id', 'doctor_id');
+    public function doctor()
+    {
+        return $this->hasOne(User::class, 'id', 'doctor_id');
     }
 
-    public function ward(){
-        return $this->hasOne(Ward::class, "id", "ward_id");
+    public function ward()
+    {
+        return $this->belongsTo(Ward::class, "ward_id");
     }
 
-    public function bed(){
+    public function bed()
+    {
         return $this->hasOne(Bed::class, "id", "bed_id");
     }
 
-    public function visit(){
+    public function visit()
+    {
         return $this->belongsTo(Visit::class, "visit_id", "id");
     }
 }
