@@ -3,6 +3,7 @@
 namespace Ignite\Inpatient\Http\Controllers;
 
 use Ignite\Inpatient\Entities\BloodPressure;
+use Ignite\Inpatient\Entities\Temperature;
 use Illuminate\Http\Request;
 // use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
@@ -319,408 +320,443 @@ class InpatientApiController extends Controller
         return json_encode(['results' => $build]);
     }
 
-	public function getAllInvestigations($admission_id){
-		try{
-			$data = Investigations::where("admission", $admission_id)->where("type", 1)->get()->map(function($item){
-				return 
-				[
-					"id" 					=> $item->id,
-					"visit_id"				=> $item->visit,
-					"type"					=> $item->type,
-					"procedure"				=> $item->procedures->name,
-					"quantity"				=> $item->quantity,
-					"price"					=> $item->price,
-					"discount"				=> $item->discount,
-					"amount"				=> $item->amount,
-					"user"					=> $item->doctors->profile->fullName,
-					"instructions"			=> $item->instructions,
-					"ordered"				=> $item->ordered,
-					"invoiced"				=> $item->invoiced,
-					"requested_on"			=> $this->carbon->parse($item->updated_at)->format('H:i A d/m/Y ')
-				];
+    public function getAllInvestigations($admission_id)
+    {
+        try {
+            $data = Investigations::where("admission", $admission_id)->where("type", 1)->get()->map(function ($item) {
+                return
+                    [
+                        "id" => $item->id,
+                        "visit_id" => $item->visit,
+                        "type" => $item->type,
+                        "procedure" => $item->procedures->name,
+                        "quantity" => $item->quantity,
+                        "price" => $item->price,
+                        "discount" => $item->discount,
+                        "amount" => $item->amount,
+                        "user" => $item->doctors->profile->fullName,
+                        "instructions" => $item->instructions,
+                        "ordered" => $item->ordered,
+                        "invoiced" => $item->invoiced,
+                        "requested_on" => $this->carbon->parse($item->updated_at)->format('H:i A d/m/Y ')
+                    ];
 
-			})->toArray();
-			return json_encode(['type' => 'success', 'data' => $data]);
-		}catch(\Exception $e){
-			return json_encode(['type' => 'error', 'message' => 'An error occured. No investigations found']);
-		}
-	}
+            })->toArray();
+            return json_encode(['type' => 'success', 'data' => $data]);
+        } catch (\Exception $e) {
+            return json_encode(['type' => 'error', 'message' => 'An error occured. No investigations found']);
+        }
+    }
 
-	public function getAllProcedures(){
-		try{
-			$data = Procedures::all()->map(function($item){
-				return 
-				[
-					"id" 					=> $item->id,
-					"name"					=> $item->name,
-					"price"					=> $item->price
-				];
+    public function getAllProcedures()
+    {
+        try {
+            $data = Procedures::all()->map(function ($item) {
+                return
+                    [
+                        "id" => $item->id,
+                        "name" => $item->name,
+                        "price" => $item->price
+                    ];
 
-			})->toArray();
-			return json_encode(['type' => 'success', 'data' => $data]);
-		}catch(\Exception $e){
-			return json_encode(['type' => 'error', 'message' => 'An error occured. No investigations found']);
-		}
-	}
+            })->toArray();
+            return json_encode(['type' => 'success', 'data' => $data]);
+        } catch (\Exception $e) {
+            return json_encode(['type' => 'error', 'message' => 'An error occured. No investigations found']);
+        }
+    }
 
-	public function getAllPrescriptions($admission_id, $type){
-		try {
-			$data = Prescription::where("admission_id", $admission_id)->where("type", $type)->orderBy("updated_at", "DESC")->get()->map(function($item){
-			return 
-			[
-				"id" 					=> $item->id,
-				"patient_id"			=> $item->visits->patients->id,
-				"visit_id"				=> $item->visit,
-				"dose"					=> $item->dose,
-				"drug"					=> $item->drug,
-				"route"					=> $item->whereto,
-				"method"				=> $item->method,
-				"take"					=> $item->take,
-				"duration"				=> $item->duration,
-				"time_measure"			=> $item->time_measure,
-				"fr_du"					=> $item->take ."/".$item->duration,
-				"allow_sub"				=> $item->sub,
-				"by"					=> $item->user->profile->fullName,
-				"status"				=> $item->status,
-				"prescribed_on"			=> $this->carbon->parse($item->updated_at)->format('H:i A d/m/Y ')
+    public function getAllPrescriptions($admission_id, $type)
+    {
+        try {
+            $data = Prescription::where("admission_id", $admission_id)->where("type", $type)->orderBy("updated_at", "DESC")->get()->map(function ($item) {
+                return
+                    [
+                        "id" => $item->id,
+                        "patient_id" => $item->visits->patients->id,
+                        "visit_id" => $item->visit,
+                        "dose" => $item->dose,
+                        "drug" => $item->drug,
+                        "route" => $item->whereto,
+                        "method" => $item->method,
+                        "take" => $item->take,
+                        "duration" => $item->duration,
+                        "time_measure" => $item->time_measure,
+                        "fr_du" => $item->take . "/" . $item->duration,
+                        "allow_sub" => $item->sub,
+                        "by" => $item->user->profile->fullName,
+                        "status" => $item->status,
+                        "prescribed_on" => $this->carbon->parse($item->updated_at)->format('H:i A d/m/Y ')
 
-			];
+                    ];
 
-		})->toArray();
-			return json_encode(['type' => 'success', 'data' => $data]);
-		} catch (\Exception $e) {
-			return json_encode(['type' => 'error', 'message' => 'An error occured. No prescriptions found. '. $e->getMessage()]);
-		}
-	}
+            })->toArray();
+            return json_encode(['type' => 'success', 'data' => $data]);
+        } catch (\Exception $e) {
+            return json_encode(['type' => 'error', 'message' => 'An error occured. No prescriptions found. ' . $e->getMessage()]);
+        }
+    }
 
-	// public function getAllDiagnosis($admission_id, $id, $visit_id){
-	// 	//
-	// }
+    // public function getAllDiagnosis($admission_id, $id, $visit_id){
+    // 	//
+    // }
 
-	public function getAllPerfomedProcedures($admission_id){
+    public function getAllPerfomedProcedures($admission_id)
+    {
 
-	}
+    }
 
-	public function getAllQueuedProcedures($admission_id){
+    public function getAllQueuedProcedures($admission_id)
+    {
 
-	}
+    }
 
-	public function getNotes($admission_id, $type){
-		try{
-			$data = Notes::where("admission_id", $admission_id)->where("type", $type)->orderBy("updated_at", "DESC")->get()->map(function($item){
-				return 
-				[
-					"id" 					=> $item->id,
-					"admission_id"			=> $item->admission_id,
-					"visit_id"				=> $item->visit_id,
-					"notes"					=> $item->notes,
-					"name"					=> $item->users->profile->fullName,
-					"written_on"			=> $this->carbon->parse($item->created_at)->format('d/m/y H:i A')
-				];
-			})->toArray();
-			return json_encode(['type' => 'success', 'data' => $data]);
-		}catch(\Exception $e){
-			return json_encode(['type' => 'error', 'message' => 'An error occured. Could not retrieve notes. '. $e->getMessage()]);
-		}
-	}
+    public function getNotes($admission_id, $type)
+    {
+        try {
+            $data = Notes::where("admission_id", $admission_id)->where("type", $type)->orderBy("updated_at", "DESC")->get()->map(function ($item) {
+                return
+                    [
+                        "id" => $item->id,
+                        "admission_id" => $item->admission_id,
+                        "visit_id" => $item->visit_id,
+                        "notes" => $item->notes,
+                        "name" => $item->users->profile->fullName,
+                        "written_on" => $this->carbon->parse($item->created_at)->format('d/m/y H:i A')
+                    ];
+            })->toArray();
+            return json_encode(['type' => 'success', 'data' => $data]);
+        } catch (\Exception $e) {
+            return json_encode(['type' => 'error', 'message' => 'An error occured. Could not retrieve notes. ' . $e->getMessage()]);
+        }
+    }
 
 
-	public function getHeadInjuries($admission_id){
-		try{
-			$data = HeadInjury::where("admission_id", $admission_id)->orderBy("updated_at", "DESC")->get()->map(function($item){
-				return 
-				[
-					"id" 					=> $item->id,
-					"admission_id"			=> $item->admission_id,
-					"bp_systolic"			=> $item->bp_systolic,
-					"bp_diastolic"			=> $item->bp_diastolic,
-					"pulse"					=> $item->pulse,
-					"respiration"			=> $item->respiration,
-					"temperature"			=> $item->temperature,
-					"conscious_status"		=> unserialize($item->conscious_status),
-					"pupil_status"			=> unserialize($item->pupil_status),
-					"user"					=> $item->users->profile->fullName,
-					"recorded_on"			=> $this->carbon->parse($item->created_at)->format('d/m/y H:i A')
-				];
-			})->toArray();
+    public function getHeadInjuries($admission_id)
+    {
+        try {
+            $data = HeadInjury::where("admission_id", $admission_id)->orderBy("updated_at", "DESC")->get()->map(function ($item) {
+                return
+                    [
+                        "id" => $item->id,
+                        "admission_id" => $item->admission_id,
+                        "bp_systolic" => $item->bp_systolic,
+                        "bp_diastolic" => $item->bp_diastolic,
+                        "pulse" => $item->pulse,
+                        "respiration" => $item->respiration,
+                        "temperature" => $item->temperature,
+                        "conscious_status" => unserialize($item->conscious_status),
+                        "pupil_status" => unserialize($item->pupil_status),
+                        "user" => $item->users->profile->fullName,
+                        "recorded_on" => $this->carbon->parse($item->created_at)->format('d/m/y H:i A')
+                    ];
+            })->toArray();
 
-			return json_encode(['type' => 'success', 'data' => $data]);
-			
-		}catch(\Exception $e){
-			return Response::json(['type' => 'error', 'message' => 'An error occured during fetching. '. $e->getMessage()]);
-		}
-	}
+            return json_encode(['type' => 'success', 'data' => $data]);
 
-	public function getFluidBalances($admission_id){
-		try{
-			$data = FluidBalance::where("admission_id", $admission_id)->orderBy("updated_at", "DESC")->get()->map(function($item){
-				return 
-				[
-					"id" 					=> $item->id,
-					"admission_id"			=> $item->admission_id,
-				];
-			})->toArray();
-			
-			return json_encode(['type' => 'success', 'data' => $data]);
+        } catch (\Exception $e) {
+            return Response::json(['type' => 'error', 'message' => 'An error occured during fetching. ' . $e->getMessage()]);
+        }
+    }
 
-		}catch(\Exception $e){
-			return Response::json(['type' => 'error', 'message' => 'An error occured during fetching. '. $e->getMessage()]);
-		}
-	}
+    public function getFluidBalances($admission_id)
+    {
+        try {
+            $data = FluidBalance::where("admission_id", $admission_id)->orderBy("updated_at", "DESC")->get()->map(function ($item) {
+                return
+                    [
+                        "id" => $item->id,
+                        "admission_id" => $item->admission_id,
+                    ];
+            })->toArray();
 
-	public function getBloodTransfusions($admission_id){
-		try{
-			
-		}catch(\Exception $e){
-			return Response::json(['type' => 'error', 'message' => 'An error occured during fetching. '. $e->getMessage()]);
-		}
-	}
+            return json_encode(['type' => 'success', 'data' => $data]);
 
-	public function addNote(Request $request){
-		\DB::beginTransaction();
-		try{
-			$request = $request->json()->all();
-			$n = Notes::create($request);
-			\DB::commit();
-			return ($n->id > 0) ? Response::json(['type' => 'success', 'message' => 'Notes saved!', 'data' => $this->getNoteData($n->id, $n->type)]) : Response::json(['type' => 'error', 'message' => 'Your note could not be saved']);
-		}catch(\Exception $e){
-			\DB::rollback();
-			return Response::json(['type' => 'error', 'message' => 'Your note could not be saved. '. $e->getMessage()]);
-		}
-	}
+        } catch (\Exception $e) {
+            return Response::json(['type' => 'error', 'message' => 'An error occured during fetching. ' . $e->getMessage()]);
+        }
+    }
 
-	public function getNoteData($id){
-		try{
-			$data =  Notes::where("id", $id)->get()->map(function($item){
-				return 
-				[
-					"id" 					=> $item->id,
-					"admission_id"			=> $item->admission_id,
-					"visit_id"				=> $item->visit_id,
-					"notes"					=> $item->notes,
-					"name"					=> $item->users->profile->fullName,
-					"written_on"			=> $this->carbon->parse($item->created_at)->format('d/m/y H:i A')
-				];
-			})->toArray();
-			return json_encode($data);
-		}catch(\Exception $e){
-			return $e->getMessage();
-		}
-	}
+    public function getBloodTransfusions($admission_id)
+    {
+        try {
 
-	public function updateNote(Request $request, $id){
-		try{
-			$request = $request->json()->all();
-			$n = Notes::find($id);
-			$n->notes = $request['notes'];
-			// $n->user = $request['user'];
-			$n->save();
-			return ($n) ? Response::json(['type' => 'success', 'message' => 'Note updated!']) : Response::json(['type' => 'error', 'message' => 'Your note could not be updated']);
-		}catch(\Exception $e){
-			return Response::json(['type' => 'error', 'message' => 'Your note could not be updated. '. $e->getMessage()]);
-		}
-	}
+        } catch (\Exception $e) {
+            return Response::json(['type' => 'error', 'message' => 'An error occured during fetching. ' . $e->getMessage()]);
+        }
+    }
 
-	public function deleteNote(Request $request){
-		try{
-			$request = $request->json()->all();
-			$n = Notes::find($request['id']);
-			$n->delete();
-			return ($n) ? Response::json(['type' => 'success', 'message' => 'Note deleted!']) : Response::json(['type' => 'error', 'message' => 'Your note could not be deleted']);
-		}catch(\Exception $e){
-			return Response::json(['type' => 'error', 'message' => 'Your note could not be deleted. '. $e->getMessage()]);
-		}
-	}
+    public function addNote(Request $request)
+    {
+        \DB::beginTransaction();
+        try {
+            $request = $request->json()->all();
+            $n = Notes::create($request);
+            \DB::commit();
+            return ($n->id > 0) ? Response::json(['type' => 'success', 'message' => 'Notes saved!', 'data' => $this->getNoteData($n->id, $n->type)]) : Response::json(['type' => 'error', 'message' => 'Your note could not be saved']);
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return Response::json(['type' => 'error', 'message' => 'Your note could not be saved. ' . $e->getMessage()]);
+        }
+    }
 
-	public function addHeadInjury(Request $request){
-		try{
-			$request = $request->json()->all();
-			$h = new HeadInjury;
-			$h->bp_systolic			= $request['bp_systolic'];
-			$h->bp_diastolic		= $request['bp_diastolic'];
-			$h->pulse				= $request['pulse'];
-			$h->respiration			= $request['respiration'];
-			$h->temperature			= $request['temperature'];
-			$h->conscious_status	= serialize($request['conscious_status']);
-			$h->pupil_status		= serialize($request['pupil_status']);
-			$h->user				= $request['user'];
-			$h->save();
-			return ($n->id > 0) ? Response::json(['type' => 'success', 'message' => 'Head Injury & Craniotomy data saved!']) : Response::json(['type' => 'error', 'message' => 'The Head Injury & Craniotomy data could not be saved']);
-		}catch(\Exception $e){
-			return Response::json(['type' => 'error', 'message' => 'The Head Injury & Craniotomy data could not be saved. '. $e->getMessage()]);
-		}
-	}
+    public function getNoteData($id)
+    {
+        try {
+            $data = Notes::where("id", $id)->get()->map(function ($item) {
+                return
+                    [
+                        "id" => $item->id,
+                        "admission_id" => $item->admission_id,
+                        "visit_id" => $item->visit_id,
+                        "notes" => $item->notes,
+                        "name" => $item->users->profile->fullName,
+                        "written_on" => $this->carbon->parse($item->created_at)->format('d/m/y H:i A')
+                    ];
+            })->toArray();
+            return json_encode($data);
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
 
-	public function updateHeadInjury(Request $request, $id){
-		try{
-			$request = $request->json()->all();
-			$n = HeadInjury::find($id);
-			$h->bp_systolic			= $request['bp_systolic'];
-			$h->bp_diastolic		= $request['bp_diastolic'];
-			$h->pulse				= $request['pulse'];
-			$h->respiration			= $request['respiration'];
-			$h->temperature			= $request['temperature'];
-			$h->conscious_status	= $request['conscious_status'];
-			$h->pupil_status		= $request['pupil_status'];
-			$h->user				= $request['user'];
-			$h->save();
-			$n->save();
-			return ($n->id > 0) ? Response::json(['type' => 'success', 'message' => 'Head Injury & Craniotomy data updated!']) : Response::json(['type' => 'error', 'message' => 'The Head Injury & Craniotomy data could not be updated']);
-		}catch(\Exception $e){
-			return Response::json(['type' => 'error', 'message' => 'The Head Injury & Craniotomy data could not be updated. '. $e->getMessage()]);
-		}
-	}
+    public function updateNote(Request $request, $id)
+    {
+        try {
+            $request = $request->json()->all();
+            $n = Notes::find($id);
+            $n->notes = $request['notes'];
+            // $n->user = $request['user'];
+            $n->save();
+            return ($n) ? Response::json(['type' => 'success', 'message' => 'Note updated!']) : Response::json(['type' => 'error', 'message' => 'Your note could not be updated']);
+        } catch (\Exception $e) {
+            return Response::json(['type' => 'error', 'message' => 'Your note could not be updated. ' . $e->getMessage()]);
+        }
+    }
 
-	public function deleteHeadInjury(Request $request, $id){
-		try{
-			$request = $request->json()->all();
-			$h = HeadInjury::find($id);
-			$h->delete();
-			return ($h) ? Response::json(['type' => 'success', 'message' => 'Head Injury & Craniotomy data deleted!']) : Response::json(['type' => 'error', 'message' => 'The Head Injury & Craniotomy data could not be deleted']);
-		}catch(\Exception $e){
-			return Response::json(['type' => 'error', 'message' => 'The Head Injury & Craniotomy data could not be deleted. '. $e->getMessage()]);
-		}
-	}
+    public function deleteNote(Request $request)
+    {
+        try {
+            $request = $request->json()->all();
+            $n = Notes::find($request['id']);
+            $n->delete();
+            return ($n) ? Response::json(['type' => 'success', 'message' => 'Note deleted!']) : Response::json(['type' => 'error', 'message' => 'Your note could not be deleted']);
+        } catch (\Exception $e) {
+            return Response::json(['type' => 'error', 'message' => 'Your note could not be deleted. ' . $e->getMessage()]);
+        }
+    }
 
-	public function addInvestigations(Request $request){
-		try{
-			$request = $request->json()->all();
-			return $request;
+    public function addHeadInjury(Request $request)
+    {
+        try {
+            $request = $request->json()->all();
+            $h = new HeadInjury;
+            $h->bp_systolic = $request['bp_systolic'];
+            $h->bp_diastolic = $request['bp_diastolic'];
+            $h->pulse = $request['pulse'];
+            $h->respiration = $request['respiration'];
+            $h->temperature = $request['temperature'];
+            $h->conscious_status = serialize($request['conscious_status']);
+            $h->pupil_status = serialize($request['pupil_status']);
+            $h->user = $request['user'];
+            $h->save();
+            return ($n->id > 0) ? Response::json(['type' => 'success', 'message' => 'Head Injury & Craniotomy data saved!']) : Response::json(['type' => 'error', 'message' => 'The Head Injury & Craniotomy data could not be saved']);
+        } catch (\Exception $e) {
+            return Response::json(['type' => 'error', 'message' => 'The Head Injury & Craniotomy data could not be saved. ' . $e->getMessage()]);
+        }
+    }
 
-		}catch(\Exception $e){
-			return Response::json(['type' => 'error', 'message' => 'An error occured. The investigation could not be added. '. $e->getMessage()]);
-		}
+    public function updateHeadInjury(Request $request, $id)
+    {
+        try {
+            $request = $request->json()->all();
+            $n = HeadInjury::find($id);
+            $n->bp_systolic = $request['bp_systolic'];
+            $n->bp_diastolic = $request['bp_diastolic'];
+            $n->pulse = $request['pulse'];
+            $n->respiration = $request['respiration'];
+            $n->temperature = $request['temperature'];
+            $n->conscious_status = $request['conscious_status'];
+            $n->pupil_status = $request['pupil_status'];
+            $n->user = $request['user'];
+            $n->save();
+            $n->save();
+            return ($n->id > 0) ? Response::json(['type' => 'success', 'message' => 'Head Injury & Craniotomy data updated!']) : Response::json(['type' => 'error', 'message' => 'The Head Injury & Craniotomy data could not be updated']);
+        } catch (\Exception $e) {
+            return Response::json(['type' => 'error', 'message' => 'The Head Injury & Craniotomy data could not be updated. ' . $e->getMessage()]);
+        }
+    }
 
-	}
+    public function deleteHeadInjury(Request $request, $id)
+    {
+        try {
+            $request = $request->json()->all();
+            $h = HeadInjury::find($id);
+            $h->delete();
+            return ($h) ? Response::json(['type' => 'success', 'message' => 'Head Injury & Craniotomy data deleted!']) : Response::json(['type' => 'error', 'message' => 'The Head Injury & Craniotomy data could not be deleted']);
+        } catch (\Exception $e) {
+            return Response::json(['type' => 'error', 'message' => 'The Head Injury & Craniotomy data could not be deleted. ' . $e->getMessage()]);
+        }
+    }
 
-	public function addBloodTransfusions(Request $request){
-		
-	}
+    public function addInvestigations(Request $request)
+    {
+        try {
+            $request = $request->json()->all();
+            return $request;
 
-	public function getDrug($term){
-		try{
-			$found = collect();
-	        $ret = [];
-	       
-	        if (!empty($term)) {
-	            $found = InventoryProducts::with(['prices' => function($query) {
+        } catch (\Exception $e) {
+            return Response::json(['type' => 'error', 'message' => 'An error occured. The investigation could not be added. ' . $e->getMessage()]);
+        }
 
-		            }])->with(['stocks' => function($query) {
+    }
 
-		            }])
-		        ->where('name', 'like', "%$term%")->get();
-	        }
+    public function addBloodTransfusions(Request $request)
+    {
 
-	        $build = [];
-	        foreach ($found as $item) {
-	            $batchp = InventoryBatchPurchases::whereProduct($item->id)
-	                    ->whereActive(TRUE)
-	                    ->first();
-	            $this->data['item_prices'] = InventoryProductPrice::query()
-	                            ->where('product', '=', $item->id)->get();
-	            $active_price = 0.00;
-	            foreach ($this->data['item_prices'] as $product) {
-	                if ($product->price > $active_price) {
-	                    $active_price = $product->price;
-	                }
-	            }
-	            $expiry = empty($batchp->expiry_date) ? '' : ' |expiry: ' . $batchp->expiry_date;
-	            $stock_text = empty($item->stocks) ? '  Out of stock' : $item->stocks->quantity . ' in stock';
-	            $strngth_text = empty($item->strength) ? '' : ' | ' . $item->strength . $item->units->name;
-	            $build[] = [
-	                'text' => $item->name . '  - ' . $stock_text . $strngth_text . $expiry,
-	                'id' => $item->id,
-	                'batch' => empty($batchp->batch) ? 0 : $batchp->batch,
-	                'cash_price' => ceil(($item->categories->cash_markup + 100) / 100 * $active_price), //$item->prices->credit_price
-	                'credit_price' => ceil(($item->categories->credit_markup + 100) / 100 * $active_price),
-	                'o_price' => ceil($active_price),
-	                'available' => empty($item->stocks) ? 0 : $item->stocks->quantity];
-	        }
-	        $ret['results'] = $build;
-	        return json_encode(['type' => 'success', 'data' => $ret]);
-    	}catch (\Exception $e) {
-			return Response::json(['type' => 'error', 'message' => 'An error occured. The drug could not be found. '. $e->getMessage()]);
-		}
-	}
+    }
 
-	public function addPrescription(Request $request){
-		\DB::beginTransaction();
-		try {
-			$request = $request->json()->all();
-			$p = new Prescription;
-			$p->admission_id 		= $request['admission_id']; 
-			$p->visit 				= $request['visit_id'];
-			$p->drug 				= $request['drug']; 
-			$p->take 				= $request['take'];
-			$p->whereto 			= $request['whereto']; 
-			$p->method 				= $request['method']; 
-			$p->duration 			= $request['duration'];
-			$p->allow_substitution 	= $request['allow_substitution'];
-			$p->time_measure 		= ($request['time_measure'] == null) ? 0 : $request['time_measure'];
-			$p->user 				= $request['user'];
-			$p->save();
-			\DB::commit(); 
+    public function getDrug($term)
+    {
+        try {
+            $found = collect();
+            $ret = [];
 
-			if($p->id > 0) { 	
-				return Response::json(['type' => 'success', 'message' => 'The prescription has been added.']);
-			}else{
-				\DB::rollback();
-				return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be added.']);
-			}
-		} catch (\Exception $e) {
-			return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be added. '. $e->getMessage()]);
-		}
-	}
+            if (!empty($term)) {
+                $found = InventoryProducts::with(['prices' => function ($query) {
 
-	public function updatePrescription(Request $request, $id){
-		\DB::beginTransaction();
-		try {
-			$request = $request->json()->all();
-			$p = Prescription::find($id);
-			$p->admission_id 		= $request['admission_id']; 
-			$p->drug 				= $request['drug']; 
-			$p->whereto 			= 1; 
-			$p->method 				= 1; 
-			$p->duration 			= $request['duration'];
-			$p->allow_substitution 	= $request['allow_substitution'];
-			$p->time_measure 		= $request['time_measure'];
-			$p->save();
-			
-			if($p) { 
-				\DB::commit();
-				return Response::json(['type' => 'success', 'message' => 'The prescription has been updated. ']);
-			}else{
-				\DB::rollback();
-				return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be updated.']);
-			}
-		} catch (\Exception $e) {
-			return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be added. '. $e->getMessage()]);
-		}
-	}
+                }])->with(['stocks' => function ($query) {
 
-	public function deletePrescription(Request $request){
-		\DB::beginTransaction();
-		try{
-			$request = $request->json()->all();
-			$p = Prescription::find("id", $request['id']);
-			$p->delete();
-			if($p) {
-				\DB::commit();
-				return Response::json(['type' => 'success', 'message' => 'Prescription deleted successfully']);
-			}else{
-				\DB::rollback();
-				return Response::json(['type' => 'error', 'message' => 'Could not delete prescription']);
-			}
-		}catch(\Exception $e){
-			return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be deleted. '. $e->getMessage()]);
-		}
-	}
+                }])
+                    ->where('name', 'like', "%$term%")->get();
+            }
+
+            $build = [];
+            foreach ($found as $item) {
+                $batchp = InventoryBatchPurchases::whereProduct($item->id)
+                    ->whereActive(TRUE)
+                    ->first();
+                $this->data['item_prices'] = InventoryProductPrice::query()
+                    ->where('product', '=', $item->id)->get();
+                $active_price = 0.00;
+                foreach ($this->data['item_prices'] as $product) {
+                    if ($product->price > $active_price) {
+                        $active_price = $product->price;
+                    }
+                }
+                $expiry = empty($batchp->expiry_date) ? '' : ' |expiry: ' . $batchp->expiry_date;
+                $stock_text = empty($item->stocks) ? '  Out of stock' : $item->stocks->quantity . ' in stock';
+                $strngth_text = empty($item->strength) ? '' : ' | ' . $item->strength . $item->units->name;
+                $build[] = [
+                    'text' => $item->name . '  - ' . $stock_text . $strngth_text . $expiry,
+                    'id' => $item->id,
+                    'batch' => empty($batchp->batch) ? 0 : $batchp->batch,
+                    'cash_price' => ceil(($item->categories->cash_markup + 100) / 100 * $active_price), //$item->prices->credit_price
+                    'credit_price' => ceil(($item->categories->credit_markup + 100) / 100 * $active_price),
+                    'o_price' => ceil($active_price),
+                    'available' => empty($item->stocks) ? 0 : $item->stocks->quantity];
+            }
+            $ret['results'] = $build;
+            return json_encode(['type' => 'success', 'data' => $ret]);
+        } catch (\Exception $e) {
+            return Response::json(['type' => 'error', 'message' => 'An error occured. The drug could not be found. ' . $e->getMessage()]);
+        }
+    }
+
+    public function addPrescription(Request $request)
+    {
+        \DB::beginTransaction();
+        try {
+            $request = $request->json()->all();
+            $p = new Prescription;
+            $p->admission_id = $request['admission_id'];
+            $p->visit = $request['visit_id'];
+            $p->drug = $request['drug'];
+            $p->take = $request['take'];
+            $p->whereto = $request['whereto'];
+            $p->method = $request['method'];
+            $p->duration = $request['duration'];
+            $p->allow_substitution = $request['allow_substitution'];
+            $p->time_measure = ($request['time_measure'] == null) ? 0 : $request['time_measure'];
+            $p->user = $request['user'];
+            $p->save();
+            \DB::commit();
+
+            if ($p->id > 0) {
+                return Response::json(['type' => 'success', 'message' => 'The prescription has been added.']);
+            } else {
+                \DB::rollback();
+                return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be added.']);
+            }
+        } catch (\Exception $e) {
+            return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be added. ' . $e->getMessage()]);
+        }
+    }
+
+    public function updatePrescription(Request $request, $id)
+    {
+        \DB::beginTransaction();
+        try {
+            $request = $request->json()->all();
+            $p = Prescription::find($id);
+            $p->admission_id = $request['admission_id'];
+            $p->drug = $request['drug'];
+            $p->whereto = 1;
+            $p->method = 1;
+            $p->duration = $request['duration'];
+            $p->allow_substitution = $request['allow_substitution'];
+            $p->time_measure = $request['time_measure'];
+            $p->save();
+
+            if ($p) {
+                \DB::commit();
+                return Response::json(['type' => 'success', 'message' => 'The prescription has been updated. ']);
+            } else {
+                \DB::rollback();
+                return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be updated.']);
+            }
+        } catch (\Exception $e) {
+            return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be added. ' . $e->getMessage()]);
+        }
+    }
+
+    public function deletePrescription(Request $request)
+    {
+        \DB::beginTransaction();
+        try {
+            $request = $request->json()->all();
+            $p = Prescription::find("id", $request['id']);
+            $p->delete();
+            if ($p) {
+                \DB::commit();
+                return Response::json(['type' => 'success', 'message' => 'Prescription deleted successfully']);
+            } else {
+                \DB::rollback();
+                return Response::json(['type' => 'error', 'message' => 'Could not delete prescription']);
+            }
+        } catch (\Exception $e) {
+            return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be deleted. ' . $e->getMessage()]);
+        }
+    }
 
     public function postBp(Request $request)
     {
         $result = BloodPressure::create($request->all());
         return response()->json($result);
     }
+
+    public function postTemperature(Request $request)
+    {
+        $result = Temperature::create($request->all());
+        return response()->json($result);
+    }
+
+    public function getTemperature(Request $request)
+    {
+        $result = Temperature::all()->last();
+        return response()->json(['temperature' => random_int(0, 300)]);
+    }
+
 
     public function administerPrescription(Request $request)
     {

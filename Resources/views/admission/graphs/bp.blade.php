@@ -8,7 +8,7 @@
                     <label class=" control-label">Blood Pressure Recording</label>
                     {{Form::hidden('patient_id',$patient->id)}}
                     {{Form::hidden('admission_id',$admission->id)}}
-                    {{Form::text('value',null,['class'=>'form-control'])}}
+                    {{Form::text('value',null,['class'=>'form-control','placeholder'=>'Enter Blood pressure'])}}
                     <button type="button" class="btn btn-success" id="adder"> Add</button>
                 </div>
                 {{Form::close()}}

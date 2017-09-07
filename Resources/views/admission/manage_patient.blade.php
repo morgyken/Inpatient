@@ -34,6 +34,7 @@
                 <li><a data-toggle="tab" href="#vitals">Patient Vitals</a></li>
                 <li><a data-toggle="tab" href="#investigation">Investigations</a></li>
                 <li><a data-toggle="tab" href="#bp">Blood Pressure</a></li>
+                <li><a data-toggle="tab" href="#temperature">Temperature</a></li>
                 <li><a data-toggle="tab" href="#procedures">Procedures</a></li>
                 <li><a data-toggle="tab" href="#discharge">Discharge</a></li>
                 <li><a data-toggle="tab" href="#summary">Summary</a></li>
@@ -44,7 +45,8 @@
                 @include("Inpatient::admission.manage.doctor")
                 @include("Inpatient::admission.manage.prescription")
                 @include("Inpatient::admission.manage.vitals")
-                @include("Inpatient::admission.manage.bp")
+                @include('inpatient::admission.graphs.bp')
+                @include('inpatient::admission.graphs.temperature')
                 @include("Inpatient::admission.manage.investigations")
                 @include("Inpatient::admission.manage.procedures")
                 {{-- @include("Inpatient::admission.manage.discharge") --}}

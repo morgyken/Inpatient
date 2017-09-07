@@ -155,4 +155,6 @@ Route::group(['prefix' => 'v1'], function () {
     // Get patient blood pressure for plotting
 
     Route::post('saver/blood_pressure', ['as' => 'mark_bp', 'uses' => 'InpatientApiController@postBp']);
+    Route::post('saver/temperature', ['as' => 'temperature', 'uses' => 'InpatientApiController@postTemperature']);
+    Route::get('get/temperature', ['as' => 'temperature', 'uses' => 'InpatientApiController@getTemperature']);
 });
