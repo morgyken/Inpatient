@@ -277,12 +277,14 @@
                         showAlert(0, " Note saved", 0);
                         getNotes();
                     }else{
-                         showAlert(2, "An error occured while saving the doctor's notes for this patient", 0);
+                    	 alertify.error(resp.message)
+                         // showAlert(2, "An error occured while saving the doctor's notes for this patient", 0);
                     }
                 },
                 error: function (resp) {
                     console.log(resp);
-                    showAlert(2, "An error occured while saving the doctor's notes for this patient", 0);
+                    alertify.error(resp.message)
+                    // showAlert(2, "An error occured while saving the doctor's notes for this patient", 0);
                 }
             });
         });

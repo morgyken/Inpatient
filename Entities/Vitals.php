@@ -28,9 +28,11 @@ use Ignite\Inpatient\Entities\Admission;
  * @property string|null $allergies
  * @property string|null $chronic_illnesses
  * @property int|null $user_id
+ * @property string $date_recorded
+ * @property string $time_recorded
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
- * @property-read \Ignite\Reception\Entities\Patients $admissions
+ * @property-read \Ignite\Inpatient\Entities\Admission $admissions
  * @property-read \Ignite\Users\Entities\User $user
  * @property-read \Ignite\Inpatient\Entities\Visit|null $visits
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Vitals whereAdmissionId($value)
@@ -41,6 +43,7 @@ use Ignite\Inpatient\Entities\Admission;
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Vitals whereBpSystolic($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Vitals whereChronicIllnesses($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Vitals whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Vitals whereDateRecorded($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Vitals whereHeight($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Vitals whereHip($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Vitals whereId($value)
@@ -49,6 +52,7 @@ use Ignite\Inpatient\Entities\Admission;
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Vitals whereRespiration($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Vitals whereTemperature($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Vitals whereTemperatureLocation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Vitals whereTimeRecorded($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Vitals whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Vitals whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Vitals whereVisitId($value)

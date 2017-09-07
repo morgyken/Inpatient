@@ -14,26 +14,28 @@ use Lava;
 use Carbon\Carbon;
 
 use Ignite\Inpatient\Entities\Admission;
+use Ignite\Inpatient\Entities\BloodPressure;
 use Ignite\Inpatient\Entities\Deposit;
-use Ignite\Inpatient\Entities\RequestDischarge;
 use Ignite\Inpatient\Entities\DischargeNote;
-use Ignite\inpatient\Entities\PatientAccount;
+
+use Ignite\Inpatient\Entities\Notes;
 use Ignite\Inpatient\Entities\NursingCharge;
+use Ignite\Inpatient\Entities\PatientAccount;
 use Ignite\Inpatient\Entities\RequestAdmission;
+use Ignite\Inpatient\Entities\RequestDischarge;
 use Ignite\Inpatient\Entities\Visit;
+use Ignite\Inpatient\Entities\Vitals;
 use Ignite\Inpatient\Entities\Ward;
 use Ignite\Inpatient\Entities\WardAssigned;
 use Ignite\Inpatient\Entities\Bed;
 use Ignite\Inpatient\Entities\BedPosition;
-use Ignite\Inpatient\Entities\Vitals;
-use Ignite\Inpatient\Entities\Notes;
 
 use Ignite\Reception\Entities\Patients;
 use Illuminate\Contracts\View\Factory;
 
 use Ignite\Users\Entities\Roles;
-use Ignite\Users\Entities\UserRoles;
 use Ignite\Users\Entities\User;
+use Ignite\Users\Entities\UserRoles;
 
 use Ignite\Evaluation\Entities\VisitDestinations;
 use Ignite\Evaluation\Entities\FinancePatientAccounts;
@@ -95,7 +97,8 @@ class InpatientController extends AdminBaseController
         return back();
     }
 
-    private function __require_assets(){
+    private function __require_assets()
+    {
 
         $css_assets = [
             'vertical-tabs.css' => m_asset('inpatient:css/vertical-tabs.css')
@@ -134,33 +137,36 @@ class InpatientController extends AdminBaseController
     {
         $patientIds = $this->patients->where('id', '!=', null)->get(['id'])->toArray();
         $patients = $this->patients->all();
-        return view('inpatient::index', ['patientIds'=>$patientIds, 'patients' => $patients]);
+        return view('inpatient::index', ['patientIds' => $patientIds, 'patients' => $patients]);
     }
 
     public function awaiting()
     {
         $patientIds = $this->request_admission->where('id', '!=', null)->get(['patient_id'])->toArray();
         $patients = $this->request_admission->all();
-        return view('inpatient::admission.admitAwaiting', ['patientIds'=>$patientIds, 'patients' => $patients]);
+        return view('inpatient::admission.admitAwaiting', ['patientIds' => $patientIds, 'patients' => $patients]);
     }
 
-    public function requestAdmission(Request $request){
-      if(RequestAdmission::find($request->patient_id) == null){
-        RequestAdmission::create($request->toArray());
-        \Session::flash('success','Admission request successful');
-        return redirect('/inpatient/admit')->with('success', 'Admission request successful');
-      }else{
-        return back()->with('error', 'The patient has already requested admission');
-      }
+    public function requestAdmission(Request $request)
+    {
+        if (RequestAdmission::find($request->patient_id) == null) {
+            RequestAdmission::create($request->toArray());
+            \Session::flash('success', 'Admission request successful');
+            return redirect('/inpatient/admit')->with('success', 'Admission request successful');
+        } else {
+            return back()->with('error', 'The patient has already requested admission');
+        }
     }
 
-    public function cancel($id) {
+    public function cancel($id)
+    {
         $admit_r = RequestAdmission::find($id);
         $admit_r->delete();
         return redirect()->back()->with('success', 'Successfully canceled admission request');
     }
 
-    public function admitWalkInPatient($id){
+    public function admitWalkInPatient($id)
+    {
         //dd($id);
         $doctor_rule = Roles::where('name', 'Doctor')->first();
         $doctor_ids = UserRoles::where('role_id', $doctor_rule->id)
@@ -178,7 +184,7 @@ class InpatientController extends AdminBaseController
         $deposits = Deposit::all();
         // $request_id = RequestAdmission::where('visit_id', $visit_id)->first()->id;
         $admissions = NursingCharge::all();
-        return view('inpatient::admission.admit_form', compact('doctors', 'patient', 'wards', 'deposits', 'beds','bedpositions', 'admissions'));
+        return view('inpatient::admission.admit_form', compact('doctors', 'patient', 'wards', 'deposits', 'beds', 'bedpositions', 'admissions'));
     }
 
     public function admitPatientForm($id, $visit_id)
@@ -195,24 +201,27 @@ class InpatientController extends AdminBaseController
         $deposits = Deposit::all();
         $request_id = RequestAdmission::where('visit_id', $visit_id)->first()->id;
         $admissions = NursingCharge::all();
-        return view('inpatient::admission.admit_form', compact('doctors', 'patient', 'wards', 'deposits', 'visit', 'beds','bedpositions', 'request_id', 'admissions'));
+        return view('inpatient::admission.admit_form', compact('doctors', 'patient', 'wards', 'deposits', 'visit', 'beds', 'bedpositions', 'request_id', 'admissions'));
     }
 
-    public function admit(Request $request){
+    public function admit(Request $request)
+    {
         \DB::beginTransaction();
-        try{
+        try {
             $admitted = Admission::where("patient_id", $request->patient_id)->get();
             $visit = Visit::where("patient", $request->patient_id)->first();
 
-            $request->visit_id = ($visit != null) ? $visit->id :  $this->checkInPatient($request);
+            $request->visit_id = ($visit != null) ? $visit->id : $this->checkInPatient($request);
 
-            if(count($admitted) > 0) { return redirect("/inpatient/admit")->with('error', "Patient already admitted"); }
+            if (count($admitted) > 0) {
+                return redirect("/inpatient/admit")->with('error', "Patient already admitted");
+            }
 
             $account = PatientAccount::where('patient_id', $request->patient_id)->first();
 
-           if (count($account)) {
-               $account_balance = $account->balance;
-           } else {
+            if (count($account)) {
+                $account_balance = $account->balance;
+            } else {
                 $p = new PatientAccount;
                 $p->patient_id = $request->patient_id;
                 $p->balance = 0;
@@ -227,14 +236,14 @@ class InpatientController extends AdminBaseController
                 $request['external_doctor'] = null;
                 $request['doctor_id'] = $request->admission_doctor;
             }
-            
+
             $ward_cost = Ward::find($request->ward_id)->first()->cost;
             $deposit = Deposit::find($request->deposit)->first();
             $deposit_amount = $deposit->cost;
             $request['cost'] = $ward_cost + $deposit_amount;
 
             /* Apply charges - Cash for now */
-            
+
             // if ($request->payment_mode == 'cash') {
 
             //     $acc = PatientAccount::where('patient_id', $request->patient_id)->first();
@@ -254,29 +263,29 @@ class InpatientController extends AdminBaseController
             //         'reference' => 'deposit_charge_' . str_random(5),
             //         'patient' => $request->patient_id
             //     ]);
-                
+
             //     // debit the patient account
             //     if($acc != null){
             //         $acc->update(['balance' => $acc->balance - $request['cost']]);
             //     }
             // }
 
-            $adm_request = (isset($request->visit_id)) ? RequestAdmission::whereRaw("patient_id = '".$request->patient_id."' AND visit_id = '".$request->visit_id."'")
+            $adm_request = (isset($request->visit_id)) ? RequestAdmission::whereRaw("patient_id = '" . $request->patient_id . "' AND visit_id = '" . $request->visit_id . "'")
                 ->first() : RequestAdmission::where("patient_id", $request->patient_id)->first();
 
             $request['reason'] = (count($adm_request) > 0) ? $adm_request->reason : null;
 
             // Let's admit our guy
             $a = new Admission;
-            $a->patient_id        = $request->patient_id;
-            $a->doctor_id         = $request->doctor_id;
-            $a->ward_id           = $request->ward_id;
-            $a->bed_id            = $request->bed_id;
-            $a->cost              = $request->cost;
-            $a->reason            = $request->reason;
-            $a->external_doctor   = $request->external_doctor;
-            $a->visit_id          = $request->visit_id;
-            $a->bedposition_id    = $request->bedposition_id;
+            $a->patient_id = $request->patient_id;
+            $a->doctor_id = $request->doctor_id;
+            $a->ward_id = $request->ward_id;
+            $a->bed_id = $request->bed_id;
+            $a->cost = $request->cost;
+            $a->reason = $request->reason;
+            $a->external_doctor = $request->external_doctor;
+            $a->visit_id = $request->visit_id;
+            $a->bedposition_id = $request->bedposition_id;
 
             $a->save();
 
@@ -304,13 +313,14 @@ class InpatientController extends AdminBaseController
 
             \DB::commit();
             return redirect('inpatient/admissions')->with('success', 'Successfully admitted a patient');
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             \DB::rollback();
-            return back()->with('error', 'A problem occured while admitting the patient. '. $e->getMessage());
+            return back()->with('error', 'A problem occured while admitting the patient. ' . $e->getMessage());
         }
     }
 
-    public function checkInPatient(Request $request){
+    public function checkInPatient(Request $request)
+    {
         $visit = new Visit;
         $visit->patient = $request->patient_id;
         $visit->clinic = session('clinic', 1);
@@ -361,17 +371,20 @@ class InpatientController extends AdminBaseController
         return $destinations->save();
     }
 
-    public function admissionList() {
+    public function admissionList()
+    {
         $admissions = Admission::all();
         return view('Inpatient::admission.admissionList', compact('admissions'));
     }
 
-    public function admitAwaiting() {
+    public function admitAwaiting()
+    {
         $patient_awaiting = Visit::where('inpatient', 'on')->get();
         return view('Inpatient::admission.admitAwaiting', compact('patient_awaiting'));
     }
 
-    public function admit_check(Request $request) {
+    public function admit_check(Request $request)
+    {
         $account_balance = PatientAccount::where('patient', $request->patient_id)->first();
 
         if (count($account_balance)) {
@@ -388,37 +401,12 @@ class InpatientController extends AdminBaseController
         return array('status' => 'sufficient', 'description' => 'Your account balance is sufficient');
     }
 
-    public function managePatient($id, $visit_id) {
-
-        $tempTable = Lava::DataTable();
-        $bpTable = Lava::DataTable(); 
-
-        $tempTable->addDateColumn('Day of Month')
-                    ->addNumberColumn('Temp in Celcius');
-
-        $bpTable->addDateColumn('Day of Month')
-                    ->addNumberColumn('BP in mm/hg');
-
-        // Random Data For Example
-        for ($a = 1; $a < 30; $a++) {
-            $tempTable->addRow([
-              '2015-10-' . $a, rand(10, 60)
-            ]);
-        }
-
-        for ($a = 1; $a < 30; $a++) {
-            $bpTable->addRow([
-              '2015-10-' . $a, rand(0, 240)
-            ]);
-        }
-
-        $tempChart = Lava::AreaChart('tempChart',$tempTable);
-
-        $bpChart = Lava::AreaChart('bpChart',$bpTable);
+    public function managePatient($id, $visit_id)
+    {
 
         $patient = Patients::findorFail($id)->first();
 
-        $ward_assigned = WardAssigned::where("visit_id",$visit_id)->first();
+        $ward_assigned = WardAssigned::where("visit_id", $visit_id)->first();
 
         $ward = Ward::find($ward_assigned->ward_id)->first();
         $admission = Admission::where('patient_id', $id)->where("visit_id", $visit_id)->first();
@@ -433,6 +421,7 @@ class InpatientController extends AdminBaseController
             $prescriptions = Prescriptions::where('visit', $visit_id)->get();
             $doctor_note = Notes::where('visit_id', $visit_id)->first();
         }
+        $bpChart = $this->getCharts($patient->id, $admission->id);
 
         $investigations = Investigations::where("visit", $visit_id)->where("type", "laboratory")->get()->map(function($item){
                 return 
@@ -453,28 +442,49 @@ class InpatientController extends AdminBaseController
 
             });
 
-        return view('Inpatient::admission.manage_patient', compact('investigations','tempChart','bpChart','patient', 'ward', 'admission', 'vitals', 'doctor_note', 'prescriptions'));
+        return view('Inpatient::admission.manage_patient', compact('investigations', 'bpChart', 'patient', 'ward', 'admission', 'vitals', 'doctor_note', 'prescriptions'));
     }
 
-    public function recordVitals(Request $request) {
+    /**
+     * @param $patient
+     * @param $admission
+     * @return mixed
+     */
+    private function getCharts($patient, $admission)
+    {
+        $bp = BloodPressure::wherePatientId($patient)->whereAdmissionId($admission)->get();
+        return \Charts::create('line', 'highcharts')
+            ->title('Blood Pressure Chart')
+            ->elementLabel('Blood Pressure')
+            ->labels($bp->pluck('created_at'))
+            ->values($bp->pluck('value'))
+            ->template('material')
+            ->width(0)
+            ->height(0);
+
+    }
+
+    public function recordVitals(Request $request)
+    {
         \DB::beginTransaction();
-        try{
+        try {
             $v = Vitals::find("visit_id", $request->visit);
-            if($v == null){
+            if ($v == null) {
                 Vitals::create($request->all());
-            }else{
+            } else {
                 $v->update($request->all());
             }
             \DB::commit();
             return redirect()->back()->with('success', 'Recorded patient\'s vitals successfully.');
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             \DB::rollback();
-            return redirect()->back()->with('error', 'An error occured. '. $e->getMessage());
+            return redirect()->back()->with('error', 'An error occured. ' . $e->getMessage());
         }
     }
 
-    public function movePatient($id, $visit_id) {
-        $admission = Admission::where("visit_id",$visit_id)->first();
+    public function movePatient($id, $visit_id)
+    {
+        $admission = Admission::where("visit_id", $visit_id)->first();
         $v = Visit::find($visit_id)->first();
         $patient = Patients::find($id)->first();
         $acc = PatientAccount::where('patient_id', $id)->first();
@@ -494,7 +504,8 @@ class InpatientController extends AdminBaseController
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postDischargeNote(Request $request) {
+    public function postDischargeNote(Request $request)
+    {
         if ($request->type == 'discharge') {
             DischargeNote::create([
                 'summary_note' => $request->summaryNote,
@@ -512,7 +523,8 @@ class InpatientController extends AdminBaseController
 
     }
 
-    public function request_discharge($id) {
+    public function request_discharge($id)
+    {
         //THE Doctor should be able to write a note
         $visit_id = $id;
         $v = Visit::findorfail($visit_id);
@@ -522,14 +534,15 @@ class InpatientController extends AdminBaseController
         $wardCharges = 0;
         $wards = WardAssigned::where('visit_id', $id)->get();
         foreach ($wards as $ward) {
-            $wardCharges += ($ward->price /** date_diff($ward->discharged_at,$ward->created_at) */);
+            $wardCharges += ($ward->price/** date_diff($ward->discharged_at,$ward->created_at) */);
         }
         $recuCharges = 0;
         //subscribed reccurrent charges
         $rcnt = RecurrentCharge::where('visit_id', $id)->where('status', 'unpaid')->get();
         foreach ($rcnt as $recurrent) {
             //nursing charges times no. of days..
-            $recuCharges += NursingCharge::find($recurrent->recurrent_charge_id)->cost /** date_diff($ward->discharged_at,$ward->created_at) */;
+            $recuCharges += NursingCharge::find($recurrent->recurrent_charge_id)->cost/** date_diff($ward->discharged_at,$ward->created_at) */
+            ;
         }
         $totalCharges = $wardCharges + $recuCharges;
 
@@ -546,25 +559,29 @@ class InpatientController extends AdminBaseController
         return redirect()->back()->with('success', 'Successfully requested for discharge');
     }
 
-    public function requested_discharge(Request $request) {
+    public function requested_discharge(Request $request)
+    {
         $discharges = RequestDischarge::all();
         return view('Evaluation::inpatient.discharges', compact('discharges'));
     }
 
-    public function confirm_discharge($request_id) {
+    public function confirm_discharge($request_id)
+    {
         $r = RequestDischarge::find($request_id);
         $v = Visit::find($r->visit_id);
         $patient = Patients::find($v->patient);
         return view('Evaluation::inpatient.discharge_patient', compact('v', 'patient'));
     }
 
-    public function Cancel_discharge($visit_id) {
+    public function Cancel_discharge($visit_id)
+    {
         $v = RequestDischarge::find($visit_id);
         $v->delete();
         return redirect()->back()->with('success', 'Successfully canceled the discharge request');
     }
 
-    public function postDischargePatient(Request $r) {
+    public function postDischargePatient(Request $r)
+    {
         $vid = $r->visit_id;
         //the discharge for
         if ($r->type != 'case') {
@@ -576,14 +593,15 @@ class InpatientController extends AdminBaseController
         $wardCharges = 0;
         $wards = WardAssigned::where('visit_id', $r->visit_id)->get();
         foreach ($wards as $ward) {
-            $wardCharges += ($ward->price /** date_diff($ward->discharged_at,$ward->created_at) */);
+            $wardCharges += ($ward->price/** date_diff($ward->discharged_at,$ward->created_at) */);
         }
         $recuCharges = 0;
         //subscribed reccurrent charges
         $rcnt = RecurrentCharge::where('visit_id', $r->visit_id)->where('status', 'unpaid')->get();
         foreach ($rcnt as $recurrent) {
             //nursing charges times no. of days..
-            $recuCharges += NursingCharge::find($recurrent->recurrent_charge_id)->cost /** date_diff($ward->discharged_at,$ward->created_at) */;
+            $recuCharges += NursingCharge::find($recurrent->recurrent_charge_id)->cost/** date_diff($ward->discharged_at,$ward->created_at) */
+            ;
         }
         $totalCharges = $wardCharges + $recuCharges;
 
@@ -596,12 +614,12 @@ class InpatientController extends AdminBaseController
         }
         if ($totalCharges > $acc_balance) {
             return redirect()->back()->with('error', 'You have a pending charges of Kshs.'
-                            . number_format($totalCharges) . '. Your account balance is Kshs. '
-                            . number_format($acc_balance) . '. Please deposit Kshs.'
-                            . number_format(($totalCharges - $acc_balance)) . ' to complete the discharge process.');
+                . number_format($totalCharges) . '. Your account balance is Kshs. '
+                . number_format($acc_balance) . '. Please deposit Kshs.'
+                . number_format(($totalCharges - $acc_balance)) . ' to complete the discharge process.');
             $validator = Validator::make($r->all(), []);
             $validator->errors()
-                    ->add('amount', 'You have pending reccurrent charges. Please make the payment to proceed with the discharge');
+                ->add('amount', 'You have pending reccurrent charges. Please make the payment to proceed with the discharge');
             return redirect()->back()->withErrors($validator);
         }
         //charge the recurrent charges from the patient acc.
@@ -629,7 +647,8 @@ class InpatientController extends AdminBaseController
         return redirect('/evaluation/inpatient/admit')->with('success', 'Successfully discharged patient');
     }
 
-    public function delete_service($id) {
+    public function delete_service($id)
+    {
         $service = NursingCharge::find($id);
         if ($service) {
             $service->delete();
@@ -644,7 +663,7 @@ class InpatientController extends AdminBaseController
      */
     public function update(Request $request)
     {
-      $bed = Bed::find($request->bed_id);
+        $bed = Bed::find($request->bed_id);
         $bed->update([
             'number' => $request->bed_no,
             'type' => $request->bed_type,
