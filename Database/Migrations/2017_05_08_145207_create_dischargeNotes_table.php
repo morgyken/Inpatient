@@ -30,9 +30,7 @@ class CreateDischargeNotesTable extends Migration
 
             $table->foreign('visit_id')->references('id')
             ->on('evaluation_visits')->onDelete('cascade')->onUpdate('cascade');
-
-
-           
+   
         });
     }
 

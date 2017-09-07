@@ -15,6 +15,7 @@ class CreateInpatientsAdministrationLogsTable extends Migration
         Schema::create('inpatient_administration_logs', function(Blueprint $column) {
             $column->increments('id');
             $column->unsignedInteger('admission_id');
+            $column->unsignedInteger('visit_id');
             $column->unsignedInteger('prescription_id');
             $column->string('time');
             $column->string('am_pm');
@@ -24,6 +25,11 @@ class CreateInpatientsAdministrationLogsTable extends Migration
             $column->foreign('admission_id')
                     ->references('id')
                     ->on('admissions')
+                    ->onUpdate('cascade')
+                    ->onDelete('cascade');
+            $column->foreign('visit_id')
+                    ->references('id')
+                    ->on('evaluation_visits')
                     ->onUpdate('cascade')
                     ->onDelete('cascade');
             $column->foreign('prescription_id')

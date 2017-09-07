@@ -20,6 +20,7 @@ class CreateInpatientsNotesTable extends Migration
             $column->unsignedInteger('user');
             $column->integer('type')->default(0); // 0 - nurse's , 1- doctor's
             $column->timestamps();
+            // $column->softDeletes();
 
             $column->foreign('admission_id')
                     ->references('id')

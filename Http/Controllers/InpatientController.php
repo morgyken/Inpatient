@@ -3,19 +3,21 @@
 namespace Ignite\Inpatient\Http\Controllers;
 
 use Ignite\Core\Http\Controllers\AdminBaseController;
-use Ignite\inpatient\Entities\PatientAccount;
+
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+
 use Validator;
 use Session;
 use Lava;
+use Carbon\Carbon;
+
 use Ignite\Inpatient\Entities\Admission;
 use Ignite\Inpatient\Entities\Deposit;
 use Ignite\Inpatient\Entities\RequestDischarge;
 use Ignite\Inpatient\Entities\DischargeNote;
-//use Ignite\Inpatient\Entities\PatientAccount;
-use Ignite\Evaluation\Entities\FinancePatientAccounts;
+use Ignite\inpatient\Entities\PatientAccount;
 use Ignite\Inpatient\Entities\NursingCharge;
 use Ignite\Inpatient\Entities\RequestAdmission;
 use Ignite\Inpatient\Entities\Visit;
@@ -24,22 +26,20 @@ use Ignite\Inpatient\Entities\WardAssigned;
 use Ignite\Inpatient\Entities\Bed;
 use Ignite\Inpatient\Entities\BedPosition;
 use Ignite\Inpatient\Entities\Vitals;
-use Ignite\Evaluation\Entities\VisitDestinations;
 use Ignite\Inpatient\Entities\Notes;
+
 use Ignite\Reception\Entities\Patients;
 use Illuminate\Contracts\View\Factory;
+
 use Ignite\Users\Entities\Roles;
 use Ignite\Users\Entities\UserRoles;
 use Ignite\Users\Entities\User;
 
+use Ignite\Evaluation\Entities\VisitDestinations;
+use Ignite\Evaluation\Entities\FinancePatientAccounts;
 use Ignite\Evaluation\Entities\Prescriptions;
-// use Ignite\Evaluation\Entities\;
-// use Ignite\Evaluation\Entities\;
-// use Ignite\Evaluation\Entities\;
-// use Ignite\Evaluation\Entities\;
-// use Ignite\Evaluation\Entities\;
-// use Ignite\Evaluation\Entities\;
-// use Ignite\Evaluation\Entities\;
+use Ignite\Evaluation\Repositories\EvaluationRepository;
+use Ignite\Evaluation\Entities\Investigations;
 
 class InpatientController extends AdminBaseController
 {
@@ -58,6 +58,8 @@ class InpatientController extends AdminBaseController
     private $wards;
     private $beds;
 
+    protected $evaluation;
+
     /**
      * InpatientController constructor.
      * @param Patients $patients
@@ -66,17 +68,31 @@ class InpatientController extends AdminBaseController
      * @param User $user
      * @param UserRoles $user_roles
      */
-    public function __construct(Patients $patients, RequestAdmission $request_admission, Roles $roles, User $user, UserRoles $user_roles, Visit $visit)
+    public function __construct(Carbon $carbon, Patients $patients, RequestAdmission $request_admission, Roles $roles, User $user, UserRoles $user_roles, Visit $visit, EvaluationRepository $evaluation)
     {
         parent::__construct();
         $this->__require_assets();
 
+        $this->carbon = $carbon;
+        $this->carbon->tz =  new \DateTimeZone('Africa/Nairobi');
         $this->request_admission = $request_admission;
         $this->roles = $roles;
         $this->user_roles = $user_roles;
         $this->user = $user;
         $this->patients = $patients;
         $this->visit = $visit;
+        $this->evaluation = $evaluation;
+    }
+
+     public function orderEvaluation($type) {
+        if ($this->evaluation->order_evaluation($type)) {
+            flash()->success('Test ordered for ' . $type);
+            return Response::json(['type'=>'success', 'message' => 'Test ordered for ' . $type]);
+        } else {
+            flash('Something wasn\'t right', 'danger');
+            return Response::json(['type'=>'error', 'message' => 'Could not order test for ' . $type]);
+        }
+        return back();
     }
 
     private function __require_assets(){
@@ -405,7 +421,7 @@ class InpatientController extends AdminBaseController
         $ward_assigned = WardAssigned::where("visit_id",$visit_id)->first();
 
         $ward = Ward::find($ward_assigned->ward_id)->first();
-        $admission = Admission::where('patient_id', $id)->first();
+        $admission = Admission::where('patient_id', $id)->where("visit_id", $visit_id)->first();
         ///the vitals taken during visits
         /* all the visits for this patient */
         $vitals = null;
@@ -418,7 +434,26 @@ class InpatientController extends AdminBaseController
             $doctor_note = Notes::where('visit_id', $visit_id)->first();
         }
 
-        return view('Inpatient::admission.manage_patient', compact('tempChart','bpChart','patient', 'ward', 'admission', 'vitals', 'doctor_note', 'prescriptions'));
+        $investigations = Investigations::where("visit", $visit_id)->where("type", "laboratory")->get()->map(function($item){
+                return 
+                [
+                    "id"                    => $item->id,
+                    "type"                  => $item->type,
+                    "procedure"             => $item->procedures->name,
+                    "quantity"              => $item->quantity,
+                    "price"                 => $item->price,
+                    "discount"              => $item->discount,
+                    "amount"                => $item->amount,
+                    "user"                  => $item->doctors->profile->fullName,
+                    "instructions"          => $item->instructions,
+                    "ordered"               => $item->ordered,
+                    "invoiced"              => $item->invoiced,
+                    "requested_on"          => $this->carbon->parse($item->updated_at)->format('H:i A d/m/Y ')
+                ];
+
+            });
+
+        return view('Inpatient::admission.manage_patient', compact('investigations','tempChart','bpChart','patient', 'ward', 'admission', 'vitals', 'doctor_note', 'prescriptions'));
     }
 
     public function recordVitals(Request $request) {

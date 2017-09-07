@@ -52,7 +52,7 @@ Route::group([ 'prefix' => 'v1'], function() {
         Route::group(['prefix' => 'prescriptions'], function() {
 
             // Get all prescriptions
-            Route::get('/admission/{admission_id}', 'InpatientApiController@getAllPrescriptions');
+            Route::get('/admission/{admission_id}/type/{type}', 'InpatientApiController@getAllPrescriptions');
 
             // Add Prescription
             Route::post('', 'InpatientApiController@addPrescription');
@@ -103,7 +103,7 @@ Route::group([ 'prefix' => 'v1'], function() {
             Route::post('/{id}/update', 'InpatientApiController@updateNote');
 
             // Delete Doctor's and Nurse's notes
-            Route::post('/{id}/delete', 'InpatientApiController@deleteNote');
+            Route::post('/delete', 'InpatientApiController@deleteNote');
 
         });
 

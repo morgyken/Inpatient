@@ -6,9 +6,9 @@
 
             {{ csrf_field() }}
 
-            <input type="hidden" name="admission_id" value="{{ $admission->id }}" required>
+            <input type="hidden" name="admission_id" id="admission_id" value="{{ $admission->id }}" required>
 
-            <input type="hidden" name="visit_id" value="{{ $admission->visit_id }}" required>
+            <input type="hidden" name="visit_id" id = "visit_id" value="{{ $admission->visit_id }}" required>
 
             <div class="form-group">
                  <label>Write your notes here:</label>
@@ -115,35 +115,157 @@
                 </div> --}}
             {{-- </div>--}}
 
-            <button type="button" class="btn btn-lg btn-primary"><i class = "fa fa-save"></i> Save</button>
+            <button type="button" class="btn btn-lg btn-primary" id = "save-note"><i class = "fa fa-save"></i> Save</button>
         </form>
 
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding:0;">
             <h3>Previous Notes</h3>
-            <table class="table table-hover datatable">
-                <thead>
-                    <tr>
-                        <th>Date & Time</th>
-                        <th>Note</th>
-                        <th>Recorded By</th>
-                        <th>Options</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </tbody>
-            </table>
+
+            <div class="alerts"></div>
+
+            <div class="table-responsive">
+                <table class="table table-stripped" id = "doctors-table" style="width:100% !important; display: none !important;">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Note</th>
+                            <th>Recorded By</th>
+                            <th>Options</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      
+                    </tbody>
+                </table>
+            </div>
         </div>
         
     </div><!-- container -->
-   <script type="text/javascript">
+
+    <script type="text/javascript">
         $(function () {
-        CKEDITOR.replaceAll();
-    });
-   </script>
+            $("table").dataTable();
+        })
+        getNotes();
+
+        function getNotes(){
+            $.ajax({
+                type: "GET",
+                url: "{{ url('/api/inpatient/v1/notes/admission/'.$admission->id.'/type/1') }}",
+                dataType: 'json',
+                success: function (resp) {                
+                    if(resp.type === "success"){
+                        if(resp.data.length > 0){
+                            // refresh table
+                            $("#doctors-table > tbody tr").remove();
+                            // Loop through and append rows
+                            let data = resp.data;
+                            data.map( (item, index) => {
+                                return(
+                                    $("#doctors-table > tbody").append(
+                                        "<tr id = 'row_"+ item.id +"'>\
+                                            <td>" + item.written_on + "</td>\
+                                            <td>" + item.notes + "</td>\
+                                            <td>" + item.name + "</td>\
+                                            <td><button type='button' class='btn btn-danger delete' id = '"+ item.id +"'><i class = 'fa fa-trash-o'></i> Delete</button></td>\
+                                        </tr>"
+                                    )
+                                );
+                            });
+
+                            $("#doctors-table").css("display","block");
+                           
+                        }else{
+                            $("#doctors-table").css("display","none");
+                            showAlert(1, "No doctor's notes found for this patient", 0);
+                        }
+                    }else{
+                        showAlert(2, "An error occured while retrieving the doctor's notes for this patient", 0);
+                    }
+                   
+                },
+                error: function () {
+                    showAlert(2, "An error occured while retrieving the doctor's notes for this patient", 0);
+                }
+            });
+        }
+
+        $('#save-note').click(function(e){
+            e.preventDefault();
+             $.ajax({
+                type: "POST",
+                url: "{{ url('/api/inpatient/v1/notes') }}",
+                data: JSON.stringify({
+                     visit_id : {{ $admission->visit_id }},
+                     admission_id: {{ $admission->id }},
+                     notes: $("#notes").val(),
+                     type: 1,
+                     user: {{ Auth::user()->id }}
+                 }),
+                success: function (resp) {
+                    // add table rows
+                     if(resp.type === "success"){
+                        showAlert(1, "There are no previous notes recorded for this patient", 1);
+                        showAlert(2, "An error occured while saving the doctor's notes for this patient", 1);
+                        showAlert(0, " Note saved", 0);
+                        getNotes();
+                    }else{
+                         showAlert(2, "An error occured while saving the doctor's notes for this patient", 0);
+                    }
+                },
+                error: function (resp) {
+                    console.log(resp);
+                    showAlert(2, "An error occured while saving the doctor's notes for this patient", 0);
+                }
+            });
+        });
+
+        $('.delete').click(function(e){
+            e.preventDefault();
+            var id = $(this).attr('id');
+            $(this).html("Deleting ....");
+            console.log("deleting");
+
+             $.ajax({
+                type: "POST",
+                url: "{{ url('/api/inpatient/v1/notes/delete') }}",
+                data: JSON.stringify({
+                     id : id
+                 }),
+                success: function (resp) {
+                    // add table rows
+                     if(resp.type === "success"){
+                        $("tr#row_"+id+"").remove();
+                        showAlert(0, " Note deleted", 0);
+                        $(this).html("<i class = 'fa fa-trash-o'></i> Delete");
+                        // getNotes();
+                    }else{
+                        showAlert(2, "An error occured while deleting the doctor's notes for this patient", 0);
+                    }
+                },
+                error: function (resp) {
+                    console.log(resp);
+                    $(this).html("<i class = 'fa fa-trash-o'></i> Delete");
+                    showAlert(2, "An error occured while deleting the doctor's notes for this patient", 0);
+                }
+            });
+        });
+
+        function showAlert(type, text, display){
+            var d = (display == 0) ? "block" : "none";
+            var t = (type == 0) ? "success" : (type == 1) ? "info" : "danger";
+            var i = (type == 0) ? "Success!" : (type == 1) ? "<i class = 'fa fa-exclamation-circle'></i>" : "<i class = 'fa fa-check-warning'></i>";
+
+            $(".alerts").html("");
+
+            $(".alerts").html(
+                "<div class='alert alert-"+ t +"' style = 'display:"+ d+";'>\
+                    <button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>\
+                    <strong>"+i+"</strong> "+ text +" \
+                </div>"
+            );           
+        }
+    </script>
+  
 </div>
+

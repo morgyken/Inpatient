@@ -238,7 +238,7 @@ class InpatientApiController extends Controller
 
 	        	if($v->id > 0 ){
                 	\DB::commit();
-                	return Response::json(['type' => 'success', 'message' => 'Recorded patient\'s vitals successfully']);
+                	return Response::json(['type' => 'success', 'message' => 'Recorded patient\'s vitals successfully', 'data' => $v->toArray()]);
             	}else{
             		\DB::rollback();
             		return Response::json(['type' => 'error', 'message' => 'An error occured during saving']);
@@ -321,7 +321,7 @@ class InpatientApiController extends Controller
 					"price"					=> $item->price,
 					"discount"				=> $item->discount,
 					"amount"				=> $item->amount,
-					"user"					=> $item->user->profile->fullName,
+					"user"					=> $item->doctors->profile->fullName,
 					"instructions"			=> $item->instructions,
 					"ordered"				=> $item->ordered,
 					"invoiced"				=> $item->invoiced,
@@ -352,9 +352,9 @@ class InpatientApiController extends Controller
 		}
 	}
 
-	public function getAllPrescriptions($admission_id){
+	public function getAllPrescriptions($admission_id, $type){
 		try {
-			$data = Prescription::where("admission_id", $admission_id)->orderBy("updated_at", "DESC")->get()->map(function($item){
+			$data = Prescription::where("admission_id", $admission_id)->where("type", $type)->orderBy("updated_at", "DESC")->get()->map(function($item){
 			return 
 			[
 				"id" 					=> $item->id,
@@ -370,7 +370,8 @@ class InpatientApiController extends Controller
 				"fr_du"					=> $item->take ."/".$item->duration,
 				"allow_sub"				=> $item->sub,
 				"by"					=> $item->user->profile->fullName,
-				"date"					=> $this->carbon->parse($item->updated_at)->format('H:i A d/m/Y ')
+				"status"				=> $item->status,
+				"prescribed_on"			=> $this->carbon->parse($item->updated_at)->format('H:i A d/m/Y ')
 
 			];
 
@@ -465,17 +466,14 @@ class InpatientApiController extends Controller
 	}
 
 	public function addNote(Request $request){
+		\DB::beginTransaction();
 		try{
 			$request = $request->json()->all();
-			$n = new Notes;
-			$n->visit_id = $request['visit_id'];
-			$n->admission_id = $request['admission_id'];
-			$n->notes = $request['notes'];
-			$n->type = $request['type'];
-			$n->user = $request['user'];
-			$n->save();
+			$n = Notes::create($request);
+			\DB::commit();
 			return ($n->id > 0) ? Response::json(['type' => 'success', 'message' => 'Notes saved!', 'data' => $this->getNoteData($n->id, $n->type)]) : Response::json(['type' => 'error', 'message' => 'Your note could not be saved']);
 		}catch(\Exception $e){
+			\DB::rollback();
 			return Response::json(['type' => 'error', 'message' => 'Your note could not be saved. '. $e->getMessage()]);
 		}
 	}
@@ -512,10 +510,10 @@ class InpatientApiController extends Controller
 		}
 	}
 
-	public function deleteNote(Request $request, $id){
+	public function deleteNote(Request $request){
 		try{
 			$request = $request->json()->all();
-			$n = Notes::find($id);
+			$n = Notes::find($request['id']);
 			$n->delete();
 			return ($n) ? Response::json(['type' => 'success', 'message' => 'Note deleted!']) : Response::json(['type' => 'error', 'message' => 'Your note could not be deleted']);
 		}catch(\Exception $e){

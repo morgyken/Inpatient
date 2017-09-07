@@ -14,7 +14,7 @@ class CreateInpatientVitalsTable extends Migration
     public function up() {
         Schema::create('inpatient_vitals', function(Blueprint $column) {
             $column->increments('id');
-            $column->unsignedInteger('visit_id')->nullable();
+            $column->unsignedInteger('visit_id');
             $column->unsignedInteger('admission_id');
             $column->double('weight', 10, 2)->nullable();
             $column->double('height', 10, 2)->nullable();
@@ -36,7 +36,9 @@ class CreateInpatientVitalsTable extends Migration
             $column->time('time_recorded');
             $column->timestamps();
 
-            $column->foreign('user_id')->references('id')->on('users')
+            $column->foreign('user_id')
+                    ->references('id')
+                    ->on('users')
                     ->onUpdate('cascade')
                     ->onDelete('cascade');
             $column->foreign('visit_id')

@@ -15,6 +15,7 @@ class CreateBloodTransfusionsTable extends Migration
         Schema::create('inpatient_blood_transfusion', function(Blueprint $column) {
             $column->increments('id');
             $column->unsignedInteger('admission_id');
+            $column->unsignedInteger('visit_id');
             $column->unsignedInteger('user_id');
             $column->integer('bp_systolic')->nullable();
             $column->integer('bp_diastolic')->nullable();
@@ -24,8 +25,10 @@ class CreateBloodTransfusionsTable extends Migration
             $column->longText('remarks')->nullable();
             $column->timestamps();
 
-           
-            $column->foreign('admission_id')->references('id')->on('admissions')
+             $column->foreign('admission_id')->references('id')->on('admissions')
+                    ->onUpdate('cascade')
+                    ->onDelete('cascade');
+            $column->foreign('visit_id')->references('id')->on('evaluation_visits')
                     ->onUpdate('cascade')
                     ->onDelete('cascade');
             $column->foreign('user_id')->references('id')->on('users')

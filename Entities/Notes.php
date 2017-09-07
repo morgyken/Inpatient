@@ -34,6 +34,7 @@ use Ignite\Users\Entities\User;
 class Notes extends Model
 {
     public $table = 'inpatient_notes';
+    protected $fillable = ['admission_id', 'visit_id', 'notes', 'type', 'user'];
     protected $guarded = [];
 
     public function admission(){

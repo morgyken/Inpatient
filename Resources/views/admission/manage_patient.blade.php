@@ -45,9 +45,9 @@
                 @include("Inpatient::admission.manage.vitals")
                 @include("Inpatient::admission.manage.investigations")                
                 @include("Inpatient::admission.manage.procedures")
-                @include("Inpatient::admission.manage.discharge")
-                @include("Inpatient::admission.manage.summary")
-                @include("Inpatient::admission.manage.history")
+                {{-- @include("Inpatient::admission.manage.discharge") --}}
+                {{-- @include("Inpatient::admission.manage.summary") --}}
+                {{-- @include("Inpatient::admission.manage.history") --}}
             </div>
 
         </div>

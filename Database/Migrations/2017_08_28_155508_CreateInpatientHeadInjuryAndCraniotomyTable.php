@@ -15,6 +15,7 @@ class CreateInpatientHeadInjuryAndCraniotomyTable extends Migration
         Schema::create('inpatient_headinjury_and_craniotomy', function(Blueprint $column) {
             $column->increments('id');
             $column->unsignedInteger('admission_id');
+            $column->unsignedInteger('visit_id');
             $column->unsignedInteger('user_id');
             $column->string('bp_systolic')->nullable();
             $column->string('bp_diastolic')->nullable();
@@ -27,6 +28,9 @@ class CreateInpatientHeadInjuryAndCraniotomyTable extends Migration
 
            
             $column->foreign('admission_id')->references('id')->on('admissions')
+                    ->onUpdate('cascade')
+                    ->onDelete('cascade');
+            $column->foreign('visit_id')->references('id')->on('evaluation_visits')
                     ->onUpdate('cascade')
                     ->onDelete('cascade');
             $column->foreign('user_id')->references('id')->on('users')
