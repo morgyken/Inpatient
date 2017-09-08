@@ -1,28 +1,22 @@
-<div id="vitals" class="tab-pane fade col-lg-12">
+<div role="tabpanel" id="vitals" class="tab-pane fade col-lg-12">
 
     <!--If not recorded add to db else display and enable edit -->
-    @if(!count($vitals))
        
-        <div class="col-xs-12 col-sm-12 col-md-6">
+        <div class="col-xs-12 col-sm-12 col-md-12">
              <h2>Record Patient's Vitals</h2>
-            <form  method="post" action="{{ url('/manage/vitals') }}" id = "vitals_form">
+            <form>
 
                 {{ csrf_field() }}
 
                 <input type="hidden" name="visit" value="{{ $admission->visit_id }}" required>
 
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding:0 !important;">
-                    <label for="" class="control-label">Nurse's Notes</label>
-                    <textarea name="nurses_notes" id="nurses_notes" class="form-control" rows="3" placeholder="Nurses Notes"></textarea>
-                </div>
-
                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding:0 !important;">
                     <br>
                     <label for="" class="control-label">Weight:(Kgs)</label>
-                    <input type="number" class="form-control" name="weight" id ="weight" required>
+                    <input type="number" class="form-control" name="weight" id ="weight" value = "{{ (isset($admission->vitals->weight)) ? $admission->vitals->weight : "" }}" required>
 
                     <label for="" class="control-label">Height:(Metres)</label>
-                    <input type="text" class="form-control" name="height" id ="height" required>
+                    <input type="text" class="form-control" name="height" id ="height" value = "{{ (isset($admission->vitals->height)) ? $admission->vitals->height : "" }}" required>
 
                     <label for="" class="control-label">BP Systolic:[mm/hg]</label>
                     <input type="number" class="form-control" name="bp_systolic">
@@ -89,12 +83,7 @@
                 </div>
             </form>
         </div>
-        
-        <div class="col-xs-12 col-sm-12 col-md-6">
-            {{--@include('inpatient::admission.graphs.input');--}}
-        </div>
        
-    @else
         <div class="col-xs-12 col-sm-12 col-lg-12">
             <h3>Previous Vitals</h3>
             @if(count($vitals) > 0)
@@ -169,5 +158,4 @@
            @endif
         </div>
 
-    @endif
 </div>

@@ -1,4 +1,4 @@
-<div id="procedures" class="tab-pane fade">
+<div role="tabpanel" id="procedures" class="tab-pane fade">
     <h3 class="text-center">Request Procedures</h3>
 	   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 	            

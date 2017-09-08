@@ -32,7 +32,7 @@ Route::group(['prefix' => 'v1'], function () {
 
     Route::group(['prefix' => 'investigations'], function () {
         // Get all investigations
-        Route::get('/admission/{admission_id}', 'InpatientApiController@getAllInvestigations');
+        Route::get('/visit/{visit_id}', 'InpatientApiController@getAllInvestigations');
 
         // Get list of procedures
         Route::get('/procedures', 'InpatientApiController@getAllProcedures');
@@ -58,6 +58,9 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('', 'InpatientApiController@addPrescription');
 
         // Update Prescription
+        Route::post('/cancel', 'InpatientApiController@deletePrescription');
+
+        // Update Prescription
         Route::post('/update', 'InpatientApiController@updatePrescription');
 
         Route::post('/delete', 'InpatientApiController@deletePrescription');
@@ -80,9 +83,9 @@ Route::group(['prefix' => 'v1'], function () {
 
     Route::group(['prefix' => 'procedures'], function () {
 
-        Route::get('/all', 'InpatientApiController@getProcedures');
+        Route::get('/all', 'InpatientApiController@getAllProcedures');
 
-        // Route::get('/all', 'InpatientApiController@getProcedures');
+        Route::get('/admission/{admission_id}/visit/{visit_id}', 'InpatientApiController@getProcedures');
 
         // Get all Performed Procedures
         Route::get('/performed/admission/{admission_id}', 'InpatientApiController@getAllPerformedProcedures');

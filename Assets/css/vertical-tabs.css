@@ -31,3 +31,8 @@
     border-top-color: #EEEEEE;
 }
 
+input[type="checkbox"]{
+    width: 50px !important;
+    
+}
+

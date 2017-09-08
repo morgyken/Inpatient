@@ -29,15 +29,16 @@
         <div class="box-body">
 
             <ul class="nav nav-tabs inpatient-tabs">
-                <li class="active"><a data-toggle="tab" href="#doctor">Doctor's Notes</a></li>
-                <li><a data-toggle="tab" href="#prescription">Prescriptions</a></li>
-                <li><a data-toggle="tab" href="#vitals">Patient Vitals</a></li>
-                <li><a data-toggle="tab" href="#investigation">Investigations</a></li>
-                <li><a data-toggle="tab" href="#bp">Blood Pressure</a></li>
-                <li><a data-toggle="tab" href="#procedures">Procedures</a></li>
-                <li><a data-toggle="tab" href="#discharge">Discharge</a></li>
-                <li><a data-toggle="tab" href="#summary">Summary</a></li>
-                <li><a data-toggle="tab" href="#history">History</a></li>
+                <li role="presentation"class="active"><a data-toggle="tab" aria-controls="tab" href="#doctor">Doctor's Notes</a></li>
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#prescription">Prescriptions</a></li>
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#vitals">Patient Vitals</a></li>
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#bp">Blood Pressure</a></li>
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#investigation">Investigations</a></li>
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#procedures">Procedures</a></li>
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#nurse">Nurse's Notes</a></li>
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#discharge">Discharge</a></li>
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#summary">Summary</a></li>
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#history">History</a></li>
             </ul>
 
             <div class="tab-content">
@@ -47,9 +48,10 @@
                 @include("Inpatient::admission.manage.bp")
                 @include("Inpatient::admission.manage.investigations")
                 @include("Inpatient::admission.manage.procedures")
-                {{-- @include("Inpatient::admission.manage.discharge") --}}
-                {{-- @include("Inpatient::admission.manage.summary") --}}
-                {{-- @include("Inpatient::admission.manage.history") --}}
+               {{--  @include("Inpatient::admission.manage.nurse")
+                @include("Inpatient::admission.manage.discharge")
+                @include("Inpatient::admission.manage.summary")
+                @include("Inpatient::admission.manage.history") --}}
             </div>
 
         </div>

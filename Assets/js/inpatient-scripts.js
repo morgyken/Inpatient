@@ -73,43 +73,6 @@ $(document).ready(function () {
         });
     }
 
-    // getInvestigations();
-
-    // function getInvestigations(){
-    //      $.ajax({
-    //         type: "GET",
-    //         url: "{{ url('/api/inpatient/v1/investigations') }}",
-    //         dataType: 'json',
-    //         success: function (resp) {
-    //             // alertify.success('<i class="fa fa-check-circle"></i> Patient evaluation updated');
-    //             // refresh table
-    //             $("#investigations-table-body tr").remove();
-    //             console.log(resp);
-    //             // Loop through and append rows
-    //             // $("#investigations-table-body").append("");
-    //         },
-    //         error: function () {
-    //             console.log(JSON.parse(resp));
-    //             // alertify.error('<i class="fa fa-check-warning"></i> Could not save evalaution');
-    //         }
-    //     });
-    // }
-
-    // $('#save_investigations').click(function(e){
-    //     e.preventDefault();
-    //      $.ajax({type: "POST",
-    //         url:PROCEDURE_URL,
-    //         data: $('#investigations_form').serialize(),
-    //         success: function () {
-    //             // alertify.success('<i class="fa fa-check-circle"></i>Investigations ordered');
-    //             // add table rows
-    //             getInvestigations();
-    //         },
-    //         error: function () {
-    //             console.log(resp);
-    //             // alertify.error('<i class="fa fa-check-warning"></i> Could not order investigations');
-    //         }
-    //     });
-    // });
+    
 
 });

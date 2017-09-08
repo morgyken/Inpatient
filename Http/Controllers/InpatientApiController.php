@@ -33,6 +33,7 @@ use Ignite\Inpatient\Entities\FluidBalance;
 use Ignite\Evaluation\Entities\FinancePatientAccounts;
 use Ignite\Evaluation\Entities\Investigations;
 use Ignite\Evaluation\Entities\Procedures;
+use Ignite\Evaluation\Entities\VisitDestinations;
 
 use Ignite\Reception\Entities\Patients;
 
@@ -278,7 +279,7 @@ class InpatientApiController extends Controller
         }
     }
 
-    public function getProcedures()
+    public function getAllProcedures()
     {
         try {
             $data = Procedures::whereCategory(6)->get()->toArray();
@@ -319,9 +320,9 @@ class InpatientApiController extends Controller
         return json_encode(['results' => $build]);
     }
 
-	public function getAllInvestigations($admission_id){
+	public function getAllInvestigations($visit_id){
 		try{
-			$data = Investigations::where("admission", $admission_id)->where("type", 1)->get()->map(function($item){
+			$data = Investigations::where("visit", $visit_id)->get()->map(function($item){
 				return 
 				[
 					"id" 					=> $item->id,
@@ -342,34 +343,20 @@ class InpatientApiController extends Controller
 			})->toArray();
 			return json_encode(['type' => 'success', 'data' => $data]);
 		}catch(\Exception $e){
-			return json_encode(['type' => 'error', 'message' => 'An error occured. No investigations found']);
-		}
-	}
-
-	public function getAllProcedures(){
-		try{
-			$data = Procedures::all()->map(function($item){
-				return 
-				[
-					"id" 					=> $item->id,
-					"name"					=> $item->name,
-					"price"					=> $item->price
-				];
-
-			})->toArray();
-			return json_encode(['type' => 'success', 'data' => $data]);
-		}catch(\Exception $e){
-			return json_encode(['type' => 'error', 'message' => 'An error occured. No investigations found']);
+			return json_encode(['type' => 'error', 'message' => 'An error occured. No investigations found. '. $e->getMessage()]);
 		}
 	}
 
 	public function getAllPrescriptions($admission_id, $type){
 		try {
-			$data = Prescription::where("admission_id", $admission_id)->where("type", $type)->orderBy("updated_at", "DESC")->get()->map(function($item){
+			$data = Prescription::where("admission_id", $admission_id)->where("type", $type)->whereHas('dispensing', function ($query) {
+                        $query->whereHas('visits', function ($q) {
+                            $q->whereId(\Session::get('v'));
+                        });
+                    })->orderBy("updated_at", "DESC")->get()->map(function($item){
 			return 
 			[
 				"id" 					=> $item->id,
-				"patient_id"			=> $item->visits->patients->id,
 				"visit_id"				=> $item->visit,
 				"dose"					=> $item->dose,
 				"drug"					=> $item->drug,
@@ -380,7 +367,7 @@ class InpatientApiController extends Controller
 				"time_measure"			=> $item->time_measure,
 				"fr_du"					=> $item->take ."/".$item->duration,
 				"allow_sub"				=> $item->sub,
-				"by"					=> $item->user->profile->fullName,
+				"by"					=> $item->users->profile->fullName,
 				"status"				=> $item->status,
 				"prescribed_on"			=> $this->carbon->parse($item->updated_at)->format('H:i A d/m/Y ')
 
@@ -393,9 +380,38 @@ class InpatientApiController extends Controller
 		}
 	}
 
+	public function cancelPrescription(Request $request){
+		\DB::beginTransaction();
+		try{
+			$request = $request->json()->all();
+			$p = Prescription::find("id", $request['id']);
+			$p->status = 1;
+			if($p) {
+				\DB::commit();
+				return Response::json(['type' => 'success', 'message' => 'Prescription canceled']);
+			}else{
+				\DB::rollback();
+				return Response::json(['type' => 'error', 'message' => 'Could not cancel prescription']);
+			}
+		}catch(\Exception $e){
+			return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be canceled. '. $e->getMessage()]);
+		}
+	}
+
 	// public function getAllDiagnosis($admission_id, $id, $visit_id){
 	// 	//
 	// }
+
+	public function getProcedures($admission_id, $visit_id){
+		\DB::beginTransaction();
+		try{
+			// $data = 
+
+		}catch(\Exception $e){
+			return Response::json(['type' => 'error', 'message' => 'An error occured. The procedures could not be retrieved. '. $e->getMessage()]);
+		}
+
+	}
 
 	public function getAllPerfomedProcedures($admission_id){
 
@@ -563,7 +579,6 @@ class InpatientApiController extends Controller
 			$h->conscious_status	= $request['conscious_status'];
 			$h->pupil_status		= $request['pupil_status'];
 			$h->user				= $request['user'];
-			$h->save();
 			$n->save();
 			return ($n->id > 0) ? Response::json(['type' => 'success', 'message' => 'Head Injury & Craniotomy data updated!']) : Response::json(['type' => 'error', 'message' => 'The Head Injury & Craniotomy data could not be updated']);
 		}catch(\Exception $e){
@@ -585,6 +600,7 @@ class InpatientApiController extends Controller
 	public function addInvestigations(Request $request){
 		try{
 			$request = $request->json()->all();
+
 			return $request;
 
 		}catch(\Exception $e){
@@ -649,28 +665,46 @@ class InpatientApiController extends Controller
 			$request = $request->json()->all();
 			$p = new Prescription;
 			$p->admission_id 		= $request['admission_id']; 
-			$p->visit 				= $request['visit_id'];
+			$p->visit 				= $request['visit'];
 			$p->drug 				= $request['drug']; 
 			$p->take 				= $request['take'];
 			$p->whereto 			= $request['whereto']; 
 			$p->method 				= $request['method']; 
 			$p->duration 			= $request['duration'];
 			$p->allow_substitution 	= $request['allow_substitution'];
-			$p->time_measure 		= ($request['time_measure'] == null) ? 0 : $request['time_measure'];
+			$p->time_measure 		= $request['time_measure'];
 			$p->user 				= $request['user'];
+			$p->type 				= $request['type'];
 			$p->save();
-			\DB::commit(); 
 
-			if($p->id > 0) { 	
+			// Add to Prescription Queue
+
+			$this->checkInAt($request['visit'], 'pharmacy');
+
+			if($p) {
+				\DB::commit(); 
 				return Response::json(['type' => 'success', 'message' => 'The prescription has been added.']);
 			}else{
 				\DB::rollback();
-				return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be added.']);
+				return Response::json(['type' => 'error', 'message' => 'An error occured while saving. Please try again!']);
 			}
 		} catch (\Exception $e) {
 			return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be added. '. $e->getMessage()]);
 		}
 	}
+
+	 private function checkInAt($visit_id, $place) {
+        $department = $place;
+        $destination = NULL;
+        if (intval($place) > 0) {
+            $destination = (int) $department;
+            $department = 'doctor';
+        }
+        $destinations = VisitDestinations::firstOrNew(['visit' => $visit_id, 'department' => ucwords($department)]);
+        $destinations->destination = $destination;
+        $destinations->user = \Auth::user()->id;
+        $destinations->save();
+    }
 
 	public function updatePrescription(Request $request, $id){
 		\DB::beginTransaction();
@@ -679,8 +713,8 @@ class InpatientApiController extends Controller
 			$p = Prescription::find($id);
 			$p->admission_id 		= $request['admission_id']; 
 			$p->drug 				= $request['drug']; 
-			$p->whereto 			= 1; 
-			$p->method 				= 1; 
+			$p->whereto 			= $request['whereto']; 
+			$p->method 				= $request['method']; 
 			$p->duration 			= $request['duration'];
 			$p->allow_substitution 	= $request['allow_substitution'];
 			$p->time_measure 		= $request['time_measure'];
@@ -706,13 +740,13 @@ class InpatientApiController extends Controller
 			$p->delete();
 			if($p) {
 				\DB::commit();
-				return Response::json(['type' => 'success', 'message' => 'Prescription deleted successfully']);
+				return Response::json(['type' => 'success', 'message' => 'Prescription canceled successfully']);
 			}else{
 				\DB::rollback();
-				return Response::json(['type' => 'error', 'message' => 'Could not delete prescription']);
+				return Response::json(['type' => 'error', 'message' => 'Could not cancel prescription']);
 			}
 		}catch(\Exception $e){
-			return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be deleted. '. $e->getMessage()]);
+			return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be canceled. '. $e->getMessage()]);
 		}
 	}
 

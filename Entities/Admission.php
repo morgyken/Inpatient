@@ -4,6 +4,7 @@ namespace Ignite\Inpatient\Entities;
 
 use Ignite\Users\Entities\User;
 use Ignite\Reception\Entities\Patients;
+use Ignite\Inpatient\Entities\Vitals;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -80,5 +81,9 @@ class Admission extends Model
     public function visit()
     {
         return $this->belongsTo(Visit::class, "visit_id", "id");
+    }
+
+    public function vitals(){
+         return $this->hasMany(Vitals::class);
     }
 }

@@ -1,4 +1,4 @@
-<div id="bp" class="tab-pane fade col-lg-12">
+<div role="tabpanel" id="bp" class="tab-pane fade col-lg-12">
     <center>
         <div class="row">
             <br/>
