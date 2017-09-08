@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property int $admission_id
- * @property int $visit_id
+ * @property int|null $visit_id
  * @property int $ward_id
  * @property string|null $admitted_at
  * @property string|null $discharged_at

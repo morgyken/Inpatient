@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $patient_id
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ * @property-read mixed $date
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Temperature whereAdmissionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Temperature whereBowels($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Temperature whereCreatedAt($value)
@@ -36,6 +37,6 @@ class Temperature extends Model
 
     public function getDateAttribute()
     {
-        return $this->created_at->toDateString();
+        return $this->created_at->format('d.m.Y H:i');
     }
 }
