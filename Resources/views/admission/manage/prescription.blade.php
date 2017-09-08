@@ -63,7 +63,7 @@
 
 	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 		<h3>ONCE ONLY PRESCRIPTIONS, STAT DOSES, PRE-MED Etc.</h3>
-		 <table class="table table-hover datatable" id = "single-prescriptions-table" style="display:none !important;">
+		 <table class="table table-stripped" id = "single-prescriptions-table">
 	    	<thead>
 	    		<tr>
 	    			<th>Drug</th>
@@ -78,7 +78,7 @@
 
 	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 		<h3>REGULAR PRESCRIPTIONS</h3>	
-	    <table class="table table-hover datatable" id = "regular-prescriptions-table" style="display:none !important;">
+	    <table class="table table-stripped" id = "regular-prescriptions-table">
 	    	<thead>
 	    		<tr>
 	    			<th>Drug</th>
@@ -88,7 +88,18 @@
 	    			<th>Options</th>
 	    		</tr>
 	    	</thead>
-	    	<tbody></tbody>
+	    	<tbody>
+	    		@foreach($prescriptions as $p)
+	    			<tr id = "{{ $p->id }}">
+	    				<td>{{ $p->drug->name }}</td>
+	    				<td>{{ $p->dose }}</td>
+	    				<td>{{ $p->users->profile->fullName }}</td>
+	    				<td>{{ }}</td>
+	    				<td>{{ }}</td>
+	    				<td>{{ }}</td>
+	    			</tr>
+	    		@endforeach
+	    	</tbody>
 	    </table>
     </div>
 
@@ -167,29 +178,22 @@
 	<script type="text/javascript">
 
 		$(document).ready(function(){
-			// $(function () {
-		 //        $(".datatable").dataTable();
-		 //    });
+			/*$(function () {
+		        $(".datatable").dataTable();
+		    });*/
 			
 			getTime();
+
 			setInterval( getTime , 1000);
 
 			var timeSet = false;
+
 		    function getTime(){ 
 		    	var d = new Date();
 		    	// d.setUTCHours(d.getHours(), d.getMinutes(), d.getSeconds(), 0);
 				let timeNow = d.getHours() + ':' + d.getMinutes();
 				if(timeSet == false) { $("#time").val(timeNow); }
 				timeSet = true;
-			}
-
-			$('.administer').on('click', function(){
-				
-			});
-
-			function showModal(id){
-				$("#modal-id").show();
-				$("#prescription_id").val(id);
 			}
 			
 			// Get once only prescriptions 
@@ -241,7 +245,7 @@
 										    			<td>" + item.prescribed_on + "</td>\
 										    			<td>\
 										    				<div class='btn-group'>\
-										    					<a class='btn btn-primary administer' onclick = 'showModal("+item.id+");' id = '"+ item.id+"'><i class = 'fa fa-plus'></i> Administer</a>\
+										    					<button class='btn btn-primary administer' id = '"+ item.id+"'><i class = 'fa fa-plus'></i> Administer</button>\
 										    					<button type='button' class='btn btn-success view-logs' data-toggle='modal' href='#modal-view' id = '"+ item.id+"'><i class = 'fa fa-eye'></i> View</button>\
 										    					<button type='button' class='btn btn-danger cancel-reg-prescription' id = '"+ item.id+"'><i class = 'fa fa-times' ></i> Cancel</button>\
 										    				</div>\
@@ -272,6 +276,12 @@
 		                }
 		            });
 		        }
+
+		        $('.administer').click(function(){
+					console.log("CLICKED!!");
+					$("#modal-id").modal();
+					$(this).attr('id');
+				});
 
 		        $('#savePrescription').click(function(e){
 		            e.preventDefault();
@@ -308,9 +318,9 @@
 		            });
 		        });
 
-		        $('.cancel-o-prescription').click(function(){
+		        $('.cancel-o-prescription').click(function(e){
 		        	console.log("cancel clicked once only");
-		        	// e.preventDefault();
+		        	e.preventDefault();
 		        	alert($(this).attr('id'));
 		        	$.ajax({
 		                type: "POST",
@@ -332,9 +342,9 @@
 
 		        });
 
-		         $('.cancel-reg-prescription').click(function(){
+		         $('.cancel-reg-prescription').click(function(e){
 		        	console.log("cancel clicked regular");
-		        	// e.preventDefault();
+		        	e.preventDefault();
 		        	alert($(this).attr('id'));
 		        	$.ajax({
 		                type: "POST",

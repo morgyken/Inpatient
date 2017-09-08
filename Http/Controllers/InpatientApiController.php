@@ -20,6 +20,7 @@ use Ignite\Inpatient\Entities\DischargeNote;
 use Ignite\Inpatient\Entities\PatientAccount;
 use Ignite\Inpatient\Entities\Prescription;
 use Ignite\Inpatient\Entities\NursingCharge;
+use Ignite\Inpatient\Entities\NursingCarePlan;
 use Ignite\Inpatient\Entities\RequestAdmission;
 use Ignite\Inpatient\Entities\Visit;
 use Ignite\Inpatient\Entities\Ward;
@@ -684,7 +685,7 @@ class InpatientApiController extends Controller
 
 			if($p) {
 				\DB::commit(); 
-				return Response::json(['type' => 'success', 'message' => 'The prescription has been added.']);
+				return Response::json(['type' => 'success', 'message' => 'The prescription has been added. The Pharmacy has been notified to dispense it for it to be administered']);
 			}else{
 				\DB::rollback();
 				return Response::json(['type' => 'error', 'message' => 'An error occured while saving. Please try again!']);
@@ -807,7 +808,7 @@ class InpatientApiController extends Controller
     {
         try {
             $request = $request->json()->all();
-            // $data = ::where("admission_id", $id)->get()->map(function($item){
+            // $data = NursingCarePlan::where("admission_id", $id)->get()->map(function($item){
             // 	return
             // })->toArray();
 
@@ -821,7 +822,7 @@ class InpatientApiController extends Controller
     {
         try {
             $request = $request->json()->all();
-            // $n = ::find($request['id']);
+            // $n = NursingCarePlan::find($request['id']);
 
             // return ($n) ? Response::json(['type' => 'success', 'message' => 'The drug administration log has been saved!']) : Response::json(['type' => 'error', 'message' => 'The drug administration log could not be saved']);
         } catch (\Exception $e) {
@@ -833,7 +834,7 @@ class InpatientApiController extends Controller
     {
         try {
             $request = $request->json()->all();
-            // $n = ::find($request['id']);
+            // $n = NursingCarePlan::find($request['id']);
             // return ($n) ? Response::json(['type' => 'success', 'message' => 'The nursing care plan has been updated!']) : Response::json(['type' => 'error', 'message' => 'The nursing care plan could not be updated']);
         } catch (\Exception $e) {
             return Response::json(['type' => 'error', 'message' => 'An error occured. The nursing care plan could not be updated. ' . $e->getMessage()]);
@@ -844,7 +845,7 @@ class InpatientApiController extends Controller
     {
         try {
             $request = $request->json()->all();
-            // $n = ::find($request['id']);
+            // $n = NursingCarePlan::find($request['id']);
             // $n->delete();
             // return ($n) ? Response::json(['type' => 'success', 'message' => 'The nursing care plan has been deleted!']) : Response::json(['type' => 'error', 'message' => 'The nursing care plan could not be deleted']);
         } catch (\Exception $e) {

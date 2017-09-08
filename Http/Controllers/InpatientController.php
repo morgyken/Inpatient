@@ -420,9 +420,20 @@ class InpatientController extends AdminBaseController
         if (count(Visit::where('patient', $id)->get()) > 0) {
             $visit_id = Visit::where('patient', $id)->orderBy('created_at', 'desc')->first()->id;
             $vitals = Vitals::where('visit_id', $visit_id)->get();
-            $prescriptions = Prescriptions::where('visit', $visit_id)->get();
+            $once_only_prescriptions = Prescriptions::where('visit', $visit_id)->where("type", 0)->whereHas('dispensing', function ($query) {
+                        $query->whereHas('visits', function ($q) {
+                            $q->whereId(\Session::get('v'));
+                        });
+                    })->orderBy("updated_at", "DESC")->get();
+            $regular_prescriptions = Prescriptions::where('visit', $visit_id)->where("type", 1)->whereHas('dispensing', function ($query) {
+                        $query->whereHas('visits', function ($q) {
+                            $q->whereId(\Session::get('v'));
+                        });
+                    })->orderBy("updated_at", "DESC")->get();
+
             $doctor_note = Notes::where('visit_id', $visit_id)->first();
         }
+
         $bpChart = $this->getCharts($patient->id, $admission->id);
         $tempChart = $this->getTemperatureChart($patient->id, $admission->id);
 //        dd(get_defined_vars());
@@ -448,7 +459,7 @@ class InpatientController extends AdminBaseController
 
         });
 
-        return view('Inpatient::admission.manage_patient', compact('tempChart', 'investigations', 'bpChart', 'patient', 'ward', 'admission', 'vitals', 'doctor_note', 'prescriptions'));
+        return view('Inpatient::admission.manage_patient', compact('tempChart', 'investigations', 'bpChart', 'patient', 'ward', 'admission', 'vitals', 'doctor_note', 'once_only_prescriptions', 'regular_prescriptions'));
     }
 
     private function getTemperatureChart($patient, $admission)

@@ -45,9 +45,9 @@
     <script type="text/javascript">
 
         $(document).ready(function(){
-            $(function () {
-                $("table").dataTable();
-            })
+            // $(function () {
+            //     $("table").dataTable();
+            // })
 
             getNotes();
 
