@@ -3,6 +3,7 @@
 namespace Ignite\Inpatient\Http\Controllers;
 
 use Ignite\Inpatient\Entities\BloodPressure;
+use Ignite\Inpatient\Entities\Temperature;
 use Illuminate\Http\Request;
 // use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
@@ -750,11 +751,7 @@ class InpatientApiController extends Controller
 		}
 	}
 
-    public function postBp(Request $request)
-    {
-        $result = BloodPressure::create($request->all());
-        return response()->json($result);
-    }
+    
 
     public function administerPrescription(Request $request)
     {

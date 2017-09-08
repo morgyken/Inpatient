@@ -23,6 +23,7 @@ use Ignite\Inpatient\Entities\NursingCharge;
 use Ignite\Inpatient\Entities\PatientAccount;
 use Ignite\Inpatient\Entities\RequestAdmission;
 use Ignite\Inpatient\Entities\RequestDischarge;
+use Ignite\Inpatient\Entities\Temperature;
 use Ignite\Inpatient\Entities\Visit;
 use Ignite\Inpatient\Entities\Vitals;
 use Ignite\Inpatient\Entities\Ward;
@@ -76,7 +77,7 @@ class InpatientController extends AdminBaseController
         $this->__require_assets();
 
         $this->carbon = $carbon;
-        $this->carbon->tz =  new \DateTimeZone('Africa/Nairobi');
+        $this->carbon->tz = new \DateTimeZone('Africa/Nairobi');
         $this->request_admission = $request_admission;
         $this->roles = $roles;
         $this->user_roles = $user_roles;
@@ -86,13 +87,14 @@ class InpatientController extends AdminBaseController
         $this->evaluation = $evaluation;
     }
 
-     public function orderEvaluation($type) {
+    public function orderEvaluation($type)
+    {
         if ($this->evaluation->order_evaluation($type)) {
             flash()->success('Test ordered for ' . $type);
-            return Response::json(['type'=>'success', 'message' => 'Test ordered for ' . $type]);
+            return Response::json(['type' => 'success', 'message' => 'Test ordered for ' . $type]);
         } else {
             flash('Something wasn\'t right', 'danger');
-            return Response::json(['type'=>'error', 'message' => 'Could not order test for ' . $type]);
+            return Response::json(['type' => 'error', 'message' => 'Could not order test for ' . $type]);
         }
         return back();
     }
@@ -422,27 +424,54 @@ class InpatientController extends AdminBaseController
             $doctor_note = Notes::where('visit_id', $visit_id)->first();
         }
         $bpChart = $this->getCharts($patient->id, $admission->id);
+        $tempChart = $this->getTemperatureChart($patient->id, $admission->id);
+//        dd(get_defined_vars());
+//        return view('Inpatient::admission.manage_patient', compact('tempChart', 'bpChart', 'patient', 'ward', 'admission', 'vitals', 'doctor_note', 'prescriptions'));
 
-        $investigations = Investigations::where("visit", $visit_id)->where("type", "laboratory")->get()->map(function($item){
-                return 
+
+        $investigations = Investigations::where("visit", $visit_id)->where("type", "laboratory")->get()->map(function ($item) {
+            return
                 [
-                    "id"                    => $item->id,
-                    "type"                  => $item->type,
-                    "procedure"             => $item->procedures->name,
-                    "quantity"              => $item->quantity,
-                    "price"                 => $item->price,
-                    "discount"              => $item->discount,
-                    "amount"                => $item->amount,
-                    "user"                  => $item->doctors->profile->fullName,
-                    "instructions"          => $item->instructions,
-                    "ordered"               => $item->ordered,
-                    "invoiced"              => $item->invoiced,
-                    "requested_on"          => $this->carbon->parse($item->updated_at)->format('H:i A d/m/Y ')
+                    "id" => $item->id,
+                    "type" => $item->type,
+                    "procedure" => $item->procedures->name,
+                    "quantity" => $item->quantity,
+                    "price" => $item->price,
+                    "discount" => $item->discount,
+                    "amount" => $item->amount,
+                    "user" => $item->doctors->profile->fullName,
+                    "instructions" => $item->instructions,
+                    "ordered" => $item->ordered,
+                    "invoiced" => $item->invoiced,
+                    "requested_on" => $this->carbon->parse($item->updated_at)->format('H:i A d/m/Y ')
                 ];
 
-            });
+        });
 
-        return view('Inpatient::admission.manage_patient', compact('investigations', 'bpChart', 'patient', 'ward', 'admission', 'vitals', 'doctor_note', 'prescriptions'));
+        return view('Inpatient::admission.manage_patient', compact('tempChart', 'investigations', 'bpChart', 'patient', 'ward', 'admission', 'vitals', 'doctor_note', 'prescriptions'));
+    }
+
+    private function getTemperatureChart($patient, $admission)
+    {
+        $t = Temperature::wherePatientId($patient)->whereAdmissionId($admission)->get();
+        return \Charts::create('line', 'highcharts')
+            ->title('Temperature Chart')
+            ->elementLabel('Temperature')
+            ->labels($t->pluck('created_at'))
+            ->values($t->pluck('temperature'))
+            ->template('material')
+            ->width(0)
+            ->height(0);
+        /* return \Charts::realtime(
+             url('api/inpatient/v1/get/temperature'), 2000, 'line', 'highcharts')
+             ->values($t->pluck('value'))
+             ->labels($t->pluck('created_at'))
+             ->responsive(false)->elementLabel('Temperature')
+             ->height(300)
+             ->width(0)
+             ->title('Temperature')
+             ->valueName('temperature');*/
+
     }
 
     /**

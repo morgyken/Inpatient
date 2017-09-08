@@ -60,13 +60,17 @@
                         if(resp.type === "success"){
                             if(resp.data.length > 0){
                                 // refresh table
-                                $("#doctors-table > tbody tr").remove();
+                                $("#doctors-table > tbody tr").html("");
                                 // Loop through and append rows
                                 let data = resp.data;
+
                                 data.map( (item, index) => {
                                     return(
-                                        $("#doctors-table > tbody").append("<tr id = 'row_"+ item.id +"'></tr>");
-                                        $("#row_"+item.id).html("<td>" + item.written_on + "</td><td>" + item.notes + "</td><td>" + item.name + "</td><td><button type='button' class='btn btn-danger delete' id = '"+ item.id +"'><i class = 'fa fa-trash-o'></i> Delete</button></td>")
+                                        $("#doctors-table > tbody").append("<tr id = 'row_"+ item.id +"'>\
+                                            <td>" + item.written_on + "</td>\
+                                            <td>" + item.notes + "</td>\
+                                            <td>" + item.name + "</td>\
+                                            <td><button type='button' class='btn btn-danger delete' id = '"+ item.id +"'><i class = 'fa fa-trash-o'></i> Delete</button></td></tr>")
                                     );
                                 });
 
@@ -136,7 +140,7 @@
                             $("tr#row_"+id+"").remove();
                             alertify.success(resp.message);
                             $(this).html("<i class = 'fa fa-trash-o'></i> Delete");
-                            // getNotes();
+                            getNotes();
                         }else{
                              alertify.error(resp.message);
                         }

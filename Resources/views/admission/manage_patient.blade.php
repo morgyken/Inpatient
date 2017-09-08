@@ -33,6 +33,7 @@
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#prescription">Prescriptions</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#vitals">Patient Vitals</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#bp">Blood Pressure</a></li>
+                <li><a data-toggle="tab" href="#temperature">Temperature</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#investigation">Investigations</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#procedures">Procedures</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#nurse">Nurse's Notes</a></li>
@@ -45,7 +46,8 @@
                 @include("Inpatient::admission.manage.doctor")
                 @include("Inpatient::admission.manage.prescription")
                 @include("Inpatient::admission.manage.vitals")
-                @include("Inpatient::admission.manage.bp")
+                @include('inpatient::admission.graphs.bp')
+                @include('inpatient::admission.graphs.temperature')
                 @include("Inpatient::admission.manage.investigations")
                 @include("Inpatient::admission.manage.procedures")
                {{--  @include("Inpatient::admission.manage.nurse")
