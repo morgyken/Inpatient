@@ -1,116 +1,167 @@
+<?php
+$performed_diagnosis = get_inpatient_investigations($admission->id, ['diagnostics']);
+$performed_labs = get_inpatient_investigations($admission->id, ['laboratory']);
+$performed_radio = get_inpatient_investigations($admission->id, ['radiology']);
+?>
 <div role="tabpanel" id="investigation" class="tab-pane fade">
-
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <div>
-            @include('inpatient::admission.manage.partials.investigations')
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-8">
+                <div class="accordion">
+                    <h4>Diagnosis</h4>
+                    <div class="investigation_item">
+                        @include('inpatient::admission.manage.partials.investigations-diagnostics')
+                    </div>
+                    <h4>Laboratory</h4>
+                    <div class="investigation_item">
+                        @include('inpatient::admission.manage.partials.investigations-lab')
+                    </div>
+                    <h4>Radiology</h4>
+                    <div class="investigation_item">
+                        @include('inpatient::admission.manage.partials.radiology')
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-12" id="show_selection">
+                        <div class="box box-primary">
+                            <div class="box-header">
+                                <h4 class="box-title">Selected procedures</h4>
+                            </div>
+                            <div class="box-body">
+                                <div id="diagnosisTable">
+                                    <table id="diagnosisInfo" class=" table table-condensed">
+                                        <thead>
+                                        <tr>
+                                            <th>Test</th>
+                                            <th>Price</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                    <div class="pull-right">
+                                        <button class="btn btn-success" id="saveDiagnosis">
+                                            <i class="fa fa-save"></i> Save
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        {{-- {!! Form::open(['route'=> ['evaluation.order','laboratory']]) !!}
-      {!! Form::hidden('visit', $admission->visit_id) !!}
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-success">
+                <div class="box-header">
+                    <h4 class="box-title">Previously ordered tests</h4>
+                </div>
+                <div class="box-body">
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Procedure</th>
+                            <th>Type</th>
+                            <th>Price</th>
+                            <th>No. Performed</th>
+                            <th>Discount</th>
+                            <th>Amount</th>
+                            <th>Payment</th>
+                            <th>Result</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @if(!$performed_diagnosis->isEmpty())
+                            @foreach($performed_diagnosis as $item)
+                                <tr>
+                                    <td>{{str_limit($item->procedures->name,20,'...')}}</td>
+                                    <td>{{$item->type}}</td>
+                                    <td>{{$item->price}}</td>
+                                    <td>{{$item->quantity}}</td>
+                                    <td>{{$item->discount}}</td>
+                                    <td>{{$item->amount>0?$item->amount:$item->price}}</td>
+                                    <td>{!! payment_label($item->is_paid) !!}</td>
+                                    @if($item->has_result)
+                                        <td><a href="{{route('evaluation.view_result',$item->visit)}}"
+                                               class="btn btn-xs btn-success" target="_blank">
+                                                <i class="fa fa-external-link"></i> View Result
+                                            </a></td>
+                                    @else
+                                        <td><span class="text-warning"><i class="fa fa-warning"></i> Pending</span></td>
+                                    @endif
+                                </tr>
+                            @endforeach
+                        @endif
 
-          <div class="table-responsive">
-              @include('evaluation::partials.common.investigations.new')
-          </div>
-  {!! Form::close() !!} --}}
+                        @if(!$performed_labs->isEmpty())
+                            @foreach($performed_labs as $item)
+                                <tr>
+                                    <td>{{str_limit($item->procedures->name,20,'...')}}</td>
+                                    <td>{{$item->type}}</td>
+                                    <td>{{$item->price}}</td>
+                                    <td>{{$item->quantity}}</td>
+                                    <td>{{$item->discount}}</td>
+                                    <td>{{$item->amount>0?$item->amount:$item->price}}</td>
+                                    <td>{!! payment_label($item->is_paid) !!}</td>
+                                    <td>
+                                        <a href="{{route('evaluation.view_result',$item->visit)}}"
+                                           class="btn btn-xs btn-success" target="_blank">
+                                            <i class="fa fa-external-link"></i> View Result
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endif
+
+
+                        @if(!$performed_radio->isEmpty())
+                            @foreach($performed_radio as $item)
+                                <tr>
+                                    <td>{{str_limit($item->procedures->name,20,'...')}}</td>
+                                    <td>{{$item->type}}</td>
+                                    <td>{{$item->price}}</td>
+                                    <td>{{$item->quantity}}</td>
+                                    <td>{{$item->discount}}</td>
+                                    <td>{{$item->amount>0?$item->amount:$item->price}}</td>
+                                    <td>{!! payment_label($item->is_paid) !!}</td>
+                                    <td>
+                                        <a href="{{route('evaluation.view_result',$item->visit)}}"
+                                           class="btn btn-xs btn-success" target="_blank">
+                                            <i class="fa fa-external-link"></i> View Result
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @endif
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
     </div>
 
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <h3 class="text-center">Requested Investigations</h3>
-        <div class="table-responsive">
-            <table class="table table-stripped table-hover table-condensed" id="investigations-table">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Procedure</th>
-                    <th>Requested By</th>
-                    <th>Requested On</th>
-                    <th>Result</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-    </div>
-
-    <?php
-    $url = route('api.evaluation.get_procedures', ['laboratory', $admission->visit_id]);
-    ?>
-
-    <script>
-        var PROCEDURE_URL = "{{ $url }}";
-        var ORDERING = true;
-    </script>
-
-    <script src="{{ m_asset('inpatient:js/inpatient-scripts.js') }}"></script>
-    <script src="{{ m_asset('evaluation:js/order_investigation.js') }}"></script>
-
-    <script type="text/javascript">
-        $(document).ready(function () {
-            getInvestigations();
-
-            function getInvestigations() {
-                $.ajax({
-                    type: "GET",
-                    url: "{{ url('/api/inpatient/v1/investigations/visit/'. $admission->visit_id) }}",
-                    dataType: 'json',
-                    success: function (resp) {
-                        if (resp.type === "success") {
-                            if (resp.data.length > 0) {
-                                // refresh table
-                                $("#investigations-table > tbody tr").remove();
-                                // Loop through and append rows
-                                var data = resp.data;
-                                data.map((item, index) = > {
-                                    return($("#investigations-table > tbody").append(
-                                    "<tr id = 'row_" + item.id + "'>\
-                                            <td>" + item.id + "</td>\
-                                            <td>" + item.procedure + "</td>\
-                                            <td>" + item.user + "</td>\
-                                            <td>" + item.requested_on + "</td>\
-                                            <td></td>\
-                                            <td><button type='button' class='btn btn-danger delete-investigation' id = '" + item.id + "'><i class = 'fa fa-trash-o'></i> Delete</button></td>\
-                                        </tr>"
-                                )
-                            )
-                                ;
-                            })
-                                ;
-
-                                $("#investigations-table").css("display", "block");
-                                $("#investigations-table").show();
-
-                            } else {
-                                $("#investigations-table").css("display", "none");
-                                // alertify.error("No requested investigations found for this patient");
-                            }
-                        } else {
-                            $("#investigations-table").hide();
-                            alertify.error(resp.message);
-                        }
-                    },
-                    error: function (resp) {
-                        alertify.error(resp.message);
-                    }
-                });
-            }
-
-            $('#save_investigations').click(function (e) {
-                e.preventDefault();
-                $.ajax({
-                    type: "POST",
-                    url: "{{ url('/api/inpatient/v1/investigations') }}",
-                    data: $('#investigations_form').serialize(),
-                    success: function (resp) {
-                        alertify.success(resp);
-                        // add table rows
-                        getInvestigations();
-                    },
-                    error: function (resp) {
-                        console.log(resp);
-                        alertify.error('<i class="fa fa-check-warning"></i> Could not order investigations');
-                    }
-                });
-            });
-        });
-    </script>
 </div>
+<style>
+    .investigation_item {
+        height: 400px;
+        overflow-y: scroll;
+    }
+</style>
+<script>
+    var USER_ID = parseInt("{{ Auth::user()->id }}");
+    var VISIT_ID = parseInt("{{ $admission->id }}");
+    var DIAGNOSIS_URL = "{{route('api.evaluation.save_diagnosis')}}";
+    $(document).ready(function () {
+        $('.accordion').accordion({heightStyle: "content"});
+//        $('input').iCheck({
+//            checkboxClass: 'icheckbox_flat-green',
+//            radioClass: 'iradio_square-blue',
+//            increaseArea: '20%' // optional
+//        });
+    });
+</script>
