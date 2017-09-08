@@ -460,6 +460,7 @@ class InpatientController extends AdminBaseController
             ->labels($t->pluck('created_at'))
             ->values($t->pluck('temperature'))
             ->template('material')
+            ->container('temp_chart')
             ->width(0)
             ->height(0);
         /* return \Charts::realtime(
@@ -488,6 +489,7 @@ class InpatientController extends AdminBaseController
             ->labels($bp->pluck('created_at'))
             ->values($bp->pluck('value'))
             ->template('material')
+            ->container('bp_chart')
             ->width(0)
             ->height(0);
 
