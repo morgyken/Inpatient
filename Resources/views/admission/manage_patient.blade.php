@@ -1,3 +1,6 @@
+<?php
+$visit=\Ignite\Inpatient\Entities\Visit::findOrNew($admission->visit_id);
+?>
 @extends('layouts.app')
 @section('content_title','Admit Patient')
 @section('content_description','Action to admitting a patient')
@@ -34,8 +37,8 @@
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#vitals">Patient Vitals</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#bp">Blood Pressure</a></li>
                 <li><a data-toggle="tab" href="#temperature">Temperature</a></li>
-                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#investigation">Investigations</a></li>
-                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#procedures">Procedures</a></li>
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#investigationTab">Investigations</a></li>
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#proceduresTab">Procedures</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#nurse">Nurse's Notes</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#discharge">Discharge</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#summary">Summary</a></li>

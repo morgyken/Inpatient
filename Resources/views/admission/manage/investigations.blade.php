@@ -3,7 +3,7 @@ $performed_diagnosis = get_inpatient_investigations($admission->id, ['diagnostic
 $performed_labs = get_inpatient_investigations($admission->id, ['laboratory']);
 $performed_radio = get_inpatient_investigations($admission->id, ['radiology']);
 ?>
-<div role="tabpanel" id="investigation" class="tab-pane fade">
+<div role="tabpanel" id="investigationTab" class="tab-pane fade">
     <div class="row">
         <div class="col-md-12">
             <div class="col-md-8">
@@ -61,7 +61,7 @@ $performed_radio = get_inpatient_investigations($admission->id, ['radiology']);
                     <h4 class="box-title">Previously ordered tests</h4>
                 </div>
                 <div class="box-body">
-                    <table class="table table-condensed">
+                    <table id="in_table" class="table table-condensed">
                         <thead>
                         <tr>
                             <th>Procedure</th>
@@ -158,6 +158,7 @@ $performed_radio = get_inpatient_investigations($admission->id, ['radiology']);
     var DIAGNOSIS_URL = "{{route('api.evaluation.save_diagnosis')}}";
     $(document).ready(function () {
         $('.accordion').accordion({heightStyle: "content"});
+        $('#in_table').dataTable();
 //        $('input').iCheck({
 //            checkboxClass: 'icheckbox_flat-green',
 //            radioClass: 'iradio_square-blue',

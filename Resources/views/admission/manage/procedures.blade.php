@@ -1,39 +1,49 @@
-<div role="tabpanel" id="procedures" class="tab-pane fade">
-    <h3 class="text-center">Request Procedures</h3>
-	   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-	            
-	       
-	        
-	    </div>
+<?php
+$investigations = $visit->investigations->where('type', 'laboratory')->where('has_result', false);
+$results = $visit->investigations->where('type', 'laboratory')->where('has_result', true);
+?>
+<div role="tabpanel" id="proceduresTab" class="tab-pane fade">
+    <br/>
+    <br/>
+    <div class="form-horizontal">
+        <div class="col-md-12">
+            <div class="nav-tabs-custom">
+                <ul id="tabs" class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#ordered" data-toggle="tab">
+                            Ordered Labs<span class="badge alert-info">{{$investigations->count()}}</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#new" data-toggle="tab">
+                            Order labs <span class="badge alert-success">new</span></a>
+                    </li>
+                    <li>
+                        <a href="#results" data-toggle="tab" id="view_results">
+                            Lab Results <span class="badge alert-success">{{$results->count()}}</span>
+                        </a>
+                    </li>
 
-	    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-	    	<h3 class="text-center">Requested Procedures</h3>
-	        <div class="table-responsive">
-	        	<table class="table table-hover" style="width:80%;">
-	        		<thead>
-	        			<tr>
-	        				<th>#</th>
-	        				<th>Procedure</th>
-	        				<th>Result</th>
-	        				<th>Added By</th>
-	        				<th>Date & Time</th>
-	                        <th>Action</th>
-	        			</tr>
-	        		</thead>
-	        		<tbody>
-	        			<tr>
-	        				<td></td>
-	        				<td></td>
-	        				<td></td>
-	        				<td></td>
-	        				<td></td>
-	        			</tr>
-	        		</tbody>
-	        	</table>
-	        </div>
-	    </div>
-	   
-	</div>
-
-					
+                    @if($results->count()>0)
+                        <li>
+                            <a target="blank"
+                               href="{{route('evaluation.print.print_res', ['visit'=>$visit,'type'=>$category])}}">
+                                Print Results<span class="badge alert-success"></span></a>
+                        </li>
+                    @endif
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active " id="ordered">
+                        @include('evaluation::partials.common.investigations.ordered')
+                    </div>
+                    <div class="tab-pane" id="new">
+                        @include('evaluation::partials.labs.new')
+                    </div>
+                    <div class="tab-pane" id="results">
+                        @include('evaluation::partials.common.investigations.res')
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
