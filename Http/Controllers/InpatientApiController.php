@@ -381,6 +381,23 @@ class InpatientApiController extends Controller
 		}
 	}
 
+    public function postBp(Request $request)
+    {
+        $result = BloodPressure::create($request->all());
+        return response()->json($result);
+    }
+
+    public function postTemperature(Request $request)
+    {
+        $result = Temperature::create($request->all());
+        return response()->json($result);
+    }
+
+    public function getTemperature(Request $request)
+    {
+        $result = Temperature::all()->last();
+        return response()->json(['temperature' => random_int(0, 300)]);
+    }
 	public function cancelPrescription(Request $request){
 		\DB::beginTransaction();
 		try{
