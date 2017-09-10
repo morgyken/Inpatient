@@ -1,8 +1,8 @@
-<div role="tabpanel" id="nurse" class="tab-pane fade in active col-md-12">
+<div role="tabpanel" id="nurse" class="tab-pane fade col-md-12">
 
     <div class="container demo col-md-12">
         <br>
-        <form id="nurse_notes" action="{{ url('/inpatient/manage/notes') }}" method="POST">
+        <form id="nurse_notes">
 
             {{ csrf_field() }}
 
@@ -12,19 +12,17 @@
 
             <div class="form-group">
                  <label>Write your notes here:</label>
-                <textarea name="notes" id="notes" class="form-control" rows="10" placeholder="Nurses's Notes..." required autofocus></textarea>
+                <textarea name="notes" id="nurses-notes" class="form-control" rows="10" placeholder="Nurse's Notes..." required autofocus></textarea>
             </div>
            
-            <button type="button" class="btn btn-lg btn-primary" id = "save-note"><i class = "fa fa-save"></i> Save</button>
+            <button type="button" class="btn btn-lg btn-primary" id = "save-nurse-note"><i class = "fa fa-save"></i> Save</button>
         </form>
 
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding:0;">
             <h3>Previous Notes</h3>
 
-            <div class="alerts"></div>
-
             <div class="table-responsive">
-                <table class="table table-stripped nurse-table" id = "nurses-table" style="width:100% !important; display: none !important;">
+                <table class="table table-stripped" id = "nurses-table">
                     <thead>
                         <tr>
                             <th>Date & Time</th>
@@ -34,118 +32,139 @@
                         </tr>
                     </thead>
                     <tbody>
+                    @foreach($nursesNotes as $n)
+                        <tr id = "nurse_noterow_{{ $n->id }}">
+                            <td>{{ \Carbon\Carbon::parse($n->updated_at)->format('H:i A d/m/Y ') }}</td>
+                            <td>{{ substr($n->notes,0,30) }}</td>
+                            <td>{{ $n->users->profile->fullName }}</td>
+                            <td>
+                                <div class='btn-group'>
+                                    <button class='btn btn-primary view-nurse-note' id = '{{ $n->id }}'><i class = 'fa fa-eye'></i> View</button>
+                                    <button type='button' class='btn btn-success edit-nurse-note' id = '{{ $n->id }}'><i class = 'fa fa-pencil'></i> Edit</button>
+                                    <button type='button' class='btn btn-danger delete-nurse-note' id = '{{ $n->id }}'><i class = 'fa fa-times' ></i> Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
                       
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-nurse-note">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">View Notes</h4>
+                    </div>
+                    <div class="modal-body">
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+         <div class="modal fade" id="modal-delete-nurse-id">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <h3>Are you sure you want to delete this note?</h3>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger yes-delete-nurse-note">Yes</button>
+                        <button type="button" class="btn btn-success" id = "no-delete-nurse-note"  data-dismiss="modal">No</button>
+                    </div>
+                </div>
             </div>
         </div>
         
     </div><!-- container -->
 
     <script type="text/javascript">
-        $(function () {
-            $(".nurse-table").dataTable();
-        })
 
-        getNotes();
+        $(document).ready(function(){
+            $(function () {
+                $("table").dataTable();
+            })
 
-        function getNotes(){
-            $.ajax({
-                type: "GET",
-                url: "{{ url('/api/inpatient/v1/notes/admission/'.$admission->id.'/type/0') }}",
-                dataType: 'json',
-                success: function (resp) {                
-                    if(resp.type === "success"){
-                        if(resp.data.length > 0){
-                            // refresh table
-                            $("#nurses-table > tbody tr").remove();
-                            // Loop through and append rows
-                            let data = resp.data;
+            $('#save-nurse-note').click(function(e){
+                e.preventDefault();
+
+                console.log("New nurse's note: "+ $("#notes").val());
+                 $.ajax({
+                    type: "POST",
+                    url: "{{ url('/api/inpatient/v1/notes') }}",
+                    data: JSON.stringify({
+                         visit_id : {{ $admission->visit_id }},
+                         admission_id: {{ $admission->id }},
+                         notes: $("#nurses-notes").val(),
+                         type: 0,
+                         user: {{ Auth::user()->id }}
+                     }),
+                    success: function (resp) {
+                        // add table rows
+                         if(resp.type === "success"){
+                            alertify.success(resp.message);
+                            let data = JSON.parse(resp.data);
+                            console.log(data);
                             data.map( (item, index) => {
                                 return(
-                                    $("#nurses-table > tbody").append(
-                                        "<tr id = 'row_"+ item.id +"'>\
-                                            <td>" + item.written_on + "</td>\
-                                            <td>" + item.notes + "</td>\
-                                            <td>" + item.name + "</td>\
-                                            <td><button type='button' class='btn btn-danger delete' id = '"+ item.id +"'><i class = 'fa fa-trash-o'></i> Delete</button></td>\
-                                        </tr>"
-                                    )
+                                    $("#nurses-table > tbody").append("<tr id = 'nurse_noterow_"+ item.id +"'>\
+                                        <td>" + item.written_on + "</td>\
+                                        <td>" + item.notes + "</td>\
+                                        <td>" + item.name + "</td>\
+                                        <td><div class='btn-group'>\
+                                         <button type='button' class='btn btn-primary view-nurse-note' id = '"+ item.id + "'><i class = 'fa fa-eye' ></i> View</button>\
+                                          <button type='button' class='btn btn-success edit-nurse-note' id = '"+ item.id + "'><i class = 'fa fa-pencil' ></i> Edit</button>\
+                                            <button type='button' class='btn btn-danger delete-nurse-note' id = '"+ item.id + "'><i class = 'fa fa-times' ></i> Delete</button>\
+                                         </div></td></tr>")
                                 );
                             });
-
-                            $("#nurses-table").css("display","block");
-                           
                         }else{
-                            $("#nurses-table").css("display","none");
-                            alertify.error("No nurse's notes found for this patient");
+                             alertify.error(resp.message);
                         }
-                    }else{
+                    },
+                    error: function (resp) {
+                        console.log(resp);
+                         alertify.error(resp.message);
+                    }
+                });
+            });
+
+            $('.delete-nurse-note').click(function(e){
+                e.preventDefault();
+                var id = $(this).attr('id');
+                $(".yes-delete-nurse-note").attr('id', id); 
+                $("#modal-delete-nurse-id").modal();
+            });
+
+
+            $('.yes-delete-nurse-note').click(function(e){
+                var id = $(this).attr('id');
+                 $.ajax({
+                    type: "POST",
+                    url: "{{ url('/api/inpatient/v1/notes/delete') }}",
+                    data: JSON.stringify({ id : id }),
+                    success: function (resp) {
+                         if(resp.type === "success"){
+                            alertify.success(resp.message);
+                            $("#modal-delete-nurse-id").modal('toggle');
+                            $("#nurse_noterow_"+id+"").remove();
+                        }else{
+                             alertify.error(resp.message);
+                        }
+                    },
+                    error: function (resp) {
                         alertify.error(resp.message);
                     }
-                   
-                },
-                error: function (resp) {
-                    alertify.error(resp.message);
-                }
+                });
             });
-        }
 
-        $('#save-note').click(function(e){
-            e.preventDefault();
-             $.ajax({
-                type: "POST",
-                url: "{{ url('/api/inpatient/v1/notes') }}",
-                data: JSON.stringify({
-                     visit_id : {{ $admission->visit_id }},
-                     admission_id: {{ $admission->id }},
-                     notes: $("#notes").val(),
-                     type: 1,
-                     user: {{ Auth::user()->id }}
-                 }),
-                success: function (resp) {
-                    // add table rows
-                     if(resp.type === "success"){
-                        alertify.success(resp.message);
-                        getNotes();
-                    }else{
-                         alertify.error(resp.message);
-                    }
-                },
-                error: function (resp) {
-                    console.log(resp);
-                     alertify.error(resp.message);
-                }
-            });
-        });
-
-        $('.delete').click(function(e){
-            e.preventDefault();
-            var id = $(this).attr('id');
-            $(this).html("Deleting ....");
-
-             $.ajax({
-                type: "POST",
-                url: "{{ url('/api/inpatient/v1/notes/delete') }}",
-                data: JSON.stringify({
-                     id : id
-                 }),
-                success: function (resp) {
-                    // add table rows
-                     if(resp.type === "success"){
-                        $("tr#row_"+id+"").remove();
-                        alertify.success(resp.message);
-                        $(this).html("<i class = 'fa fa-trash-o'></i> Delete");
-                        // getNotes();
-                    }else{
-                         alertify.error(resp.message);
-                    }
-                },
-                error: function (resp) {
-                    $(this).html("<i class = 'fa fa-trash-o'></i> Delete");
-                    alertify.error(resp.message);
-                }
-            });
         });
 
     

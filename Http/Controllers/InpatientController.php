@@ -43,6 +43,7 @@ use Ignite\Evaluation\Entities\FinancePatientAccounts;
 use Ignite\Evaluation\Entities\Prescriptions;
 use Ignite\Evaluation\Repositories\EvaluationRepository;
 use Ignite\Evaluation\Entities\Investigations;
+use Ignite\Evaluation\Entities\RecurrentCharge;
 
 class InpatientController extends AdminBaseController
 {
@@ -107,16 +108,16 @@ class InpatientController extends AdminBaseController
         ];
 
         $js_assets = [
-            'doctor-investigations.js' => m_asset('evaluation:js/doctor-investigations.js'),
-            'doctor-treatment.js' => m_asset('evaluation:js/doctor-treatment.js'),
-            'doctor-next-steps.js' => m_asset('evaluation:js/doctor-next-steps.min.js'),
-            'doctor-notes.js' => m_asset('evaluation:js/doctor-notes.min.js'),
-            'doctor-opnotes.js' => m_asset('evaluation:js/doctor-opnotes.min.js'),
-            'doctor-prescriptions.js' => m_asset('evaluation:js/doctor-prescriptions.min.js'),
-            'doctor-visit-date.js' => m_asset('evaluation:js/doctor-set-visit-date.min.js'),
-            'nurse-vitals.js' => m_asset('evaluation:js/nurse-vitals.js'),
-            //'order-investigation.js' => m_asset('evaluation:js/doctor-treatment.min.js'),
-            'nurse_eye_preliminary.js' => m_asset('evaluation:js/nurse_eye_preliminary.min.js'),
+            // 'doctor-investigations.js' => m_asset('evaluation:js/doctor-investigations.js'),
+            // 'doctor-treatment.js' => m_asset('evaluation:js/doctor-treatment.js'),
+            // 'doctor-next-steps.js' => m_asset('evaluation:js/doctor-next-steps.min.js'),
+            // 'doctor-notes.js' => m_asset('evaluation:js/doctor-notes.min.js'),
+            // 'doctor-opnotes.js' => m_asset('evaluation:js/doctor-opnotes.min.js'),
+            // 'doctor-prescriptions.js' => m_asset('evaluation:js/doctor-prescriptions.min.js'),
+            // 'doctor-visit-date.js' => m_asset('evaluation:js/doctor-set-visit-date.min.js'),
+            // 'nurse-vitals.js' => m_asset('evaluation:js/nurse-vitals.js'),
+            // //'order-investigation.js' => m_asset('evaluation:js/doctor-treatment.min.js'),
+            // 'nurse_eye_preliminary.js' => m_asset('evaluation:js/nurse_eye_preliminary.min.js'),
             'inpatient-scripts.js' => m_asset('inpatient:js/inpatient-scripts.js')
         ];
 
@@ -420,25 +421,15 @@ class InpatientController extends AdminBaseController
         if (count(Visit::where('patient', $id)->get()) > 0) {
             $visit_id = Visit::where('patient', $id)->orderBy('created_at', 'desc')->first()->id;
             $vitals = Vitals::where('visit_id', $visit_id)->get();
-            $once_only_prescriptions = Prescriptions::where('visit', $visit_id)->where("type", 0)->whereHas('dispensing', function ($query) {
-                        $query->whereHas('visits', function ($q) {
-                            $q->whereId(\Session::get('v'));
-                        });
-                    })->orderBy("updated_at", "DESC")->get();
-            $regular_prescriptions = Prescriptions::where('visit', $visit_id)->where("type", 1)->whereHas('dispensing', function ($query) {
-                        $query->whereHas('visits', function ($q) {
-                            $q->whereId(\Session::get('v'));
-                        });
-                    })->orderBy("updated_at", "DESC")->get();
+            $once_only_prescriptions = Prescriptions::where('visit', $visit_id)->where("type", 0)->orderBy("updated_at", "DESC")->get();
+            $regular_prescriptions = Prescriptions::where('visit', $visit_id)->where("type", 1)->orderBy("updated_at", "DESC")->get();
 
-            $doctor_note = Notes::where('visit_id', $visit_id)->first();
+            $doctorsNotes = Notes::where('visit_id', $visit_id)->where("type",1)->get();
+            $nursesNotes = Notes::where('visit_id', $visit_id)->where("type",0)->get();
         }
 
         $bpChart = $this->getCharts($patient->id, $admission->id);
         $tempChart = $this->getTemperatureChart($patient->id, $admission->id);
-//        dd(get_defined_vars());
-//        return view('Inpatient::admission.manage_patient', compact('tempChart', 'bpChart', 'patient', 'ward', 'admission', 'vitals', 'doctor_note', 'prescriptions'));
-
 
         $investigations = Investigations::where("visit", $visit_id)->where("type", "laboratory")->get()->map(function ($item) {
             return
@@ -459,7 +450,7 @@ class InpatientController extends AdminBaseController
 
         });
 
-        return view('Inpatient::admission.manage_patient', compact('tempChart', 'investigations', 'bpChart', 'patient', 'ward', 'admission', 'vitals', 'doctor_note', 'once_only_prescriptions', 'regular_prescriptions'));
+        return view('Inpatient::admission.manage_patient', compact('tempChart', 'investigations', 'bpChart', 'patient', 'ward', 'admission', 'vitals', 'doctorsNotes', 'nursesNotes', 'once_only_prescriptions', 'regular_prescriptions'));
     }
 
     private function getTemperatureChart($patient, $admission)
@@ -504,23 +495,6 @@ class InpatientController extends AdminBaseController
 
     }
 
-    public function recordVitals(Request $request)
-    {
-        \DB::beginTransaction();
-        try {
-            $v = Vitals::find("visit_id", $request->visit);
-            if ($v == null) {
-                Vitals::create($request->all());
-            } else {
-                $v->update($request->all());
-            }
-            \DB::commit();
-            return redirect()->back()->with('success', 'Recorded patient\'s vitals successfully.');
-        } catch (\Exception $e) {
-            \DB::rollback();
-            return redirect()->back()->with('error', 'An error occured. ' . $e->getMessage());
-        }
-    }
 
     public function movePatient($id, $visit_id)
     {

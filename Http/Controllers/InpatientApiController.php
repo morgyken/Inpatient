@@ -1,53 +1,87 @@
 <?php
 
+/*
+    |--------------------------------------------------------------------------
+    | INPATIENT V1 API - It's a crazy mess this one coz of insane timelines!!!
+    | 
+    | AUTHOR: DAVID NGUGI ( dngugi@collabmed.com )
+    | 
+    | DATE: AUGUST/SEPTEMBER 2017
+    | 
+    |--------------------------------------------------------------------------
+*/
+
 namespace Ignite\Inpatient\Http\Controllers;
 
-use Ignite\Inpatient\Entities\BloodPressure;
-use Ignite\Inpatient\Entities\Temperature;
 use Illuminate\Http\Request;
-// use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 
 use Response;
 use Validator;
 use DB;
+use Carbon\Carbon;
 
+/*
+    |--------------------------------------------------------------------------
+    | INPATIENT MODULE ENTITIES
+    |--------------------------------------------------------------------------
+*/
 use Ignite\Inpatient\Entities\Admission;
 use Ignite\Inpatient\Entities\Administration;
-use Ignite\Inpatient\Entities\Deposit;
-use Ignite\Inpatient\Entities\RequestDischarge;
-use Ignite\Inpatient\Entities\DischargeNote;
-use Ignite\Inpatient\Entities\PatientAccount;
-use Ignite\Inpatient\Entities\Prescription;
-use Ignite\Inpatient\Entities\NursingCharge;
-use Ignite\Inpatient\Entities\NursingCarePlan;
-use Ignite\Inpatient\Entities\RequestAdmission;
-use Ignite\Inpatient\Entities\Visit;
-use Ignite\Inpatient\Entities\Ward;
-use Ignite\Inpatient\Entities\WardAssigned;
 use Ignite\Inpatient\Entities\Bed;
 use Ignite\Inpatient\Entities\BedPosition;
-use Ignite\Inpatient\Entities\Notes;
-use Ignite\Inpatient\Entities\Vitals;
-use Ignite\Inpatient\Entities\HeadInjury;
+use Ignite\Inpatient\Entities\BloodPressure;
+use Ignite\Inpatient\Entities\Deposit;
+use Ignite\Inpatient\Entities\DischargeNote;
 use Ignite\Inpatient\Entities\FluidBalance;
+use Ignite\Inpatient\Entities\HeadInjury;
+use Ignite\Inpatient\Entities\Notes;
+use Ignite\Inpatient\Entities\NursingCharge;
+use Ignite\Inpatient\Entities\NursingCarePlan;
+use Ignite\Inpatient\Entities\PatientAccount;
+use Ignite\Inpatient\Entities\Prescription;
+use Ignite\Inpatient\Entities\RequestAdmission;
+use Ignite\Inpatient\Entities\RequestDischarge;
+use Ignite\Inpatient\Entities\Temperature;
+use Ignite\Inpatient\Entities\Visit;
+use Ignite\Inpatient\Entities\Vitals;
+use Ignite\Inpatient\Entities\Ward;
+use Ignite\Inpatient\Entities\WardAssigned;
 
+/*
+    |--------------------------------------------------------------------------
+    | EVALUATION MODULE ENTITIES
+    |--------------------------------------------------------------------------
+*/
 use Ignite\Evaluation\Entities\FinancePatientAccounts;
 use Ignite\Evaluation\Entities\Investigations;
 use Ignite\Evaluation\Entities\Procedures;
 use Ignite\Evaluation\Entities\VisitDestinations;
 
-use Ignite\Reception\Entities\Patients;
-
-use Ignite\Users\Entities\Roles;
-use Ignite\Users\Entities\UserRoles;
-use Ignite\Users\Entities\User;
-
+/*
+    |--------------------------------------------------------------------------
+    | INVENTORY MODULE ENTITIES
+    |--------------------------------------------------------------------------
+*/
 use Ignite\Inventory\Entities\InventoryProducts;
 use Ignite\Inventory\Entities\InventoryBatchPurchases;
 use Ignite\Inventory\Entities\InventoryProductPrice;
 
-use Carbon\Carbon;
+/*
+    |--------------------------------------------------------------------------
+    | RECEPTION MODULE ENTITIES
+    |--------------------------------------------------------------------------
+*/
+use Ignite\Reception\Entities\Patients;
+
+/*
+    |--------------------------------------------------------------------------
+    | USERS MODULE ENTITIES
+    |--------------------------------------------------------------------------
+*/
+use Ignite\Users\Entities\Roles;
+use Ignite\Users\Entities\UserRoles;
+use Ignite\Users\Entities\User;
 
 class InpatientApiController extends Controller
 {
@@ -184,7 +218,6 @@ class InpatientApiController extends Controller
     {
         try {
             if (count(Vitals::where('admission_id', $admission_id)->get()) > 0) {
-                $dataArr = [];
                 $data = Vitals::where('admission_id', $admission_id)->orderBy("updated_at", "DESC")->get()->map(function ($item) {
                     return
                         [
@@ -208,6 +241,7 @@ class InpatientApiController extends Controller
                             "allergies" => $item->allergies,
                             "chronic_illnesses" => $item->chronic_illnesses,
                             "recorded_by" => $item->user->profile->fullName,
+                            "date_time_recorded"  => $item->date_recorded . " " .$item->time_recorded,
                             "timestamp" => $this->carbon->parse($item->created_at)->format('d/m/Y H:i A')
                         ];
                 })->toArray();
@@ -236,6 +270,7 @@ class InpatientApiController extends Controller
             } else {
                 $v = new Vitals;
                 $v->admission_id = $request['admission_id'];
+                $v->visit_id = $request['visit_id'];
                 $v->bp_systolic = $request['bp_systolic'];
                 $v->bp_diastolic = $request['bp_diastolic'];
                 $v->pulse = $request['pulse'];
@@ -244,12 +279,15 @@ class InpatientApiController extends Controller
                 $v->temperature_location = $request['temperature_location'];
                 $v->oxygen = $request['oxygen'];
                 $v->user_id = $request['user_id'];
-                $v->date_recorded = $this->carbon->now();
+                $v->date_recorded = $request['date_recorded'];
+                $v->time_recorded = $request['time_recorded'];
                 $v->save();
 
                 if ($v->id > 0) {
                     \DB::commit();
-                    return Response::json(['type' => 'success', 'message' => 'Recorded patient\'s vitals successfully']);
+                    $vitalsData = json_decode($this->getPatientVitals($request['admission_id']));
+                    $vitals = $vitalsData['data'];
+                    return Response::json(['type' => 'success', 'message' => 'Recorded patient\'s vitals successfully', 'data' => $vitals]);
                 } else {
                     \DB::rollback();
                     return Response::json(['type' => 'error', 'message' => 'An error occured during saving']);
@@ -351,11 +389,8 @@ class InpatientApiController extends Controller
 
 	public function getAllPrescriptions($admission_id, $type){
 		try {
-			$data = Prescription::where("admission_id", $admission_id)->where("type", $type)->whereHas('dispensing', function ($query) {
-                        $query->whereHas('visits', function ($q) {
-                            $q->whereId(\Session::get('v'));
-                        });
-                    })->orderBy("updated_at", "DESC")->get()->map(function($item){
+            return 
+			$data = Prescription::where("admission_id", $admission_id)->where("type", $type)->where('status',1)->orderBy("updated_at", "DESC")->get()->map(function($item){
 			return 
 			[
 				"id" 					=> $item->id,
@@ -665,27 +700,12 @@ class InpatientApiController extends Controller
 		\DB::beginTransaction();
 		try {
 			$request = $request->json()->all();
-			$p = new Prescription;
-			$p->admission_id 		= $request['admission_id']; 
-			$p->visit 				= $request['visit'];
-			$p->drug 				= $request['drug']; 
-			$p->take 				= $request['take'];
-			$p->whereto 			= $request['whereto']; 
-			$p->method 				= $request['method']; 
-			$p->duration 			= $request['duration'];
-			$p->allow_substitution 	= $request['allow_substitution'];
-			$p->time_measure 		= $request['time_measure'];
-			$p->user 				= $request['user'];
-			$p->type 				= $request['type'];
-			$p->save();
-
+            $p = Prescription::create($request);
 			// Add to Prescription Queue
-
 			$this->checkInAt($request['visit'], 'pharmacy');
-
+            \DB::commit(); 
 			if($p) {
-				\DB::commit(); 
-				return Response::json(['type' => 'success', 'message' => 'The prescription has been added. The Pharmacy has been notified to dispense it for it to be administered']);
+				return Response::json(['type' => 'success', 'message' => 'The prescription has been added. The Pharmacy has been notified to dispense it for it to be administered', 'data' => $this->getPrescriptionData()]);
 			}else{
 				\DB::rollback();
 				return Response::json(['type' => 'error', 'message' => 'An error occured while saving. Please try again!']);
@@ -694,6 +714,23 @@ class InpatientApiController extends Controller
 			return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be added. '. $e->getMessage()]);
 		}
 	}
+
+    public function getPrescriptionData(){
+        try{
+            return Prescription::latest()->limit(1)->get()->map(function($item){
+                return 
+                [
+                    "id"             => $item->id,
+                    "dose"           => $item->dose,
+                    "drug"           => $item->drugs->name,
+                    "prescribed_by"  => $item->users->profile->fullName,
+                    "prescribed_on"  => $this->carbon->parse($item->updated_at)->format('H:i A d/m/Y ')  
+                ];
+            })->toArray();
+        }catch(\Exception $e){
+            return $e->getMessage();
+        }
+    }
 
 	 private function checkInAt($visit_id, $place) {
         $department = $place;
@@ -713,7 +750,6 @@ class InpatientApiController extends Controller
 		try {
 			$request = $request->json()->all();
 			$p = Prescription::find($id);
-			$p->admission_id 		= $request['admission_id']; 
 			$p->drug 				= $request['drug']; 
 			$p->whereto 			= $request['whereto']; 
 			$p->method 				= $request['method']; 
@@ -738,7 +774,7 @@ class InpatientApiController extends Controller
 		\DB::beginTransaction();
 		try{
 			$request = $request->json()->all();
-			$p = Prescription::find("id", $request['id']);
+			$p = Prescription::where("id", $request['id'])->first();
 			$p->delete();
 			if($p) {
 				\DB::commit();
@@ -752,7 +788,25 @@ class InpatientApiController extends Controller
 		}
 	}
 
-    
+    public function getAdministrationLogs($prescription_id){
+        try {
+            $data = Administration::where("prescription_id", $prescription_id)->orderBy("updated_at", "DESC")->get()->map(function($item){
+                return 
+                [
+                    "id"            => $item->id,
+                    "dose"          => $item->prescription->dose,
+                    "recorded_by"   => $item->users->profile->fullName,
+                    "recorded_on"   => $this->carbon->parse($item->created_at)->format('d/m/y H:i A')
+                ];
+            })->toArray();
+
+            return json_encode(['type' => 'success', 'data' => $data]);
+
+        }catch (\Exception $e) {
+            return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription administration logs could not be retrieved. ' . $e->getMessage()]);
+        }
+
+    }
 
     public function administerPrescription(Request $request)
     {
@@ -761,13 +815,11 @@ class InpatientApiController extends Controller
             $a = new Administration;
             $a->admission_id = $request['admission_id'];
             $a->prescription_id = $request['prescription_id'];
+            $a->visit_id = $request['visit_id'];
             $a->time = $request['time'];
             $a->am_pm = $request['am_pm'];
             $a->user = $request['user'];
             $a->save();
-
-            // Update inventory
-
 
             return ($a->id > 0) ? Response::json(['type' => 'success', 'message' => 'The prescribed drug has been administered!']) : Response::json(['type' => 'error', 'message' => 'The prescription could not be administered']);
         } catch (\Exception $e) {
@@ -780,10 +832,9 @@ class InpatientApiController extends Controller
         try {
             $request = $request->json()->all();
             $a = Administration::find($request['id']);
-            $a->prescription_id = $request['prescription_id'];
             $a->time = $request['time'];
             $a->am_pm = $request['am_pm'];
-            $a->user = $request['user'];
+            // $a->user = $request['user'];
             $a->save();
 
             return ($a) ? Response::json(['type' => 'success', 'message' => 'The drug administration log has been updated!']) : Response::json(['type' => 'error', 'message' => 'The drug administration log could not be updated']);

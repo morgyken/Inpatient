@@ -72,7 +72,29 @@
 	    			<th>Prescribed On</th>
 	    		</tr>
 	    	</thead>
-	    	<tbody></tbody>
+	    	<tbody>
+	    		@foreach($once_only_prescriptions as $p)
+	    			<tr id = "once_row_{{ $p->id }}">
+	    				<td>{{ $p->drugs->name }}</td>
+	    				<td>{{ $p->dose }}</td>
+	    				<td>{{ $p->users->profile->fullName }}</td>
+	    				<td>{{ \Carbon\Carbon::parse($p->updated_at)->format('H:i A d/m/Y ')}}</td>
+	    				<td>
+		    				@if($p->status == 1)
+		    					<div class='btn-group'>
+		    						<button class='btn btn-primary administer-once' id = '{{ $p->id }}'><i class = 'fa fa-plus'></i> Administer</button>
+			    					<button type='button' class='btn btn-danger cancel-o-prescription' id = '{{ $p->id }}'><i class = 'fa fa-times' ></i> Cancel</button>
+			    				</div>
+			    			@else
+			    				<div class='btn-group'>
+			    					<button type='button' class='btn btn-info'><i class = 'fa fa-exclamation-circle'></i> Dispensing</button>
+				    				<button type='button' class='btn btn-danger cancel-o-prescription' id = '{{ $p->id }}'><i class = 'fa fa-times' ></i> Cancel</button>
+			    				</div>
+		    				@endif
+		    			</td>
+	    			</tr>
+	    		@endforeach
+	    	</tbody>
 	    </table>
 	</div>
 
@@ -89,85 +111,116 @@
 	    		</tr>
 	    	</thead>
 	    	<tbody>
-	    		@foreach($prescriptions as $p)
-	    			<tr id = "{{ $p->id }}">
-	    				<td>{{ $p->drug->name }}</td>
+	    		@foreach($regular_prescriptions as $p)
+	    			<tr id = "reg_row_{{ $p->id }}">
+	    				<td>{{ $p->drugs->name }}</td>
 	    				<td>{{ $p->dose }}</td>
 	    				<td>{{ $p->users->profile->fullName }}</td>
-	    				<td>{{ }}</td>
-	    				<td>{{ }}</td>
-	    				<td>{{ }}</td>
+	    				<td>{{ \Carbon\Carbon::parse($p->updated_at)->format('H:i A d/m/Y ')}}</td>
+	    				<td>
+	    					@if($p->status == 1)
+		    					<div class='btn-group'>
+			    					<button class='btn btn-primary administer' id = '{{ $p->id }}'><i class = 'fa fa-plus'></i> Administer</button>
+			    					<button type='button' class='btn btn-success view-logs' id = '{{ $p->id }}'><i class = 'fa fa-eye'></i> View</button>
+			    					<button type='button' class='btn btn-danger cancel-reg-prescription' id = '{{ $p->id }}'><i class = 'fa fa-times' ></i> Cancel</button>
+			    				</div>
+			    			@else
+			    				<div class='btn-group'>
+			    					<button type='button' class='btn btn-info'><i class = 'fa fa-exclamation-circle'></i> Dispensing</button>
+			    					<button type='button' class='btn btn-danger cancel-reg-prescription' id = '{{ $p->id }}'><i class = 'fa fa-times' ></i> Cancel</button>
+			    				</div>
+		    				@endif
+		    			</td>
 	    			</tr>
 	    		@endforeach
 	    	</tbody>
 	    </table>
     </div>
 
-<div class="modal fade" id="modal-id">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Prescribe Prescription</h4>
-			</div>
-			<div class="modal-body">
-				<form role="form">
-					{{ csrf_field() }}
-					<input type = "hidden" name = "prescription_id" id = "prescription_id"/>
-					<div class="form-group">
-						<label>Time Administered</label>
-						<input type="time" name = "time" id = "time" class="form-control" placeholder="Time" required/>
-					</div>
-					<div class="form-group">
-						<label>AM or PM</label>
-						<select name="am_pm" name = "am_pm" id="am_pm" class="form-control" required>
-							<option value="am">AM</option>
-							<option value ="pm">PM</option>
-						</select>
-					</div>				
-					<button type="button" class="btn btn-primary administer_drug">Administer</button>
-				</form>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-			</div>
-		</div>
-	</div>
-</div>
+    {{-- MODALS --}}
 
-<div class="modal fade" id="modal-view">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title">Prescription Administration Logs</h4>
-			</div>
-			<div class="modal-body">
-				<div class="table-responsive">
-					<table class="table table-hover">
-						<thead>
-							<tr>
-								<th>Prescription</th>
-								<th>Date & Time</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>11 am</td>
-								<td>12 am</td>
-							</tr>
-						</tbody>
-					</table>
+	<div class="modal fade" id="modal-id">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Prescribe Prescription</h4>
+				</div>
+				<div class="modal-body">
+					<form role="form">
+						{{ csrf_field() }}
+						<input type = "hidden" name = "prescription_id" id = "prescription_id"/>
+						<div class="form-group">
+							<label>Time Administered</label>
+							<input type="time" name = "time" id = "time" class="form-control" placeholder="Time" required/>
+						</div>
+						<div class="form-group">
+							<label>AM or PM</label>
+							<select name="am_pm" id="am_pm" class="form-control" required>
+								<option value="am">AM</option>
+								<option value ="pm">PM</option>
+							</select>
+						</div>				
+						<button type="button" class="btn btn-primary" id = "administer_drug">Administer</button>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 				</div>
 			</div>
-			<div class="modal-footer">
-{{-- 				<button type="button" class="btn btn-primary">Save changes</button>
- --}}				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modal-view">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">Prescription Administration Logs</h4>
+				</div>
+				<div class="modal-body">
+					<div class="table-responsive" style="max-height: 500px;">
+						<table class="table table-hover" id = "admin-logs-table">
+							<thead>
+								<tr>
+									<th>Prescription Dose</th>
+									<th>Administered By</th>
+									<th>Administered On</th>
+									<th>Option</th>
+								</tr>
+							</thead>
+							<tbody>
+								
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
 
+	<div class="modal fade" id="modal-cancel-prescription">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h3>Are you sure you want to cancel this prescription?</h3>
+                    <input type="hidden" id = "is_reg" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger yes-cancel-prescription">Yes</button>
+                    <button type="button" class="btn btn-success" id = "no-cancel-prescrption"  data-dismiss="modal">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- END MODALS --}}
+
+
+    {{-- SCRIPTS --}}
 	<script>
 	    var INSURANCE = false;
 	    var STOCK_URL = "{{route('api.inventory.getstock')}}";
@@ -178,194 +231,250 @@
 	<script type="text/javascript">
 
 		$(document).ready(function(){
-			/*$(function () {
-		        $(".datatable").dataTable();
-		    });*/
-			
-			getTime();
+			// $(function () {
+		 //        $("table").dataTable();
+		 //    });
 
-			setInterval( getTime , 1000);
+		    getTime();
 
-			var timeSet = false;
-
-		    function getTime(){ 
-		    	var d = new Date();
-		    	// d.setUTCHours(d.getHours(), d.getMinutes(), d.getSeconds(), 0);
+			function getTime(){
+				var d = new Date();
 				let timeNow = d.getHours() + ':' + d.getMinutes();
-				if(timeSet == false) { $("#time").val(timeNow); }
-				timeSet = true;
+				$("#time").val(timeNow);
+				if( d.getHours() >= 12) {
+					$("am_pm").val("pm").prop("selected", true);
+				}else{
+					$("am_pm").val("am").prop("selected", true);
+				}
 			}
-			
-			// Get once only prescriptions 
-			getPrescriptions(0);
 
-			// Get regular prescriptions
-			getPrescriptions(1);
+	        $('.administer').click(function(e){
+	        	e.preventDefault();
+	        	var id = $(this).attr('id');
+	        	getTime();
+	        	$("#prescription_id").val(id);
+				$("#modal-id").modal();			
+			});
 
-			function getPrescriptions(type){
-					let table = (type == 0) ? "#single-prescriptions-table" :  "#regular-prescriptions-table";
-		            $.ajax({
-		                type: "GET",
-		                url: "{{ url('/api/inpatient/v1/prescriptions/admission/'.$admission->id).'/type/'}}"+type + "",
-		                dataType: 'json',
-		                success: function (resp) {                
-		                    if(resp.type === "success"){
-		                        if(resp.data.length > 0){
-		                            // refresh table
-		                            $("" + table + " > tbody tr").remove();
-		                            // Loop through and append rows
-		                            let data = resp.data;
+	        $('#savePrescription').click(function(e){
+	            e.preventDefault();
+	            let pre_type = ($("#type").is(":checked")) ? 1 : 0;
+	            let data = JSON.stringify(
+	            		{
+	                     	visit : {{ $admission->visit_id }},
+	                     	admission_id: {{ $admission->id }},
+	                    	user: {{ Auth::user()->id }},
+							drug: $("#item_0").val(),
+							take: parseInt($("#take").val()),
+							whereto: parseInt($("#whereto").val()),
+							method: parseInt($("#method").val()),
+							duration: parseInt($("#duration").val()),
+							time_measure: parseInt($("#time_measure").val()),
+							allow_substitution: $("#allow_substitution").is(":checked"),
+	                     	type: pre_type
+	               		});
 
-		                            if(type == 0){
-		                            	data.map( (item, index) => {
-			                                return(
-			                                    $(""+table+" > tbody").append(
-			                                    	"<tr id = 'row_"+ item.id +"'>\
-										    			<td>" + item.drug + "</td>\
-										    			<td>" + item.dose + "</td>\
-										    			<td>" + item.by + "</td>\
-										    			<td>" + item.prescribed_on + "</td>\
-										    			<td>\
-										    				<div class='btn-group'>\
-										    					<button type='button' class='btn btn-danger cancel-o-prescription' id = '"+ item.id+"'><i class = 'fa fa-times' ></i> Cancel</button>\
-										    				</div>\
-										    			</td>\
-										    		</tr>"
-			                                    )
-			                                );
-			                            });
-		                            }else{
-		                            	data.map( (item, index) => {
-			                                return(
-			                                    $(""+table+" > tbody").append(
-			                                    	"<tr id = 'row_"+ item.id +"'>\
-										    			<td>" + item.drug + "</td>\
-										    			<td>" + item.dose + "</td>\
-										    			<td>" + item.by + "</td>\
-										    			<td>" + item.prescribed_on + "</td>\
-										    			<td>\
-										    				<div class='btn-group'>\
-										    					<button class='btn btn-primary administer' id = '"+ item.id+"'><i class = 'fa fa-plus'></i> Administer</button>\
-										    					<button type='button' class='btn btn-success view-logs' data-toggle='modal' href='#modal-view' id = '"+ item.id+"'><i class = 'fa fa-eye'></i> View</button>\
-										    					<button type='button' class='btn btn-danger cancel-reg-prescription' id = '"+ item.id+"'><i class = 'fa fa-times' ></i> Cancel</button>\
-										    				</div>\
-										    			</td>\
-										    		</tr>"
-			                                    )
-			                                );
-			                            });
-		                            }
-		                           
+	             $.ajax({
+	                type: "POST",
+	                url: "{{ url('/api/inpatient/v1/prescriptions') }}",
+	                data: data,
+	                success: function (resp) {
+	                    // add table rows
+	                     if(resp.type === "success"){
+	                     	alertify.success(resp.message);
+	                     	// Append to Respective row
+	   						let data = resp.data;
+	                        // console.log(resp.data);
+	                     	if(pre_type == 0){
+	                     		// Append to Once only prescription table
+	                            data.map( (item, index) => {
+	                                return(
+	                                    $("#single-prescriptions-table > tbody").append("<tr id = 'once_row_"+ item.id +"'>\
+	                                    	<td>"+ item.drug +"</td>\
+	                                        <td>" + item.dose + "</td>\
+	                                        <td>"+ item.prescribed_by +"</td>\
+	                                        <td>"+ item.prescribed_on +"</td>\
+	                                        <td><div class='btn-group'>\
+					    					<button type='button' class='btn btn-info'><i class = 'fa fa-exclamation-circle'></i> Dispensing</button>\
+						    				<button type='button' class='btn btn-danger cancel-o-prescription' id = '"+ item.id +"'><i class = 'fa fa-times' ></i> Cancel</button>\
+					    				</div></td></tr>")
+	                                ); 
+	                            });
+	                     	}else{
+	                     		// Append to Regular prescription table
+	                            data.map( (item, index) => {
+	                                return(
+	                                    $("#regular-prescriptions-table > tbody").append("<tr id = 'reg_row_"+ item.id +"'>\
+	                                    	<td>"+ item.drug +"</td>\
+	                                        <td>" + item.dose + "</td>\
+	                                        <td>"+ item.prescribed_by +"</td>\
+	                                        <td>"+ item.prescribed_on +"</td>\
+	                                        <td><div class='btn-group'>\
+					    					<button type='button' class='btn btn-info'><i class = 'fa fa-exclamation-circle'></i> Dispensing</button>\
+					    					<button type='button' class='btn btn-danger cancel-reg-prescription' id = '"+ item.id +"'><i class = 'fa fa-times' ></i> Cancel</button>\
+					    				</div></td></tr>")
+	                                );
+	                            });
+	                     	}
+	                        alertify.success(resp.message);
+	                    }else{
+	                    	 alertify.error(resp.message);
+	                    }
+	                },
+	                error: function (resp) {
+	                    alertify.error(resp.message);
+	                }
+	            });
+	        });
 
-		                            $("" + table + "").css("display","block");
-		                            $("" + table + "").show();
-		                           
-		                        }else{
-		                            $("" + table + "").css("display","none");
-		                            $("" + table + "").hide();
-		                            // alertify.error("No prescriptions found for this patient");
-		                        }
-		                    }else{
-		                        alertify.error(resp.message);
-		                    }
-		                   
-		                },
-		                error: function (resp) {
-		                	$("" + table + "").hide();
-		                	alertify.error(resp.message);
-		                }
-		            });
-		        }
+	        $('.cancel-o-prescription').click(function(e){
+	        	e.preventDefault();
+	        	let id =  $(this).attr('id');
+	        	$(".yes-cancel-prescription").attr('id', id); 
+	        	$("#is_reg").val(0); 
+                $("#modal-cancel-prescription").modal();
+	        });
 
-		        $('.administer').click(function(){
-					console.log("CLICKED!!");
-					$("#modal-id").modal();
-					$(this).attr('id');
+	         $('.cancel-reg-prescription').click(function(e){
+	        	e.preventDefault();
+	        	let id =  $(this).attr('id');
+	        	$(".yes-cancel-prescription").attr('id', id); 
+	        	$("#is_reg").val(1); 
+                $("#modal-cancel-prescription").modal();
+	        });
+
+	        $('.yes-cancel-prescription').click(function(e){
+                var id = $(this).attr('id');
+                var type = parseInt($("#is_reg").val());
+                 $.ajax({
+                    type: "POST",
+                    url: "{{ url('/api/inpatient/v1/prescriptions/delete') }}",
+                    data: JSON.stringify({ id : id }),
+                    success: function (resp) {
+                         if(resp.type === "success"){
+                            alertify.success(resp.message);
+                            if(type == 1){
+                            	$("#reg_row_"+id+"").remove();
+                        	}else if(type == 0){
+                        		$("#once_row_"+id+"").remove();
+                        	}
+                        	$("#modal-cancel-prescription").modal('toggle');
+                        }else{
+                             alertify.error(resp.message);
+                        }
+                    },
+                    error: function (resp) {
+                        alertify.error(resp.message);
+                    }
+                });
+            });
+
+
+	        $('#administer_drug').click(function(e){
+	        	e.preventDefault();
+				
+				let data = JSON.stringify({ 
+					admission_id : {{ $admission->id }},
+					prescription_id : $("#prescription_id").val(),
+					visit_id : {{ $admission->visit_id }},
+					time : $("#time").val(),
+					am_pm : $("#am_pm").val(),
+					user: {{ Auth::user()->id }}
 				});
 
-		        $('#savePrescription').click(function(e){
-		            e.preventDefault();
-		            let pre_type = ($("#type").is(":checked")) ? 1 : 0;
+	        	$.ajax({
+	                type: "POST",
+	                url: "{{ url('/api/inpatient/v1/prescriptions/administer') }}",
+	                data: data,
+	                success: function (resp) {
+	                     if(resp.type === "success"){
+	                        alertify.success(resp.message);
+	                        $("#modal-id").modal();
+	                    }else{
+	                    	 alertify.error(resp.message);
+	                    }
+	                },
+	                error: function (resp) {
+	                    alertify.error(resp.message);
+	                }
+	            });
 
-		             $.ajax({
-		                type: "POST",
-		                url: "{{ url('/api/inpatient/v1/prescriptions') }}",
-		                data: JSON.stringify({
-		                     	visit : {{ $admission->visit_id }},
-		                     	admission_id: {{ $admission->id }},
-		                    	user: {{ Auth::user()->id }},
-								drug: $("#item_0").val(),
-								take: parseInt($("#take").val()),
-								whereto: parseInt($("#whereto").val()),
-								method: parseInt($("#method").val()),
-								duration: parseInt($("#duration").val()),
-								time_measure: parseInt($("#time_measure").val()),
-								allow_substitution: $("#allow_substitution").is(":checked"),
-		                     	type: pre_type
-		                 }),
-		                success: function (resp) {
-		                    // add table rows
-		                     if(resp.type === "success"){
-		                        alertify.success(resp.message);
-		                        getPrescriptions(pre_type);
-		                    }else{
-		                    	 alertify.error(resp.message);
-		                    }
-		                },
-		                error: function (resp) {
-		                    alertify.error(resp.message);
-		                }
-		            });
-		        });
+	        });
 
-		        $('.cancel-o-prescription').click(function(e){
-		        	console.log("cancel clicked once only");
-		        	e.preventDefault();
-		        	alert($(this).attr('id'));
-		        	$.ajax({
-		                type: "POST",
-		                url: "{{ url('/api/inpatient/v1/prescriptions/cancel') }}",
-		                data: JSON.stringify({ id : $(this).attr('id') }),
-		                success: function (resp) {
-		                    // update table rows
-		                     if(resp.type === "success"){
-		                        alertify.success(resp.message);
-		                        getPrescriptions(0);
-		                    }else{
-		                    	 alertify.error(resp.message);
-		                    }
-		                },
-		                error: function (resp) {
-		                    alertify.error(resp.message);
-		                }
-		            });
+	        function getLogs(id){
+	        	$.ajax({
+			        type: "GET",
+			        url: "{{ url('/api/inpatient/v1/prescriptions/administration')}}/"+ id +"",
+			        dataType: 'json',
+			        success: function (resp) {                
+			            if(resp.type === "success"){
+			                if(resp.data.length > 0){
+			                    // refresh table
+			                    $("#admin-logs-table > tbody tr").remove();
+			                    // Loop through and append rows
+			                    let data = resp.data;
+		                    	data.map( (item, index) => {
+		                            return(
+		                                $("#admin-logs-table > tbody").append(
+		                                	"<tr id = 'row_"+ item.id +"'>\
+								    			<td>" + item.dose + "</td>\
+								    			<td>" + item.recorded_by + "</td>\
+								    			<td>" + item.recorded_on + "</td>\
+								    			<td><button type='button' class='btn btn-danger delete-log' id = '"+ item.id+"'><i class = 'fa fa-times' ></i> Delete</button>\
+								    			</td>\
+								    		</tr>"
+		                                )
+		                            );
+		                        });
 
-		        });
+		                        $("#modal-view").modal();
 
-		         $('.cancel-reg-prescription').click(function(e){
-		        	console.log("cancel clicked regular");
-		        	e.preventDefault();
-		        	alert($(this).attr('id'));
-		        	$.ajax({
-		                type: "POST",
-		                url: "{{ url('/api/inpatient/v1/prescriptions/cancel') }}",
-		                data: JSON.stringify({ id : $(this).attr('id') }),
-		                success: function (resp) {
-		                    // update table rows
-		                     if(resp.type === "success"){
-		                        alertify.success(resp.message);
-		                        getPrescriptions(0);
-		                    }else{
-		                    	 alertify.error(resp.message);
-		                    }
-		                },
-		                error: function (resp) {
-		                    alertify.error(resp.message);
-		                }
-		            });
+			                }else{
+			                    alertify.error("No administration logs found for this patient");
+			                }
+			            }else{
+			                alertify.error(resp.message);
+			            }
+			           
+			        },
+			        error: function (resp) {
+			        	alertify.error(resp.message);
+			        }
+			    });
+	        }
 
-		        });
-		    });
+	        $('.view-logs').click(function(e){
+	        	e.preventDefault();
+	        	var id = $(this).attr('id');
+	        	getLogs(id);
+	        });
+
+
+	        $('.delete-log').click(function(e){
+	        	e.preventDefault();
+				var id = $(this).attr('id');
+				let data = JSON.stringify({ id : id });
+	        	$.ajax({
+	                type: "POST",
+	                url: "{{ url('/api/inpatient/v1/prescriptions/administration/delete') }}",
+	                data: data,
+	                success: function (resp) {
+	                     if(resp.type === "success"){
+	                        alertify.success(resp.message);
+	                        $("#admin-logs-table > tbody #row_"+id+"").remove();
+	                    }else{
+	                    	 alertify.error(resp.message);
+	                    }
+	                },
+	                error: function (resp) {
+	                    alertify.error(resp.message);
+	                }
+	            });
+
+	        });
+
+
+	    });
 
 	</script>
 

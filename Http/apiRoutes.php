@@ -65,6 +65,8 @@ Route::group(['prefix' => 'v1'], function () {
 
         Route::post('/delete', 'InpatientApiController@deletePrescription');
 
+        Route::get('/administration/{prescription_id}', 'InpatientApiController@getAdministrationLogs');
+
         // Administer Prescription
         Route::post('/administer', 'InpatientApiController@administerPrescription');
 

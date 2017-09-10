@@ -12,7 +12,7 @@
 
             <div class="form-group">
                  <label>Write your notes here:</label>
-                <textarea name="notes" id="notes" class="form-control" rows="10" placeholder="Doctor's Notes..." required autofocus></textarea>
+                <textarea name="notes" id="doctors-notes" class="form-control" rows="10" placeholder="Doctor's Notes..." required autofocus></textarea>
             </div>
            
             <button type="button" class="btn btn-lg btn-primary" id = "save-note"><i class = "fa fa-save"></i> Save</button>
@@ -24,7 +24,7 @@
             <div class="alerts"></div>
 
             <div class="table-responsive">
-                <table class="table table-stripped" id = "doctors-table" style="width:100% !important; display: none !important;">
+                <table class="table table-stripped" id = "doctors-table">
                     <thead>
                         <tr>
                             <th>Date & Time</th>
@@ -34,9 +34,52 @@
                         </tr>
                     </thead>
                     <tbody>
+                    @foreach($doctorsNotes as $n)
+                        <tr id = "noterow_{{ $n->id }}">
+                            <td>{{ \Carbon\Carbon::parse($n->updated_at)->format('H:i A d/m/Y ') }}</td>
+                            <td>{{ substr($n->notes,0,30) }}</td>
+                            <td>{{ $n->users->profile->fullName }}</td>
+                            <td>
+                                <div class='btn-group'>
+                                    <button type='button' class='btn btn-danger delete-note' id = '{{ $n->id }}'><i class = 'fa fa-times' ></i> Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
                       
                     </tbody>
                 </table>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-doctor-note">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">View Notes</h4>
+                    </div>
+                    <div class="modal-body">
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modal-delete-id">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <h3>Are you sure you want to delete this note?</h3>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger yes">Yes</button>
+                        <button type="button" class="btn btn-success" id = "no"  data-dismiss="modal">No</button>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -45,54 +88,9 @@
     <script type="text/javascript">
 
         $(document).ready(function(){
-            // $(function () {
-            //     $("table").dataTable();
-            // })
-
-            getNotes();
-
-            function getNotes(){
-                $.ajax({
-                    type: "GET",
-                    url: "{{ url('/api/inpatient/v1/notes/admission/'.$admission->id.'/type/1') }}",
-                    dataType: 'json',
-                    success: function (resp) {                
-                        if(resp.type === "success"){
-                            if(resp.data.length > 0){
-                                // refresh table
-                                $("#doctors-table > tbody tr").html("");
-                                // Loop through and append rows
-                                let data = resp.data;
-
-                                data.map( (item, index) => {
-                                    return(
-                                        $("#doctors-table > tbody").append("<tr id = 'row_"+ item.id +"'>\
-                                            <td>" + item.written_on + "</td>\
-                                            <td>" + item.notes + "</td>\
-                                            <td>" + item.name + "</td>\
-                                            <td><button type='button' class='btn btn-danger delete' id = '"+ item.id +"'><i class = 'fa fa-trash-o'></i> Delete</button></td></tr>")
-                                    );
-                                });
-
-                                $("#doctors-table").css("display","block");
-                                $("#doctors-table").show();
-                               
-                            }else{
-                                $("#doctors-table").css("display","none");
-                                alertify.error("No doctor's notes found for this patient");
-                            }
-                        }else{
-                            $("#doctors-table").hide();
-                            alertify.error(resp.message);
-                        }
-                       
-                    },
-                    error: function (resp) {
-                        $("#doctors-table").hide();
-                        alertify.error(resp.message);
-                    }
-                });
-            }
+            $(function () {
+                $("table").dataTable();
+            })
 
             $('#save-note').click(function(e){
                 e.preventDefault();
@@ -102,7 +100,7 @@
                     data: JSON.stringify({
                          visit_id : {{ $admission->visit_id }},
                          admission_id: {{ $admission->id }},
-                         notes: $("#notes").val(),
+                         notes: $("#doctors-notes").val(),
                          type: 1,
                          user: {{ Auth::user()->id }}
                      }),
@@ -110,7 +108,19 @@
                         // add table rows
                          if(resp.type === "success"){
                             alertify.success(resp.message);
-                            getNotes();
+                            let data = JSON.parse(resp.data);
+                            console.log(data);
+                            data.map( (item, index) => {
+                                return(
+                                    $("#doctors-table > tbody").append("<tr id = 'noterow_"+ item.id +"'>\
+                                        <td>" + item.written_on + "</td>\
+                                        <td>" + item.notes + "</td>\
+                                        <td>" + item.name + "</td>\
+                                        <td><div class='btn-group'>\
+                                             <button type='button' class='btn btn-danger delete-note' id = '"+ item.id + "'><i class = 'fa fa-times' ></i> Delete</button>\
+                                         </div></td></tr>")
+                                );
+                            });
                         }else{
                              alertify.error(resp.message);
                         }
@@ -122,12 +132,20 @@
                 });
             });
 
-            $('.delete').click(function(e){
+            $('.delete-note').click(function(e){
                 e.preventDefault();
                 var id = $(this).attr('id');
-                $(this).html("Deleting ....");
-                console.log("deleting");
+                $(".yes").attr('id', id); 
 
+                $("#modal-delete-id").modal();
+
+
+                
+            });
+
+
+            $('.yes').click(function(e){
+                var id = $(this).attr('id');
                  $.ajax({
                     type: "POST",
                     url: "{{ url('/api/inpatient/v1/notes/delete') }}",
@@ -135,26 +153,23 @@
                          id : id
                      }),
                     success: function (resp) {
-                        // add table rows
                          if(resp.type === "success"){
-                            $("tr#row_"+id+"").remove();
                             alertify.success(resp.message);
-                            $(this).html("<i class = 'fa fa-trash-o'></i> Delete");
-                            getNotes();
+                            $("#modal-delete-id").modal('toggle');
+                            $("#noterow_"+id+"").remove();
                         }else{
                              alertify.error(resp.message);
                         }
                     },
                     error: function (resp) {
-                        $(this).html("<i class = 'fa fa-trash-o'></i> Delete");
                         alertify.error(resp.message);
                     }
                 });
             });
+
         });
 
     
     </script>
   
 </div>
-
