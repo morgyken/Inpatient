@@ -33,7 +33,7 @@ class CreateCanceledPrescriptionsTable extends Migration
                     ->on('admissions')
                     ->onUpdate('cascade')
                     ->onDelete('cascade');
-            $table->foreign('visit')
+            $table->foreign('visit_id')
                     ->references('id')
                     ->on('evaluation_visits')
                     ->onUpdate('cascade')

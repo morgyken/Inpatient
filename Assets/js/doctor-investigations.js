@@ -11,6 +11,7 @@
  * */
 
 /* global DIAGNOSIS_URL, USER_ID, VISIT_ID, alertify */
+var MY_NICE_TABLE = null;
 $(function () {
     //mock hide this
     $('.instructions').hide();
@@ -18,7 +19,9 @@ $(function () {
     $('#radiology_form input,#radilogy_form textarea, #diagnosis_form input,#diagnosis_form textarea,#laboratory_form input,#laboratory_form textarea').blur(function () {
         show_selection_investigation();
     });
-
+    MY_NICE_TABLE = $('#in_table').dataTable({
+        ajax: THE_TABLE_URL
+    });
 
     $('#diagnosis_form input:text').keyup(function () {
         show_selection_investigation();
@@ -32,9 +35,8 @@ $(function () {
         show_selection_investigation();
     });
     $('input').on('ifChanged', function (event) {
-        var elements = $(this).parent().parent().find('input');
-        var texts = $(this).parent().parent().find('textarea');
-        console.log(elements, texts);
+        var elements = $(this).parents('tr').find('input');
+        var texts = $(this).parents('tr').find('textarea');
         if ($(this).is(':checked')) {
             elements.prop('disabled', false);
             texts.prop('disabled', false);
@@ -45,6 +47,7 @@ $(function () {
             $(texts).parent().hide();
         }
         $(this).prop('disabled', false);
+        show_selection_investigation();
     });
     $('#radiology_form .check,#laboratory_form .check,#diagnosis_form .check').click(function () {
         var elements = $(this).parent().parent().find('input');
@@ -110,13 +113,13 @@ $(function () {
             data: $('#radiology_form,#diagnosis_form, #laboratory_form').serialize(),
             success: function () {
                 alertify.success('<i class="fa fa-check-circle"></i> Patient evaluation updated');
-                location.reload();
+                $('#investigationTab input').iCheck('uncheck');
+                $('#in_table').dataTable().api().ajax.reload()
             },
             error: function () {
-                alertify.error('<i class="fa fa-check-warning"></i> Could not save evalaution');
+                alertify.error('<i class="fa fa-check-warning"></i> Could not save evaluation');
             }
         });
-        //location.reload();
     });
     //sick of this
     $('#laboratory_form').find('input:radio, input:checkbox').prop('checked', false);
