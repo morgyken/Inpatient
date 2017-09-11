@@ -1,3 +1,6 @@
+<?php
+$visit=\Ignite\Inpatient\Entities\Visit::findOrNew($admission->visit_id);
+?>
 @extends('layouts.app')
 @section('content_title','Admit Patient')
 @section('content_description','Action to admitting a patient')
@@ -54,16 +57,17 @@
         <div class="box-body">
 
             <ul class="nav nav-tabs inpatient-tabs">
-                <li role="presentation" class="active"><a data-toggle="tab" aria-controls="tab" href="#doctor">Doctor's Notes</a></li>
+                <li role="presentation" class="active"><a data-toggle="tab" aria-controls="doctor" href="#doctor">Doctor's Notes</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#nurse">Nurse's Notes</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#prescription">Prescriptions</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#vitals">Patient Vitals</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#bp">Blood Pressure</a></li>
-                <li role="presentation"><a data-toggle="tab" href="#temperature">Temperature</a></li>
-                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#investigation">Investigations</a></li>
-                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#procedures">Procedures</a></li>
-                
-               {{--  <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#discharge">Discharge</a></li>
+                <li role="presentation" ><a data-toggle="tab" aria-controls="tab" href="#temperature">Temperature</a></li>    
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#blood">Blood Trans.</a></li>
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#plan">Care Plan</a></li>
+                {{-- <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#investigationTab">Investigations</a></li>
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#proceduresTab">Procedures</a></li> --}}
+              {{--   <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#discharge">Discharge</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#summary">Summary</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#history">History</a></li> --}}
             </ul>
@@ -75,8 +79,10 @@
                 @include("Inpatient::admission.manage.vitals")
                 @include('inpatient::admission.graphs.bp')
                 @include('inpatient::admission.graphs.temperature')
-                @include("Inpatient::admission.manage.investigations")
-                @include("Inpatient::admission.manage.procedures")
+                @include('inpatient::admission.manage.transfusion')
+                @include('inpatient::admission.manage.care_plan')
+               {{--  @include("Inpatient::admission.manage.investigations")
+                @include("Inpatient::admission.manage.procedures") --}}
                {{--  @include("Inpatient::admission.manage.discharge")
                 @include("Inpatient::admission.manage.summary")
                 @include("Inpatient::admission.manage.history") --}}

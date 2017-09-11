@@ -101,6 +101,9 @@ Route::group(['prefix' => 'v1'], function () {
         // Get notes
         Route::get('/admission/{admission_id}/type/{type}', 'InpatientApiController@getNotes');
 
+        // Get single note
+        Route::get('/{id}', 'InpatientApiController@getNote');
+
         // Save Doctor's and Nurse's notes
         Route::post('', 'InpatientApiController@addNote');
 
@@ -136,11 +139,18 @@ Route::group(['prefix' => 'v1'], function () {
 
     Route::group(['prefix' => 'transfusions'], function () {
         // Get Blood Transfusion Data
-        // Get Head Injury Data
+
+        // Get Blood Transfusion Data
         Route::get('/admission/{admission_id}', 'InpatientApiController@getBloodTransfusions');
 
-        // Save head Injury data
+        // Save Blood Transfusion data
         Route::post('', 'InpatientApiController@addBloodTransfusions');
+
+        // Update Blood Transfusion data
+        Route::post('/update', 'InpatientApiController@updateBloodTransfusions');
+
+        // Delete Blood Transfusion data
+        Route::post('', 'InpatientApiController@deleteBloodTransfusions');
     });
 
     Route::group(['prefix' => 'plans'], function () {

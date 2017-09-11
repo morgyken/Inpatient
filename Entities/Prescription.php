@@ -2,16 +2,20 @@
 
 namespace Ignite\Inpatient\Entities;
 
+use Illuminate\Database\Eloquent\Model;
+
+use Ignite\Inpatient\Entities\Administration;
 use Ignite\Evaluation\Entities\Dispensing;
 use Ignite\Inventory\Entities\InventoryProducts;
 use Ignite\Users\Entities\User;
-use Illuminate\Database\Eloquent\Model;
+
 
 /**
  * Ignite\Inpatient\Entities\Prescription
  *
  * @property int $id
  * @property int $visit
+ * @property int $user
  * @property string $drug
  * @property int $take
  * @property int $whereto
@@ -20,9 +24,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $status
  * @property bool $allow_substitution
  * @property int $time_measure
- * @property int $user
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ * @property int $type
  * @property int|null $admission_id
  * @property-read \Illuminate\Database\Eloquent\Collection|\Ignite\Evaluation\Entities\Dispensing[] $dispensing
  * @property-read \Ignite\Inventory\Entities\InventoryProducts $drugs
@@ -40,6 +44,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereTake($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereTimeMeasure($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereUser($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereVisit($value)
@@ -55,7 +60,7 @@ class Prescription extends Model
 
     /**
      * @return string
-     */
+    */
     public function getDoseAttribute()
     {
         return $this->take . ' ' . mconfig('evaluation.options.prescription_whereto.' . $this->whereto) . ' '
@@ -65,7 +70,7 @@ class Prescription extends Model
 
     /**
      * @return string
-     */
+    */
     public function getSubAttribute()
     {
         return $this->allow_substitution ? 'Yes' : 'No';
@@ -73,7 +78,7 @@ class Prescription extends Model
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+    */
     public function visits()
     {
         return $this->belongsTo(Visit::class, 'visit');
@@ -81,7 +86,7 @@ class Prescription extends Model
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+    */
     public function drugs()
     {
         return $this->belongsTo(InventoryProducts::class, 'drug');
@@ -89,7 +94,7 @@ class Prescription extends Model
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+    */
     public function users()
     {
         return $this->belongsTo(User::class, 'user');
@@ -97,9 +102,17 @@ class Prescription extends Model
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
+    */
     public function dispensing()
     {
         return $this->hasMany(Dispensing::class, 'prescription');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+    */
+    public function logs()
+    {
+         return $this->hasMany(Administration::class, 'prescription_id', 'id');
     }
 }

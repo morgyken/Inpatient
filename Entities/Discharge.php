@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
  * Ignite\Inpatient\Entities\Discharge
  *
  * @property int $id
- * @property int $visit_id
+ * @property int $admission_id
+ * @property int|null $visit_id
  * @property int|null $doctor_id
  * @property string $type
  * @property string $DischargeNote
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $timeofdeath
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Discharge whereAdmissionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Discharge whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Discharge whereDateofdeath($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Discharge whereDischargeNote($value)

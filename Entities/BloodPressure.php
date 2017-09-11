@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $patient_id
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ * @property-read mixed $date
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\BloodPressure whereAdmissionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\BloodPressure whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\BloodPressure whereId($value)
@@ -25,4 +26,9 @@ class BloodPressure extends Model
 {
     protected $guarded = [];
     protected $table = 'inpatient_blood_pressures';
+
+    public function getDateAttribute()
+    {
+        return $this->created_at->format('d.m.Y H:i');
+    }
 }

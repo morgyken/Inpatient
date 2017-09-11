@@ -15,7 +15,7 @@
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0 !important;">
                         <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="padding: 0 !important;">
                          <label for="" class="control-label">Date recorded:</label>
-                            <input type="date" class="form-control" name="date_recorded" id ="date_recorded" required>
+                            <input type="date" class="form-control" name="date_recorded" id ="date_recorded" value = "{{ \Carbon\Carbon::now('Africa/Nairobi')->toDateString() }}" required>
                         </div>
                         <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                             <label for="" class="control-label">Time recorded:</label>
@@ -39,7 +39,7 @@
                     <input type="number" class="form-control" name="pulse" id="pulse">
 
                     <label for="" class="control-label">Respiration:[Per min]</label>
-                    <input type="number" class="form-control" name="respiration" id = "pulse">
+                    <input type="number" class="form-control" name="respiration" id = "respiration">
 
                     <label for="" class="control-label">Temperature:[Celsius]</label>
                     <input type="number" class="form-control" name="temperature" id = "temperature">
@@ -97,57 +97,53 @@
                 </div>
             </form>
         </div>
+
+
        
         <div class="col-xs-12 col-sm-12 col-lg-12">
             <h3>Previous Vitals</h3>
-            @if(count($vitals) > 0)
-                <table class="table table-hover" id = "vitals-table">
+            @if(count($vitals) <= 0)
+                <div class="alert alert-info">
+                    There are no vitals recorded for this patient
+                </div>             
+            @endif
+
+            <div class="table-responsive">
+                <table class="table table-stripped" id = "vitals-table">
                     <thead>
                         <tr>
                             <th>DateTime</th>
-                            <th>Height</th>
-                            <th>Weight</th>
-                            <th>BMI</th>
                             <th>Status</th>
                             <th>Temp</th>
                             <th>BP</th>
                             <th>Resp</th>
                             <th>Pulse</th>
                             <th>O<sub>2</sub></th>
+                            <th>Options</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($vitals as $v)
-                            <tr id = "vitals_row_{{ $v->id }}">
-                                <td>{{ \Carbon\Carbon::parse($v->created_at)->format('H:i A d/m/Y') }}</td>
-                                <td>{{ $v->height }}</td>
-                                <td>{{ $v->weight }}</td>
-                                <td>{{ $v->weight / ($v->height * $v->height) }}</td>
+                            <tr id = "vitals_row_{{ $v['id'] }}">
+                                <td>{{ $v['date_time_recorded'] }}</td>
+                                <td>{{ $v['bmi_status'] }}</td>
+                                <td>{{ $v['temperature'] }}<sup>o</sup>C</td>
+                                <td>{{ $v['bp'] }}</td>
+                                <td>{{ $v['respiration'] }}</td>
+                                <td>{{ $v['pulse'] }}</td>
+                                <td>{{ $v['oxygen'] }}</td>
                                 <td>
-                                    @if( ($v->weight / ($v->height * $v->height)) > 29.9)
-                                        Obese
-                                    @elseif( ($v->weight / ($v->height * $v->height)) < 30 && ($v->weight / ($v->height * $v->height)) > 24.9)
-                                        Overweight
-                                    @elseif( ($v->weight / ($v->height * $v->height)) < 24.8 && ($v->weight / ($v->height * $v->height)) > 18.5)
-                                        Normal
-                                    @elseif( ($v->weight / ($v->height * $v->height)) < 18.5)
-                                        Underweight
-                                    @endif
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-primary"><i class = "fa fa-eye"></i> View</button>
+                                        <button type="button" class="btn btn-success"><i class = "fa fa-pencil"></i> Edit</button>
+                                        <button type="button" class="btn btn-danger"><i class = "fa fa-trash-o"></i> Delete</button>
+                                    </div>
                                 </td>
-                                <td>{{ $v->temperature }}</td>
-                                <td>{{ $v->bp_systolic }}/{{ $v->bp_diastolic }}</td>
-                                <td>{{ $v->resperation }}</td>
-                                <td>{{ $v->pulse }}</td>
-                                <td>{{ $v->oxygen }}</td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
-            @else
-                <div class="alert">
-                    There are no vitals recorded for this patient
-                </div>
-           @endif
+            </div>
         </div>
 
     <div class="modal fade" id="modal-delete-vitals">
@@ -170,18 +166,16 @@
 <script type="text/javascript">
     
     $(document).ready(function(){
-        $(function () {
-            $("table").dataTable();
-        });
 
-        getDate();
+        $("#vitals-table").dataTable();
 
         function getDate(){
             var d = new Date();
             let dateNow = d.getDay() + '/' + d.getMonth() + '/' + d.getYear();
             $("#date_recorded").val(dateNow);
         }
-
+        
+        getDate();
         getTime();
 
         function getTime(){
@@ -217,9 +211,9 @@
                     data: JSON.stringify({
                             visit_id : {{ $admission->visit_id }},
                             admission_id: {{ $admission->id }},
-                            user: {{ Auth::user()->id }},
-                            height : $("#").val(),
-                            weight : $("#").val(),
+                            user_id: {{ Auth::user()->id }},
+                            height : $("#height").val(),
+                            weight : $("#weight").val(),
                             bp_systolic : $("#bp_systolic").val(),
                             bp_diastolic : $("#bp_diastolic").val(),
                             pulse : $("#pulse").val(),
@@ -232,7 +226,9 @@
                             blood_sugar : $("#blood_sugar").val(),
                             blood_sugar_units : $("#blood_sugar_units").val(),
                             allergies : $("#allergies").val(),
-                            chronic_illnesses : $("chronic_illnesses").val()
+                            chronic_illnesses : $("chronic_illnesses").val(),
+                            date_recorded : $("#date_recorded").val(),
+                            time_recorded: $("#time_recorded").val()
                      }),
                     success: function (resp) {
                         // add table rows
@@ -240,7 +236,7 @@
                             alertify.success(resp.message);
                             // append To Table
                             let data = JSON.parse(resp.data);
-                            console.log(data);
+                            // console.log(data);
                             data.map( (item, index) => {
                                 return(
                                     $("#vitals-table > tbody").append("<tr id = '"+item.id+"'>\

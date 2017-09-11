@@ -15,11 +15,13 @@ use Carbon\Carbon;
 
 use Ignite\Inpatient\Entities\Admission;
 use Ignite\Inpatient\Entities\BloodPressure;
+use Ignite\Inpatient\Entities\BloodTransfusion;
 use Ignite\Inpatient\Entities\Deposit;
 use Ignite\Inpatient\Entities\DischargeNote;
 
 use Ignite\Inpatient\Entities\Notes;
 use Ignite\Inpatient\Entities\NursingCharge;
+use Ignite\Inpatient\Entities\NursingCarePlan;
 use Ignite\Inpatient\Entities\PatientAccount;
 use Ignite\Inpatient\Entities\RequestAdmission;
 use Ignite\Inpatient\Entities\RequestDischarge;
@@ -30,6 +32,7 @@ use Ignite\Inpatient\Entities\Ward;
 use Ignite\Inpatient\Entities\WardAssigned;
 use Ignite\Inpatient\Entities\Bed;
 use Ignite\Inpatient\Entities\BedPosition;
+use Ignite\Inpatient\Helpers\InpatientHelpers;
 
 use Ignite\Reception\Entities\Patients;
 use Illuminate\Contracts\View\Factory;
@@ -63,6 +66,7 @@ class InpatientController extends AdminBaseController
     private $beds;
 
     protected $evaluation;
+    private $helper;
 
     /**
      * InpatientController constructor.
@@ -72,11 +76,12 @@ class InpatientController extends AdminBaseController
      * @param User $user
      * @param UserRoles $user_roles
      */
-    public function __construct(Carbon $carbon, Patients $patients, RequestAdmission $request_admission, Roles $roles, User $user, UserRoles $user_roles, Visit $visit, EvaluationRepository $evaluation)
+    public function __construct(InpatientHelpers $helper, Carbon $carbon, Patients $patients, RequestAdmission $request_admission, Roles $roles, User $user, UserRoles $user_roles, Visit $visit, EvaluationRepository $evaluation)
     {
         parent::__construct();
         $this->__require_assets();
 
+        $this->helper = $helper;
         $this->carbon = $carbon;
         $this->carbon->tz = new \DateTimeZone('Africa/Nairobi');
         $this->request_admission = $request_admission;
@@ -118,7 +123,9 @@ class InpatientController extends AdminBaseController
             // 'nurse-vitals.js' => m_asset('evaluation:js/nurse-vitals.js'),
             // //'order-investigation.js' => m_asset('evaluation:js/doctor-treatment.min.js'),
             // 'nurse_eye_preliminary.js' => m_asset('evaluation:js/nurse_eye_preliminary.min.js'),
-            'inpatient-scripts.js' => m_asset('inpatient:js/inpatient-scripts.js')
+            'inpatient-scripts.js' => m_asset('inpatient:js/inpatient-scripts.js'),
+            'canvas-to-blob.min.js' => m_asset('inpatient:js/jpeg_camera/canvas-to-blob.min.js'),
+            'jpeg_camera_with_dependencies.min.js' => m_asset('inpatient:js/jpeg_camera/jpeg_camera_with_dependencies.min.js')
         ];
 
         foreach ($css_assets as $key => $asset) {
@@ -420,12 +427,38 @@ class InpatientController extends AdminBaseController
 
         if (count(Visit::where('patient', $id)->get()) > 0) {
             $visit_id = Visit::where('patient', $id)->orderBy('created_at', 'desc')->first()->id;
-            $vitals = Vitals::where('visit_id', $visit_id)->get();
+            $vitals = Vitals::where('visit_id', $visit_id)->orderBy("updated_at", "DESC")->get()->map(function ($item) {
+                    return [
+                            "id" => $item->id,
+                            "height" => $item->height,
+                            "weight" => $item->weight,
+                            "bmi" => number_format($this->helper->calculateBMI($item->weight, $item->height), 2),
+                            "bmi_status" => $this->helper->getBMIStatus($this->helper->calculateBMI($item->weight, $item->height)),
+                            "bp" => $item->bp_systolic . "/" . $item->bp_diastolic,
+                            "pulse" => $item->pulse,
+                            "respiration" => $item->respiration,
+                            "temperature" => $item->temperature,
+                            "temperature_location" => $item->temperature_location,
+                            "oxygen" => $item->oxygen,
+                            "waist" => $item->waist,
+                            "hip" => $item->hip,
+                            "blood_sugar" => $item->blood_sugar,
+                            "blood_sugar_units" => $item->blood_sugar_units,
+                            "allergies" => $item->allergies,
+                            "chronic_illnesses" => $item->chronic_illnesses,
+                            "recorded_by" => $item->user->profile->fullName,
+                            "date_time_recorded"  => $item->date_recorded . " " .$item->time_recorded,
+                            "timestamp" => $this->carbon->parse($item->created_at)->format('d/m/Y H:i A')
+                        ];
+                });
+
             $once_only_prescriptions = Prescriptions::where('visit', $visit_id)->where("type", 0)->orderBy("updated_at", "DESC")->get();
             $regular_prescriptions = Prescriptions::where('visit', $visit_id)->where("type", 1)->orderBy("updated_at", "DESC")->get();
 
             $doctorsNotes = Notes::where('visit_id', $visit_id)->where("type",1)->get();
             $nursesNotes = Notes::where('visit_id', $visit_id)->where("type",0)->get();
+            $nursingCarePlans = NursingCarePlan::where('visit_id', $visit_id)->get();
+            $transfusions = BloodTransfusion::where('visit_id', $visit_id)->get();
         }
 
         $bpChart = $this->getCharts($patient->id, $admission->id);
@@ -450,7 +483,7 @@ class InpatientController extends AdminBaseController
 
         });
 
-        return view('Inpatient::admission.manage_patient', compact('tempChart', 'investigations', 'bpChart', 'patient', 'ward', 'admission', 'vitals', 'doctorsNotes', 'nursesNotes', 'once_only_prescriptions', 'regular_prescriptions'));
+        return view('Inpatient::admission.manage_patient', compact('tempChart', 'investigations', 'bpChart', 'patient', 'ward', 'admission', 'vitals', 'doctorsNotes', 'nursesNotes', 'once_only_prescriptions', 'regular_prescriptions', 'nursingCarePlans', 'transfusions'));
     }
 
     private function getTemperatureChart($patient, $admission)
@@ -459,9 +492,10 @@ class InpatientController extends AdminBaseController
         return \Charts::create('line', 'highcharts')
             ->title('Temperature Chart')
             ->elementLabel('Temperature')
-            ->labels($t->pluck('created_at'))
+            ->labels($t->pluck('date'))
             ->values($t->pluck('temperature'))
             ->template('material')
+            ->container('temp_chart')
             ->width(0)
             ->height(0);
         /* return \Charts::realtime(
@@ -487,9 +521,10 @@ class InpatientController extends AdminBaseController
         return \Charts::create('line', 'highcharts')
             ->title('Blood Pressure Chart')
             ->elementLabel('Blood Pressure')
-            ->labels($bp->pluck('created_at'))
+            ->labels($bp->pluck('date'))
             ->values($bp->pluck('value'))
             ->template('material')
+            ->container('bp_chart')
             ->width(0)
             ->height(0);
 

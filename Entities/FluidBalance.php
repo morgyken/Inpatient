@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property int $admission_id
+ * @property int $visit_id
  * @property int $user_id
  * @property string|null $bp_systolic
  * @property string|null $intravenous_infusion
@@ -34,6 +35,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\FluidBalance whereOutput($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\FluidBalance whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\FluidBalance whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\FluidBalance whereVisitId($value)
  * @mixin \Eloquent
  */
 class FluidBalance extends Model

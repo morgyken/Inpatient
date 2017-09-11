@@ -10,7 +10,7 @@ use Ignite\Inpatient\Entities\Admission;
  * Ignite\Inpatient\Entities\Vitals
  *
  * @property int $id
- * @property int|null $visit_id
+ * @property int $visit_id
  * @property int $admission_id
  * @property float|null $weight
  * @property float|null $height
@@ -34,7 +34,7 @@ use Ignite\Inpatient\Entities\Admission;
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \Ignite\Inpatient\Entities\Admission $admissions
  * @property-read \Ignite\Users\Entities\User $user
- * @property-read \Ignite\Inpatient\Entities\Visit|null $visits
+ * @property-read \Ignite\Inpatient\Entities\Visit $visits
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Vitals whereAdmissionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Vitals whereAllergies($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Vitals whereBloodSugar($value)

@@ -17,6 +17,7 @@ class CreateInpatientsNotesTable extends Migration
             $column->unsignedInteger('admission_id');
             $column->unsignedInteger('visit_id');
             $column->longText('notes');
+            $column->binary('note_pic')->nullable();
             $column->unsignedInteger('user');
             $column->integer('type')->default(0); // 0 - nurse's , 1- doctor's
             $column->timestamps();

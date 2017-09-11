@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property int $admission_id
+ * @property int $visit_id
  * @property int $user_id
  * @property string|null $bp_systolic
  * @property string|null $bp_diastolic
@@ -34,6 +35,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\HeadInjury whereTemperature($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\HeadInjury whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\HeadInjury whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\HeadInjury whereVisitId($value)
  * @mixin \Eloquent
  */
 class HeadInjury extends Model

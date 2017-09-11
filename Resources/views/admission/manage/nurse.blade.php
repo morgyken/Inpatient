@@ -1,6 +1,4 @@
-<div role="tabpanel" id="nurse" class="tab-pane fade col-md-12">
-
-    <div class="container demo col-md-12">
+<div role="tabpanel" id="nurse" class="tab-pane fade col-xs-12 col-sm-12 col-md-12 col-lg-12">
         <br>
         <form id="nurse_notes">
 
@@ -83,14 +81,11 @@
             </div>
         </div>
         
-    </div><!-- container -->
-
     <script type="text/javascript">
 
         $(document).ready(function(){
-            $(function () {
-                $("table").dataTable();
-            })
+            
+            $("#nurses-table").dataTable();
 
             $('#save-nurse-note').click(function(e){
                 e.preventDefault();

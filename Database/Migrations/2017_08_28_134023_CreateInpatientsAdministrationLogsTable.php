@@ -19,7 +19,7 @@ class CreateInpatientsAdministrationLogsTable extends Migration
             $column->unsignedInteger('prescription_id');
             $column->string('time');
             $column->string('am_pm');
-            $column->integer('user')->unsigned();
+            $column->unsignedInteger('user');
             $column->timestamps();
 
             $column->foreign('admission_id')

@@ -4,24 +4,27 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateBloodTransfusionsTable extends Migration
+class CreateInpatientNursingCarePlanTable extends Migration
 {
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up() {
-        Schema::create('inpatient_blood_transfusion', function(Blueprint $column) {
+    public function up()
+    {
+          Schema::create('inpatient_nursing_care_plan', function(Blueprint $column) {
             $column->increments('id');
             $column->unsignedInteger('admission_id');
             $column->unsignedInteger('visit_id');
             $column->unsignedInteger('user_id');
-            $column->integer('bp_systolic')->nullable();
-            $column->integer('bp_diastolic')->nullable();
-            $column->integer('temperature')->nullable();
-            $column->integer('respiration')->nullable();
-            $column->longText('remarks')->nullable();
+            $column->longText('diagnosis');
+            $column->longText('expected_outcome');
+            $column->longText('intervention');
+            $column->longText('reasons');
+            $column->longText('evaluation');
+            $column->date('date_recorded');
+            $column->time('time_recorded');
             $column->timestamps();
 
             $column->foreign('admission_id')->references('id')->on('admissions')
@@ -41,7 +44,8 @@ class CreateBloodTransfusionsTable extends Migration
      *
      * @return void
      */
-    public function down() {
-        Schema::drop('inpatient_blood_transfusion');
+    public function down()
+    {
+        Schema::drop('inpatient_nursing_care_plan');
     }
 }

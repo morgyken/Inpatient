@@ -9,9 +9,9 @@ use Ignite\Reception\Entities\Patients;
  * Ignite\Inpatient\Entities\RequestAdmission
  *
  * @property int $id
+ * @property int $patient_id
  * @property int|null $visit_id
  * @property string|null $reason
- * @property int $patient_id
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \Ignite\Reception\Entities\Patients $patient
