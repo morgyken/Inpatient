@@ -159,10 +159,10 @@ $performed_radio = get_inpatient_investigations($admission->id, ['radiology']);
     $(document).ready(function () {
         $('.accordion').accordion({heightStyle: "content"});
         $('#in_table').dataTable();
-//        $('input').iCheck({
-//            checkboxClass: 'icheckbox_flat-green',
-//            radioClass: 'iradio_square-blue',
-//            increaseArea: '20%' // optional
-//        });
+        $('#investigationTab input').iCheck({
+            checkboxClass: 'icheckbox_flat-green',
+            radioClass: 'iradio_square-blue',
+            increaseArea: '20%' // optional
+        });
     });
 </script>
