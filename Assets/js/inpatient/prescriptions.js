@@ -79,7 +79,6 @@ $(document).ready(function(){
                             );
                         });
                  	}
-                    alertify.success(resp.message);
                 }else{
                 	 alertify.error(resp.message);
                 }
