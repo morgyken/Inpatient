@@ -848,7 +848,7 @@ class InpatientApiController extends Controller
                 ucfirst(substr($item->type, 1 + strpos($item->type, '-'))),
                 $item->price, $item->quantity, $item->discount,
                 $item->amount > 0 ? $item->amount : $item->price,
-                $item->created_at->toDateTimeString(),
+                $item->created_at->format('d/m/Y h:i a'),
                 payment_label($item->is_paid),
                 $link,
             ];
@@ -875,9 +875,10 @@ class InpatientApiController extends Controller
                 ucfirst(substr($item->type, 1 + strpos($item->type, '-'))),
                 $item->price, $item->quantity, $item->discount,
                 $item->amount > 0 ? $item->amount : $item->price,
-                $item->created_at->toDateTimeString(),
+                $item->created_at->format('d/m/Y h:i a'),
                 payment_label($item->is_paid),
                 $link,
+//                $item->
             ];
         }
         return response()->json(['data' => $return]);

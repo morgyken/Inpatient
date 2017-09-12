@@ -19,7 +19,8 @@ $(function () {
         show_selection_investigation();
     });
     $('#in_table').dataTable({
-        ajax: THE_TABLE_URL
+        ajax: THE_TABLE_URL,
+        responsive: true
     });
 
     $('#diagnosis_form input:text').keyup(function () {

@@ -19,7 +19,8 @@ $(function () {
         show_procedures_selected();
     });
     $('#in_procedures_table').dataTable({
-        ajax: THE_PROCEDURE_URL
+        ajax: THE_PROCEDURE_URL,
+        responsive: true
     });
     $('#doctor_form,#nurse_form').find('input:text').keyup(function () {
         show_procedures_selected();
