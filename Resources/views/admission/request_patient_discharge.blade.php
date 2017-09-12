@@ -174,7 +174,7 @@
                 $(".Summary").show();
             }
         }
-        CKEDITOR.replaceAll();
+//        CKEDITOR.replaceAll();
         check_type();
         $("#discharge_type").change(function(){
             check_type();

@@ -65,7 +65,7 @@ $co = null;
 @endif
                             -->
                 </span>
-                    <input type="hidden" name="type{{$procedure->id}}" value="laboratory" disabled/>
+                    <input type="hidden" name="type{{$procedure->id}}" value="inpatient-laboratory" disabled/>
                 </td>
                 <td>
                     <input type="text" name="price{{$procedure->id}}" value="{{$price}}" id="cost{{$procedure->id}}"

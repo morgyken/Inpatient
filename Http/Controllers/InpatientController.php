@@ -2,26 +2,23 @@
 
 namespace Ignite\Inpatient\Http\Controllers;
 
-use Ignite\Core\Http\Controllers\AdminBaseController;
-
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Routing\Controller;
-
-use Validator;
-use Session;
-use Lava;
 use Carbon\Carbon;
-
+use Ignite\Core\Http\Controllers\AdminBaseController;
+use Ignite\Evaluation\Entities\Investigations;
+use Ignite\Evaluation\Entities\Prescriptions;
+use Ignite\Evaluation\Entities\RecurrentCharge;
+use Ignite\Evaluation\Entities\VisitDestinations;
+use Ignite\Evaluation\Repositories\EvaluationRepository;
 use Ignite\Inpatient\Entities\Admission;
+use Ignite\Inpatient\Entities\Bed;
+use Ignite\Inpatient\Entities\BedPosition;
 use Ignite\Inpatient\Entities\BloodPressure;
 use Ignite\Inpatient\Entities\BloodTransfusion;
 use Ignite\Inpatient\Entities\Deposit;
 use Ignite\Inpatient\Entities\DischargeNote;
-
 use Ignite\Inpatient\Entities\Notes;
-use Ignite\Inpatient\Entities\NursingCharge;
 use Ignite\Inpatient\Entities\NursingCarePlan;
+use Ignite\Inpatient\Entities\NursingCharge;
 use Ignite\Inpatient\Entities\PatientAccount;
 use Ignite\Inpatient\Entities\RequestAdmission;
 use Ignite\Inpatient\Entities\RequestDischarge;
@@ -30,23 +27,14 @@ use Ignite\Inpatient\Entities\Visit;
 use Ignite\Inpatient\Entities\Vitals;
 use Ignite\Inpatient\Entities\Ward;
 use Ignite\Inpatient\Entities\WardAssigned;
-use Ignite\Inpatient\Entities\Bed;
-use Ignite\Inpatient\Entities\BedPosition;
 use Ignite\Inpatient\Helpers\InpatientHelpers;
-
 use Ignite\Reception\Entities\Patients;
-use Illuminate\Contracts\View\Factory;
-
 use Ignite\Users\Entities\Roles;
 use Ignite\Users\Entities\User;
 use Ignite\Users\Entities\UserRoles;
-
-use Ignite\Evaluation\Entities\VisitDestinations;
-use Ignite\Evaluation\Entities\FinancePatientAccounts;
-use Ignite\Evaluation\Entities\Prescriptions;
-use Ignite\Evaluation\Repositories\EvaluationRepository;
-use Ignite\Evaluation\Entities\Investigations;
-use Ignite\Evaluation\Entities\RecurrentCharge;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Validator;
 
 class InpatientController extends AdminBaseController
 {
@@ -70,16 +58,20 @@ class InpatientController extends AdminBaseController
 
     /**
      * InpatientController constructor.
+     * @param InpatientHelpers $helper
+     * @param Carbon $carbon
      * @param Patients $patients
      * @param RequestAdmission $request_admission
      * @param Roles $roles
      * @param User $user
      * @param UserRoles $user_roles
+     * @param Visit $visit
+     * @param EvaluationRepository $evaluation
      */
     public function __construct(InpatientHelpers $helper, Carbon $carbon, Patients $patients, RequestAdmission $request_admission, Roles $roles, User $user, UserRoles $user_roles, Visit $visit, EvaluationRepository $evaluation)
     {
         parent::__construct();
-        $this->__require_assets();
+        $this->_require_assets();
 
         $this->helper = $helper;
         $this->carbon = $carbon;
@@ -105,7 +97,7 @@ class InpatientController extends AdminBaseController
         return back();
     }
 
-    private function __require_assets()
+    private function _require_assets()
     {
 
         $css_assets = [
@@ -114,21 +106,14 @@ class InpatientController extends AdminBaseController
         ];
 
         $js_assets = [
-            // 'doctor-investigations.js' => m_asset('evaluation:js/doctor-investigations.js'),
-            // 'doctor-treatment.js' => m_asset('evaluation:js/doctor-treatment.js'),
-            // 'doctor-next-steps.js' => m_asset('evaluation:js/doctor-next-steps.min.js'),
-            // 'doctor-notes.js' => m_asset('evaluation:js/doctor-notes.min.js'),
-            // 'doctor-opnotes.js' => m_asset('evaluation:js/doctor-opnotes.min.js'),
-            // 'doctor-prescriptions.js' => m_asset('evaluation:js/doctor-prescriptions.min.js'),
-            // 'doctor-visit-date.js' => m_asset('evaluation:js/doctor-set-visit-date.min.js'),
-            // 'nurse-vitals.js' => m_asset('evaluation:js/nurse-vitals.js'),
-            // //'order-investigation.js' => m_asset('evaluation:js/doctor-treatment.min.js'),
-            // 'nurse_eye_preliminary.js' => m_asset('evaluation:js/nurse_eye_preliminary.min.js'),
+            'doctor-investigations.js' => m_asset('inpatient:js/doctor-investigations.js'),
+            'doctor-treatment.js' => m_asset('inpatient:js/doctor-treatment.js'),
             'inpatient-scripts.js' => m_asset('inpatient:js/inpatient-scripts.js'),
             'jquery.timepicker.min.js' =>  m_asset('inpatient:js/jquery.timepicker.min.js'),
             'prescriptions.js' => m_asset('inpatient:js/inpatient/prescriptions.js'),
             'canvas-to-blob.min.js' => m_asset('inpatient:js/jpeg_camera/canvas-to-blob.min.js'),
             'jpeg_camera_with_dependencies.min.js' => m_asset('inpatient:js/jpeg_camera/jpeg_camera_with_dependencies.min.js')
+
         ];
 
         foreach ($css_assets as $key => $asset) {
@@ -431,35 +416,35 @@ class InpatientController extends AdminBaseController
         if (count(Visit::where('patient', $id)->get()) > 0) {
             $visit_id = Visit::where('patient', $id)->orderBy('created_at', 'desc')->first()->id;
             $vitals = Vitals::where('visit_id', $visit_id)->orderBy("updated_at", "DESC")->get()->map(function ($item) {
-                    return [
-                            "id" => $item->id,
-                            "height" => $item->height,
-                            "weight" => $item->weight,
-                            "bmi" => number_format($this->helper->calculateBMI($item->weight, $item->height), 2),
-                            "bmi_status" => $this->helper->getBMIStatus($this->helper->calculateBMI($item->weight, $item->height)),
-                            "bp" => $item->bp_systolic . "/" . $item->bp_diastolic,
-                            "pulse" => $item->pulse,
-                            "respiration" => $item->respiration,
-                            "temperature" => $item->temperature,
-                            "temperature_location" => $item->temperature_location,
-                            "oxygen" => $item->oxygen,
-                            "waist" => $item->waist,
-                            "hip" => $item->hip,
-                            "blood_sugar" => $item->blood_sugar,
-                            "blood_sugar_units" => $item->blood_sugar_units,
-                            "allergies" => $item->allergies,
-                            "chronic_illnesses" => $item->chronic_illnesses,
-                            "recorded_by" => $item->user->profile->fullName,
-                            "date_time_recorded"  => $item->date_recorded . " " .$item->time_recorded,
-                            "timestamp" => $this->carbon->parse($item->created_at)->format('d/m/Y H:i A')
-                        ];
-                });
+                return [
+                    "id" => $item->id,
+                    "height" => $item->height,
+                    "weight" => $item->weight,
+                    "bmi" => number_format($this->helper->calculateBMI($item->weight, $item->height), 2),
+                    "bmi_status" => $this->helper->getBMIStatus($this->helper->calculateBMI($item->weight, $item->height)),
+                    "bp" => $item->bp_systolic . "/" . $item->bp_diastolic,
+                    "pulse" => $item->pulse,
+                    "respiration" => $item->respiration,
+                    "temperature" => $item->temperature,
+                    "temperature_location" => $item->temperature_location,
+                    "oxygen" => $item->oxygen,
+                    "waist" => $item->waist,
+                    "hip" => $item->hip,
+                    "blood_sugar" => $item->blood_sugar,
+                    "blood_sugar_units" => $item->blood_sugar_units,
+                    "allergies" => $item->allergies,
+                    "chronic_illnesses" => $item->chronic_illnesses,
+                    "recorded_by" => $item->user->profile->fullName,
+                    "date_time_recorded" => $item->date_recorded . " " . $item->time_recorded,
+                    "timestamp" => $this->carbon->parse($item->created_at)->format('d/m/Y H:i A')
+                ];
+            });
 
             $once_only_prescriptions = Prescriptions::where('visit', $visit_id)->where("type", 0)->orderBy("updated_at", "DESC")->get();
             $regular_prescriptions = Prescriptions::where('visit', $visit_id)->where("type", 1)->orderBy("updated_at", "DESC")->get();
 
-            $doctorsNotes = Notes::where('visit_id', $visit_id)->where("type",1)->get();
-            $nursesNotes = Notes::where('visit_id', $visit_id)->where("type",0)->get();
+            $doctorsNotes = Notes::where('visit_id', $visit_id)->where("type", 1)->get();
+            $nursesNotes = Notes::where('visit_id', $visit_id)->where("type", 0)->get();
             $nursingCarePlans = NursingCarePlan::where('visit_id', $visit_id)->get();
             $transfusions = BloodTransfusion::where('visit_id', $visit_id)->get();
         }

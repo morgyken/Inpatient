@@ -13,83 +13,34 @@
 
 namespace Ignite\Inpatient\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
-
-use Response;
-use Validator;
-use DB;
 use Carbon\Carbon;
-
-/*
-    |--------------------------------------------------------------------------
-    | INPATIENT MODULE ENTITIES
-    |--------------------------------------------------------------------------
-*/
-use Ignite\Inpatient\Entities\Admission;
-use Ignite\Inpatient\Entities\Administration;
-use Ignite\Inpatient\Entities\Bed;
-use Ignite\Inpatient\Entities\BedPosition;
-use Ignite\Inpatient\Entities\BloodPressure;
-use Ignite\Inpatient\Entities\BloodTransfusion;
-use Ignite\Inpatient\Entities\Deposit;
-use Ignite\Inpatient\Entities\DischargeNote;
-use Ignite\Inpatient\Entities\FluidBalance;
-use Ignite\Inpatient\Entities\HeadInjury;
-use Ignite\Inpatient\Entities\Notes;
-use Ignite\Inpatient\Entities\NursingCharge;
-use Ignite\Inpatient\Entities\NursingCarePlan;
-use Ignite\Inpatient\Entities\PatientAccount;
-use Ignite\Inpatient\Entities\Prescription;
-use Ignite\Inpatient\Entities\RequestAdmission;
-use Ignite\Inpatient\Entities\RequestDischarge;
-use Ignite\Inpatient\Entities\Temperature;
-use Ignite\Inpatient\Entities\Visit;
-use Ignite\Inpatient\Entities\Vitals;
-use Ignite\Inpatient\Entities\Ward;
-use Ignite\Inpatient\Entities\WardAssigned;
-
-/*
-    |--------------------------------------------------------------------------
-    | INPATIENT MODULE HELPERS
-    |--------------------------------------------------------------------------
-*/
-use Ignite\Inpatient\Helpers\InpatientHelpers;
-
-/*
-    |--------------------------------------------------------------------------
-    | EVALUATION MODULE ENTITIES
-    |--------------------------------------------------------------------------
-*/
-use Ignite\Evaluation\Entities\FinancePatientAccounts;
 use Ignite\Evaluation\Entities\Investigations;
 use Ignite\Evaluation\Entities\Procedures;
 use Ignite\Evaluation\Entities\VisitDestinations;
-
-/*
-    |--------------------------------------------------------------------------
-    | INVENTORY MODULE ENTITIES
-    |--------------------------------------------------------------------------
-*/
-use Ignite\Inventory\Entities\InventoryProducts;
+use Ignite\Inpatient\Entities\Administration;
+use Ignite\Inpatient\Entities\Admission;
+use Ignite\Inpatient\Entities\BloodPressure;
+use Ignite\Inpatient\Entities\BloodTransfusion;
+use Ignite\Inpatient\Entities\FluidBalance;
+use Ignite\Inpatient\Entities\HeadInjury;
+use Ignite\Inpatient\Entities\Notes;
+use Ignite\Inpatient\Entities\NursingCarePlan;
+use Ignite\Inpatient\Entities\Prescription;
+use Ignite\Inpatient\Entities\RequestAdmission;
+use Ignite\Inpatient\Entities\Temperature;
+use Ignite\Inpatient\Entities\Visit;
+use Ignite\Inpatient\Entities\Vitals;
+use Ignite\Inpatient\Helpers\InpatientHelpers;
 use Ignite\Inventory\Entities\InventoryBatchPurchases;
 use Ignite\Inventory\Entities\InventoryProductPrice;
-
-/*
-    |--------------------------------------------------------------------------
-    | RECEPTION MODULE ENTITIES
-    |--------------------------------------------------------------------------
-*/
+use Ignite\Inventory\Entities\InventoryProducts;
 use Ignite\Reception\Entities\Patients;
-
-/*
-    |--------------------------------------------------------------------------
-    | USERS MODULE ENTITIES
-    |--------------------------------------------------------------------------
-*/
 use Ignite\Users\Entities\Roles;
-use Ignite\Users\Entities\UserRoles;
 use Ignite\Users\Entities\User;
+use Ignite\Users\Entities\UserRoles;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use Response;
 
 class InpatientApiController extends Controller
 {
@@ -210,7 +161,7 @@ class InpatientApiController extends Controller
                 $data = Vitals::where('admission_id', $admission_id)->orderBy("updated_at", "DESC")->get()->map(function ($item) {
                     return
                         [
-                             "id"                   => $item->id,
+                         "id"                   => $item->id,
                             "height"                => $item->height,
                             "weight"                => $item->weight,
                             "bmi"                   => number_format($this->helper->calculateBMI($item->weight, $item->height), 2),
@@ -301,8 +252,9 @@ class InpatientApiController extends Controller
                     "date_time_recorded"    => $item->date_recorded . " " .$item->time_recorded,
                     "timestamp"             => $this->carbon->parse($item->created_at)->format('d/m/Y H:i A')
                 ];
+
             })->toArray();
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
@@ -504,7 +456,6 @@ class InpatientApiController extends Controller
         }
     }
 
-
 	public function getHeadInjuries($admission_id){
 		try{
 			$data = HeadInjury::where("admission_id", $admission_id)->orderBy("updated_at", "DESC")->get()->map(function($item){
@@ -661,26 +612,29 @@ class InpatientApiController extends Controller
 		}
 	}
 
-	public function addInvestigations(Request $request){
-		try{
-			$request = $request->json()->all();
 
-			return $request;
+    public function addInvestigations(Request $request)
+    {
+        try {
+            $request = $request->json()->all();
 
-		}catch(\Exception $e){
-			return Response::json(['type' => 'error', 'message' => 'An error occured. The investigation could not be added. '. $e->getMessage()]);
-		}
+            return $request;
 
-	}
+        } catch (\Exception $e) {
+            return Response::json(['type' => 'error', 'message' => 'An error occured. The investigation could not be added. ' . $e->getMessage()]);
+        }
 
-	public function addBloodTransfusions(Request $request){
+    }
+
+    public function addBloodTransfusions(Request $request)
+    {
         \DB::beginTransaction();
-		try{
+        try {
 
             $request = $request->json()->all();
             $b = new BloodTransfusion;
             $b->admission_id = $request['admission_id'];
-            $b->visit_id  = $request['visit_id'];
+            $b->visit_id = $request['visit_id'];
             $b->bp_systolic = $request['bp_systolic'];
             $b->bp_diastolic = $request['bp_diastolic'];
             $b->temperature = $request['temperature'];
@@ -693,125 +647,130 @@ class InpatientApiController extends Controller
 
             \DB::commit();
 
-            if($b){
+            if ($b) {
                 return Response::json(['type' => 'success', 'message' => 'Blood Transfusion data saved!', 'data' => $this->getTransfusionData($request['admission_id'])]);
-            }else{
+            } else {
                 \DB::rollback();
                 return Response::json(['type' => 'error', 'message' => 'An problem occured. The blood transfusion data could not be saved']);
             }
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             \DB::rollback();
-            return Response::json(['type' => 'error', 'message' => 'An error occured. The blood transfusion data could not be saved. '. $e->getMessage()]);
+            return Response::json(['type' => 'error', 'message' => 'An error occured. The blood transfusion data could not be saved. ' . $e->getMessage()]);
         }
-	}
+    }
 
-    public function getTransfusionData($admission_id){
-        try{
-            return BloodTransfusion::where("admission_id", $admission_id)->latest()->limit(1)->get()->map(function($item){
+    public function getTransfusionData($admission_id)
+    {
+        try {
+            return BloodTransfusion::where("admission_id", $admission_id)->latest()->limit(1)->get()->map(function ($item) {
                 return [
-                    "id"            => $item->id,
-                    "temperature"   => $item->temperature,
-                    "bp"            => $item->bp_systolic . "/" . $item->bp_diastolic,
-                    "respiration"   => $item->respiration,
-                    "remarks"       => $item->remarks,
-                    "date_time"     => $item->date_recorded . " " .$item->time_recorded
+                    "id" => $item->id,
+                    "temperature" => $item->temperature,
+                    "bp" => $item->bp_systolic . "/" . $item->bp_diastolic,
+                    "respiration" => $item->respiration,
+                    "remarks" => $item->remarks,
+                    "date_time" => $item->date_recorded . " " . $item->time_recorded
                 ];
             })->toArray();
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
 
-    public function updateBloodTransfusions(Request $request){
+    public function updateBloodTransfusions(Request $request)
+    {
         \DB::beginTransaction();
-        try{
+        try {
             $request = $request->json()->all();
             $b = BloodTransfusion::update($request);
-            if($b){
+            if ($b) {
                 \DB::commit();
                 return Response::json(['type' => 'success', 'message' => 'Blood Transfusion data updated!']);
-            }else{
+            } else {
                 \DB::rollback();
                 return Response::json(['type' => 'error', 'message' => 'An problem occured. The blood transfusion data could not be updated']);
             }
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             \DB::rollback();
-            return Response::json(['type' => 'error', 'message' => 'An error occured. The blood transfusion data could not be updated. '. $e->getMessage()]);
+            return Response::json(['type' => 'error', 'message' => 'An error occured. The blood transfusion data could not be updated. ' . $e->getMessage()]);
         }
     }
 
-    public function deleteBloodTransfusions(Request $request){
+    public function deleteBloodTransfusions(Request $request)
+    {
         \DB::beginTransaction();
-        try{
+        try {
             $request = $request->json()->all();
             $b = BloodTransfusion::find($request['id']);
             $b->delete();
-            if($b){
+            if ($b) {
                 \DB::commit();
                 return Response::json(['type' => 'success', 'message' => 'Blood Transfusion data deleted!']);
-            }else{
+            } else {
                 \DB::rollback();
                 return Response::json(['type' => 'error', 'message' => 'An problem occured. The blood transfusion data could not be deleted']);
             }
 
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             \DB::rollback();
-            return Response::json(['type' => 'error', 'message' => 'An error occured. The blood transfusion data could not be saved. '. $e->getMessage()]);
+            return Response::json(['type' => 'error', 'message' => 'An error occured. The blood transfusion data could not be saved. ' . $e->getMessage()]);
         }
     }
 
-	public function getDrug($term){
-		try{
-			$found = collect();
-	        $ret = [];
-	       
-	        if (!empty($term)) {
-	            $found = InventoryProducts::with(['prices' => function($query) {
+    public function getDrug($term)
+    {
+        try {
+            $found = collect();
+            $ret = [];
 
-		            }])->with(['stocks' => function($query) {
+            if (!empty($term)) {
+                $found = InventoryProducts::with(['prices' => function ($query) {
 
-		            }])
-		        ->where('name', 'like', "%$term%")->get();
-	        }
+                }])->with(['stocks' => function ($query) {
 
-	        $build = [];
-	        foreach ($found as $item) {
-	            $batchp = InventoryBatchPurchases::whereProduct($item->id)
-	                    ->whereActive(TRUE)
-	                    ->first();
-	            $this->data['item_prices'] = InventoryProductPrice::query()
-	                            ->where('product', '=', $item->id)->get();
-	            $active_price = 0.00;
-	            foreach ($this->data['item_prices'] as $product) {
-	                if ($product->price > $active_price) {
-	                    $active_price = $product->price;
-	                }
-	            }
-	            $expiry = empty($batchp->expiry_date) ? '' : ' |expiry: ' . $batchp->expiry_date;
-	            $stock_text = empty($item->stocks) ? '  Out of stock' : $item->stocks->quantity . ' in stock';
-	            $strngth_text = empty($item->strength) ? '' : ' | ' . $item->strength . $item->units->name;
-	            $build[] = [
-	                'text' => $item->name . '  - ' . $stock_text . $strngth_text . $expiry,
-	                'id' => $item->id,
-	                'batch' => empty($batchp->batch) ? 0 : $batchp->batch,
-	                'cash_price' => ceil(($item->categories->cash_markup + 100) / 100 * $active_price), //$item->prices->credit_price
-	                'credit_price' => ceil(($item->categories->credit_markup + 100) / 100 * $active_price),
-	                'o_price' => ceil($active_price),
-	                'available' => empty($item->stocks) ? 0 : $item->stocks->quantity];
-	        }
-	        $ret['results'] = $build;
-	        return json_encode(['type' => 'success', 'data' => $ret]);
-    	}catch (\Exception $e) {
-			return Response::json(['type' => 'error', 'message' => 'An error occured. The drug could not be found. '. $e->getMessage()]);
-		}
-	}
+                }])
+                    ->where('name', 'like', "%$term%")->get();
+            }
 
-	public function addPrescription(Request $request){
-		\DB::beginTransaction();
-		try {
-			$request = $request->json()->all();
+            $build = [];
+            foreach ($found as $item) {
+                $batchp = InventoryBatchPurchases::whereProduct($item->id)
+                    ->whereActive(TRUE)
+                    ->first();
+                $this->data['item_prices'] = InventoryProductPrice::query()
+                    ->where('product', '=', $item->id)->get();
+                $active_price = 0.00;
+                foreach ($this->data['item_prices'] as $product) {
+                    if ($product->price > $active_price) {
+                        $active_price = $product->price;
+                    }
+                }
+                $expiry = empty($batchp->expiry_date) ? '' : ' |expiry: ' . $batchp->expiry_date;
+                $stock_text = empty($item->stocks) ? '  Out of stock' : $item->stocks->quantity . ' in stock';
+                $strngth_text = empty($item->strength) ? '' : ' | ' . $item->strength . $item->units->name;
+                $build[] = [
+                    'text' => $item->name . '  - ' . $stock_text . $strngth_text . $expiry,
+                    'id' => $item->id,
+                    'batch' => empty($batchp->batch) ? 0 : $batchp->batch,
+                    'cash_price' => ceil(($item->categories->cash_markup + 100) / 100 * $active_price), //$item->prices->credit_price
+                    'credit_price' => ceil(($item->categories->credit_markup + 100) / 100 * $active_price),
+                    'o_price' => ceil($active_price),
+                    'available' => empty($item->stocks) ? 0 : $item->stocks->quantity];
+            }
+            $ret['results'] = $build;
+            return json_encode(['type' => 'success', 'data' => $ret]);
+        } catch (\Exception $e) {
+            return Response::json(['type' => 'error', 'message' => 'An error occured. The drug could not be found. ' . $e->getMessage()]);
+        }
+    }
+
+    public function addPrescription(Request $request)
+    {
+        \DB::beginTransaction();
+        try {
+            $request = $request->json()->all();
             $p = Prescription::create($request);
 			// Add to Prescription Queue
 			$this->checkInAt($request['visit'], 'pharmacy');
@@ -838,9 +797,9 @@ class InpatientApiController extends Controller
                     "prescribed_by"  => $item->users->profile->fullName,
                     "prescribed_on"  => $this->carbon->parse($item->updated_at)->format('H:i A d/m/Y ')  
                 ];
-            })->toArray();
-        }catch(\Exception $e){
-            return $e->getMessage();
+            });
+        } catch (\Exception $e) {
+            return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be added. ' . $e->getMessage()]);
         }
     }
 
@@ -869,6 +828,33 @@ class InpatientApiController extends Controller
         return response()->json(['temperature' => random_int(0, 300)]);
     }
 
+    public function getDoneProcedures($visit)
+    {
+        /** @var Investigations[] $data */
+        $data = get_inpatient_investigations($visit);
+        $return = [];
+        foreach ($data as $key => $item) {
+            if ($item->has_result)
+                $link = '<a href="' . route('evaluation . view_result', $item->visit) . '"
+                                               class="btn btn-xs btn-success" target="_blank">
+                                                <i class="fa fa-external-link"></i> View Result
+            </a>';
+            else
+                $link = '<span class="text-warning" ><i class="fa fa-warning" ></i > Pending</span>';
+
+            $return[] = [
+                str_limit($item->procedures->name, 20, '...'),
+                ucfirst(substr($item->type, 1 + strpos($item->type, '-'))),
+                $item->price, $item->quantity, $item->discount,
+                $item->amount > 0 ? $item->amount : $item->price,
+                $item->created_at->toDateTimeString(),
+                payment_label($item->is_paid),
+                $link,
+            ];
+        }
+        return response()->json(['data' => $return]);
+    }
+
     private function checkInAt($visit_id, $place)
     {
         $department = $place;
@@ -883,36 +869,38 @@ class InpatientApiController extends Controller
         $destinations->save();
     }
 
-	public function updatePrescription(Request $request, $id){
-		\DB::beginTransaction();
-		try {
-			$request = $request->json()->all();
-			$p = Prescription::find($id);
-			$p->drug 				= $request['drug']; 
-			$p->whereto 			= $request['whereto']; 
-			$p->method 				= $request['method']; 
-			$p->duration 			= $request['duration'];
-			$p->allow_substitution 	= $request['allow_substitution'];
-			$p->time_measure 		= $request['time_measure'];
-			$p->save();
-			
-			if($p) { 
-				\DB::commit();
-				return Response::json(['type' => 'success', 'message' => 'The prescription has been updated. ']);
-			}else{
-				\DB::rollback();
-				return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be updated.']);
-			}
-		} catch (\Exception $e) {
-			return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be added. '. $e->getMessage()]);
-		}
-	}
+    public function updatePrescription(Request $request, $id)
+    {
+        \DB::beginTransaction();
+        try {
+            $request = $request->json()->all();
+            $p = Prescription::find($id);
+            $p->drug = $request['drug'];
+            $p->whereto = $request['whereto'];
+            $p->method = $request['method'];
+            $p->duration = $request['duration'];
+            $p->allow_substitution = $request['allow_substitution'];
+            $p->time_measure = $request['time_measure'];
+            $p->save();
 
-	public function deletePrescription(Request $request){
-		\DB::beginTransaction();
-		try{
-			$request = $request->json()->all();
-			$p = Prescription::where("id", $request['id']);
+            if ($p) {
+                \DB::commit();
+                return Response::json(['type' => 'success', 'message' => 'The prescription has been updated. ']);
+            } else {
+                \DB::rollback();
+                return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be updated.']);
+            }
+        } catch (\Exception $e) {
+            return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be added. ' . $e->getMessage()]);
+        }
+    }
+
+    public function deletePrescription(Request $request)
+    {
+        \DB::beginTransaction();
+        try {
+            $request = $request->json()->all();
+            $p = Prescription::where("id", $request['id']);
             $prescription = $this->getPrescription($request['id']);
             $prescription['reason'] = $request['reason'];
             $c = CanceledPrescriptions::create($prescription);
@@ -957,7 +945,8 @@ class InpatientApiController extends Controller
         }
     }
 
-    public function getAdministrationLogs($prescription_id){
+    public function getAdministrationLogs($prescription_id)
+    {
         try {
             $data = Administration::where("prescription_id", $prescription_id)->orderBy("updated_at", "DESC")->get()->map(function($item){
                 return 
@@ -971,7 +960,7 @@ class InpatientApiController extends Controller
 
             return json_encode(['type' => 'success', 'data' => $data]);
 
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription administration logs could not be retrieved. ' . $e->getMessage()]);
         }
 
@@ -1070,7 +1059,7 @@ class InpatientApiController extends Controller
                     "recorded_on"       => $item->date_recorded . " " .$item->time_recorded 
                 ];
             })->toArray();
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
@@ -1091,7 +1080,7 @@ class InpatientApiController extends Controller
 
     public function deleteNursingCarePlan(Request $request)
     {
-         \DB::beginTransaction();
+        \DB::beginTransaction();
         try {
             $request = $request->json()->all();
             $n = NursingCarePlan::find($request['id']);

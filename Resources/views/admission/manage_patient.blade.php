@@ -1,5 +1,5 @@
 <?php
-$visit=\Ignite\Inpatient\Entities\Visit::findOrNew($admission->visit_id);
+$visit = \Ignite\Inpatient\Entities\Visit::findOrNew($admission->visit_id);
 ?>
 @extends('layouts.app')
 @section('content_title','Admit Patient')
@@ -12,12 +12,16 @@ $visit=\Ignite\Inpatient\Entities\Visit::findOrNew($admission->visit_id);
             <div class="panel-heading" role="tab" id="headingZero">
                 <h4 class="panel-title">
                     <div>
-                        <ul class = "accordion-header single-btn">
-                            <li class = "title"><b>{{ $admission->patient->full_name }}</b> ({{ $patient->age }} yrs old) at Bed {{ $admission->bed->number }}, {{ $admission->ward->name }} Ward</li>
-                            <li class = "options">
+                        <ul class="accordion-header single-btn">
+                            <li class="title"><b>{{ $admission->patient->full_name }}</b> ({{ $patient->age }} yrs old)
+                                at Bed {{ $admission->bed->number }}, {{ $admission->ward->name }} Ward
+                            </li>
+                            <li class="options">
                                 <span class="input-group-btn">
-                                    <a role="button"  data-toggle="collapse" data-parent="#accordion" href="#collapseZero" aria-expanded="true" aria-controls="collapseZero">
-                                    <button type="button" class="btn btn-default" id = "btnCollapse"><i class="fa fa-chevron-down"></i></button>
+                                    <a role="button" data-toggle="collapse" data-parent="#accordion"
+                                       href="#collapseZero" aria-expanded="true" aria-controls="collapseZero">
+                                    <button type="button" class="btn btn-default" id="btnCollapse"><i
+                                                class="fa fa-chevron-down"></i></button>
                                     </a>
                                 </span>
                             </li>
@@ -52,19 +56,24 @@ $visit=\Ignite\Inpatient\Entities\Visit::findOrNew($admission->visit_id);
         <div class="box-body">
 
             <ul class="nav nav-tabs inpatient-tabs">
-                <li role="presentation" class="active"><a data-toggle="tab" aria-controls="doctor" href="#doctor">Doctor's Notes</a></li>
+                <li role="presentation" class="active"><a data-toggle="tab" aria-controls="doctor" href="#doctor">Doctor's
+                        Notes</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#nurse">Nurse's Notes</a></li>
-                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#prescription">Prescriptions</a></li>
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#prescription">Prescriptions</a>
+                </li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#vitals">Patient Vitals</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#bp">Blood Pressure</a></li>
-                <li role="presentation" ><a data-toggle="tab" aria-controls="tab" href="#temperature">Temperature</a></li>    
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#temperature">Temperature</a>
+                </li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#blood">Blood Trans.</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#plan">Care Plan</a></li>
-                {{-- <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#investigationTab">Investigations</a></li>
-                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#proceduresTab">Procedures</a></li> --}}
-              {{--   <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#discharge">Discharge</a></li>
-                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#summary">Summary</a></li>
-                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#history">History</a></li> --}}
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab"
+                                           href="#investigationTab">Investigations</a></li>
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#proceduresTab">Procedures</a>
+                </li>
+                {{--   <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#discharge">Discharge</a></li>
+                  <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#summary">Summary</a></li>
+                  <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#history">History</a></li> --}}
             </ul>
 
             <div class="tab-content">
@@ -74,27 +83,27 @@ $visit=\Ignite\Inpatient\Entities\Visit::findOrNew($admission->visit_id);
                 @include("Inpatient::admission.manage.vitals")
                 @include('inpatient::admission.graphs.bp')
                 @include('inpatient::admission.graphs.temperature')
+                @include("Inpatient::admission.manage.investigations")
+                @include("Inpatient::admission.manage.procedures")
                 @include('inpatient::admission.manage.transfusion')
                 @include('inpatient::admission.manage.care_plan')
-               {{--  @include("Inpatient::admission.manage.investigations")
-                @include("Inpatient::admission.manage.procedures") --}}
-               {{--  @include("Inpatient::admission.manage.discharge")
-                @include("Inpatient::admission.manage.summary")
-                @include("Inpatient::admission.manage.history") --}}
+               {{--   @include("Inpatient::admission.manage.discharge")
+                 @include("Inpatient::admission.manage.summary")
+                 @include("Inpatient::admission.manage.history") --}}
             </div>
 
         </div>
 
     </div>
     <script type="text/javascript">
-        $(document).ready(function(){
+        $(document).ready(function () {
             var toggled = false;
 
-            $("#btnCollapse").click(function(){
-                if(!toggled){
+            $("#btnCollapse").click(function () {
+                if (!toggled) {
                     $("#btnCollapse > i").attr('class', "fa fa-chevron-down");
                     toggled = true;
-                }else{
+                } else {
                     $("#btnCollapse > i").attr('class', "fa fa-chevron-up");
                     toggled = false;
                 }

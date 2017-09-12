@@ -40,19 +40,24 @@ $co = null;
                 <td>
                     <span id="name{{$procedure->id}}"> {{$procedure->name}}</span>
                     <br/>
-                    <input type="hidden" name="type{{$procedure->id}}" value="diagnostics" disabled/>
+                    <input type="hidden" name="type{{$procedure->id}}" value="inpatient-diagnostics" disabled/>
                     <span class="instructions">
-                    <textarea placeholder="Instructions" name="instructions{{$procedure->id}}" disabled cols="50"></textarea></span>
+                    <textarea placeholder="Instructions" name="instructions{{$procedure->id}}" disabled
+                              cols="50"></textarea></span>
                 </td>
                 <td>
-                    <input type="text" name="price{{$procedure->id}}" value="{{$price}}" id="cost{{$procedure->id}}" size="5" readonly=""/>
+                    <input type="text" name="price{{$procedure->id}}" value="{{$price}}" id="cost{{$procedure->id}}"
+                           size="5" readonly=""/>
                 </td>
-                <td><input class="quantity" size="5" value="1" id="quantity{{$procedure->id}}" type="text" name="quantity{{$procedure->id}}"/></td>
+                <td><input class="quantity" size="5" value="1" id="quantity{{$procedure->id}}" type="text"
+                           name="quantity{{$procedure->id}}"/></td>
                 <td>
                     @if(is_array($discount_allowed) && in_array('diagnostics', $discount_allowed))
-                        <input class="discount" size="5" value="0" id="discount{{$procedure->id}}" type="text" name="discount{{$procedure->id}}"/>
+                        <input class="discount" size="5" value="0" id="discount{{$procedure->id}}" type="text"
+                               name="discount{{$procedure->id}}"/>
                     @else
-                        <input style="color:red" class="discount" size="5" value="0" id="discount{{$procedure->id}}" type="text" name="discount{{$procedure->id}}" readonly=""/>
+                        <input style="color:red" class="discount" size="5" value="0" id="discount{{$procedure->id}}"
+                               type="text" name="discount{{$procedure->id}}" readonly=""/>
                     @endif
                 </td>
                 <td><input size="5" id="amount{{$procedure->id}}" type="text" name="amount{{$procedure->id}}"/></td>

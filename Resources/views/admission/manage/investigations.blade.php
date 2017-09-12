@@ -1,7 +1,7 @@
 <?php
-$performed_diagnosis = get_inpatient_investigations($admission->id, ['diagnostics']);
-$performed_labs = get_inpatient_investigations($admission->id, ['laboratory']);
-$performed_radio = get_inpatient_investigations($admission->id, ['radiology']);
+$performed_diagnosis = get_inpatient_investigations($admission->visit_id, ['inpatient-diagnostics']);
+$performed_labs = get_inpatient_investigations($admission->visit_id, ['inpatient-laboratory']);
+$performed_radio = get_inpatient_investigations($admission->visit_id, ['inpatient-radiology']);
 ?>
 <div role="tabpanel" id="investigationTab" class="tab-pane fade">
     <div class="row">
@@ -70,11 +70,14 @@ $performed_radio = get_inpatient_investigations($admission->id, ['radiology']);
                             <th>No. Performed</th>
                             <th>Discount</th>
                             <th>Amount</th>
+                            <th>Date</th>
                             <th>Payment</th>
                             <th>Result</th>
                         </tr>
                         </thead>
                         <tbody>
+                        <?php
+                        /*
                         @if(!$performed_diagnosis->isEmpty())
                             @foreach($performed_diagnosis as $item)
                                 <tr>
@@ -137,6 +140,7 @@ $performed_radio = get_inpatient_investigations($admission->id, ['radiology']);
                                 </tr>
                             @endforeach
                         @endif
+                        */?>
                         </tbody>
                     </table>
                 </div>
@@ -156,13 +160,15 @@ $performed_radio = get_inpatient_investigations($admission->id, ['radiology']);
     var USER_ID = parseInt("{{ Auth::user()->id }}");
     var VISIT_ID = parseInt("{{ $admission->id }}");
     var DIAGNOSIS_URL = "{{route('api.evaluation.save_diagnosis')}}";
+    var THE_TABLE_URL = "{{url('/api/inpatient/v1/get/inpatient-procurement/'.$admission->visit_id)}}";
     $(document).ready(function () {
         $('.accordion').accordion({heightStyle: "content"});
-        $('#in_table').dataTable();
-//        $('input').iCheck({
-//            checkboxClass: 'icheckbox_flat-green',
-//            radioClass: 'iradio_square-blue',
-//            increaseArea: '20%' // optional
-//        });
-    });
+
+        $('#investigationTab input').iCheck({
+            checkboxClass: 'icheckbox_flat-green',
+            radioClass: 'iradio_square-blue',
+            increaseArea: '20%' // optional
+        });
+    })
+    ;
 </script>
