@@ -106,19 +106,17 @@
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"  style="padding: 0 !important;">                       
                             <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6"  style="padding: 0 !important;">
                                 <br/>
-                                <div id="camera-wrapper">
-                                    <div class="camera" id="camera" style="border: 1px solid blue; width: 250px !important; height: 250px !important;"></div>
-                                </div>
+                                <video id="video" width="250" height="250" autoplay style="border: 1px solid blue;"></video>
                             </div>
                             <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                                 <br/>
-                                <canvas id = "camera2" style="border: 1px solid #333; width: 250px !important; height: 250px !important;"/>
+                                <canvas id = "canvas" style="border: 1px solid #333; width: 250px !important; height: 250px !important;"/>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer"><br/>
-                        <button type="button" class="btn btn-primary" ><i class="fa fa-camera"></i> Capture</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id = "snap"><i class="fa fa-camera"></i> Capture</button>
+                        <button type="button" class="btn btn-default" id = "stopCapture">Close</button>
                     </div>
                 </div>
             </div>
@@ -130,51 +128,45 @@
             
             $("#doctors-table").dataTable();
 
-            var initCamera = function () {
-              if (!window.JpegCamera) {
-                alert('Camera access is not available in your browser');
-              } else {
-                camera = new JpegCamera('#camera')
-                  .ready(function (resolution) {})
-                  .error(function () {
-                  alert('Camera access was denied');
+            function startCamera(){
+                // Grab elements, create settings, etc.
+                var canvas = document.getElementById('canvas');
+                var context = canvas.getContext('2d');
+                var video = document.getElementById('video');
+
+                // Get access to the camera!
+                if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    // Not adding `{ audio: true }` since we only want video now
+                    navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+                        video.src = window.URL.createObjectURL(stream);
+                        video.play();
+                    });
+                }
+
+                // Trigger photo take
+                document.getElementById("snap").addEventListener("click", function() {
+                    context.drawImage(video, 0, 0, context.width, context.height);
                 });
-              }
-            };
-
-            var bindEvents = function () {
-              $('#camera-wrapper').on('click', '#shoot', capture);
-              $('#layout-options').on('click', 'canvas', download);
-            };
-
-            var init =  function () {
-              initCamera();
-              bindEvents();
             }
 
             $("#open-capture-modal").click(function(e){
                 e.preventDefault();
                 $("#modal-capture").modal();
-                init();
+                startCamera();
             });
-            
-            $("#tabActivate").click(function(){
-                var camera = new JpegCamera("#camera");
 
-                var snapshot = camera.capture();
-
-                snapshot.show(); // Display the snapshot
-
-                snapshot.upload({api_url: "/upload_image"}).done(function(response) {
-                  // response_container.innerHTML = response;
-                  this.discard(); // discard snapshot and show video stream again
-                }).fail(function(status_code, error_message, response) {
-                  alert("Upload failed with status " + status_code);
-                });
-            
-            });
-            
-            
+             $("#stopCapture").click(function(e){
+                e.preventDefault();
+                 var video = document.getElementById('video');
+                 if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    // Not adding `{ audio: true }` since we only want video now
+                    navigator.mediaDevices.getUserMedia({ video: false }).then(function(stream) {
+                        video.src ="";
+                        video.stop();
+                    });
+                }
+                $("#modal-capture").modal("toggle");
+            });          
 
             $('#save-note').click(function(e){
                 e.preventDefault();
