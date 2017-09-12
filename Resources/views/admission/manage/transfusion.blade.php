@@ -13,11 +13,11 @@
                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding: 0 !important;">
                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding: 0 !important;">
                         <label for="" class="control-label">Date recorded:</label>
-                        <input type="date" class="form-control" name="blood_date_recorded" id ="date_recorded" value = "{{ \Carbon\Carbon::now('Africa/Nairobi')->toDateString() }}" required>
+                        <input type="date" class="form-control" name="blood_date_recorded" id ="blood_date_recorded" value = "{{ \Carbon\Carbon::now('Africa/Nairobi')->toDateString() }}" required>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding: 0 !important;">
                         <label for="" class="control-label">Time recorded:</label>
-                        <input type="time" class="form-control" name="blood_time_recorded" id ="time_recorded" value = "{{ \Carbon\Carbon::now()->format('H:i') }}" required>
+                        <input type="text" class="form-control" name="blood_time_recorded" id ="blood_time_recorded" value = "{{ \Carbon\Carbon::now()->format('H:i') }}" required>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0 !important;">
                          <div class="form-group">
@@ -58,7 +58,7 @@
         </form>
 
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding:0;">
-            <h3>Previous Bllod Transfusion Data</h3>
+            <h3>Previous Blood Transfusion Data</h3>
 
             <div class="alerts"></div>
 
@@ -83,8 +83,8 @@
                             <td>{{ $t->users->profile->fullName }}</td>
                             <td>
                                 <div class='btn-group'>
-                                    <button class='btn btn-primary view-transfusion' id = '{{ $t->id }}'><i class = 'fa fa-eye'></i> View</button>
-                                    <button type='button' class='btn btn-success edit-transfusion' id = '{{ $t->id }}'><i class = 'fa fa-pencil'></i> Edit</button>
+                                   {{--  <button class='btn btn-primary view-transfusion' id = '{{ $t->id }}'><i class = 'fa fa-eye'></i> View</button>
+                                    <button type='button' class='btn btn-success edit-transfusion' id = '{{ $t->id }}'><i class = 'fa fa-pencil'></i> Edit</button> --}}
                                     <button type='button' class='btn btn-danger delete-transfusion' id = '{{ $t->id }}'><i class = 'fa fa-times' ></i> Delete</button>
                                 </div>
                             </td>
@@ -168,8 +168,6 @@
                                         <td>" + item.remarks +"</td>\
                                         <td>\
                                             <div class='btn-group'>\
-                                                <button class='btn btn-primary view-transfusion' id = '"+ item.id +"'><i class = 'fa fa-eye'></i> View</button>\
-                                                <button type='button' class='btn btn-success edit-transfusion' id = '"+ item.id +"'><i class = 'fa fa-pencil'></i> Edit</button>\
                                                 <button type='button' class='btn btn-danger delete-transfusion' id = '"+ item.id +"'><i class = 'fa fa-times' ></i> Delete</button>\
                                             </div>\
                                         </td></tr>")

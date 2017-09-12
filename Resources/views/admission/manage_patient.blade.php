@@ -6,11 +6,6 @@ $visit=\Ignite\Inpatient\Entities\Visit::findOrNew($admission->visit_id);
 @section('content_description','Action to admitting a patient')
 
 @section('content')
-{{-- 
-    <div class="box box-info">
-        
-
-    </div> --}}
 
     <div class="box box-info">
         <div class="panel panel-default">

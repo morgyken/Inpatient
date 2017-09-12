@@ -38,7 +38,6 @@
                             <td>
                                 <div class='btn-group'>
                                     <button class='btn btn-primary view-nurse-note' id = '{{ $n->id }}'><i class = 'fa fa-eye'></i> View</button>
-                                    <button type='button' class='btn btn-success edit-nurse-note' id = '{{ $n->id }}'><i class = 'fa fa-pencil'></i> Edit</button>
                                     <button type='button' class='btn btn-danger delete-nurse-note' id = '{{ $n->id }}'><i class = 'fa fa-times' ></i> Delete</button>
                                 </div>
                             </td>
@@ -50,7 +49,7 @@
             </div>
         </div>
 
-        <div class="modal fade" id="modal-nurse-note">
+        <div class="modal fade" id="modal-view-nurse-note">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -58,10 +57,18 @@
                         <h4 class="modal-title">View Notes</h4>
                     </div>
                     <div class="modal-body">
-                        
+                         <form>
+                            <input type="hidden" name="nurse_note_id" id = "nurse_note_id" required>
+                            <textarea name="view-nurse-note" disabled="true" id="view-nurse-note" class="form-control" rows="3"  cols= "10" required></textarea>
+                        </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary" id = "edit-nurse-note-view">Edit</button>
+                            <button type="button" class="btn btn-primary" style="display: none;" id = "update-nurse-note">Update</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                       
                     </div>
                 </div>
             </div>
@@ -115,7 +122,6 @@
                                         <td>" + item.name + "</td>\
                                         <td><div class='btn-group'>\
                                          <button type='button' class='btn btn-primary view-nurse-note' id = '"+ item.id + "'><i class = 'fa fa-eye' ></i> View</button>\
-                                          <button type='button' class='btn btn-success edit-nurse-note' id = '"+ item.id + "'><i class = 'fa fa-pencil' ></i> Edit</button>\
                                             <button type='button' class='btn btn-danger delete-nurse-note' id = '"+ item.id + "'><i class = 'fa fa-times' ></i> Delete</button>\
                                          </div></td></tr>")
                                 );
@@ -131,7 +137,72 @@
                 });
             });
 
-            $('.delete-nurse-note').click(function(e){
+            $('body').on('click','.view-nurse-note', function(e){
+                e.preventDefault();
+                var id = $(this).attr('id');
+                $("#nurse_note_id").val(id);
+
+                $.ajax({
+                    type: "GET",
+                    url: "{{ url('/api/inpatient/v1/notes') }}/"+id,
+                    success: function (resp) {
+                        if(resp.type === "success"){                      
+                            resp.data.map( (item, index) => {
+                                return(
+                                    $("#view-nurse-note").val(item.notes)
+                                );
+                            });
+
+                            $("#view-nurse-note").prop('disabled', true);
+                            $("#edit-nurse-note-view").css("display","block");
+                            $("#update-nurse-note").css("display","none");
+
+                            $("#modal-view-nurse-note").modal();
+                        }else{
+                             alertify.error(resp.data);
+                        }
+                    },
+                    error: function (resp) {
+                        alertify.error(resp.message);
+                    }
+                });
+            });
+
+            $('body').on('click','#edit-nurse-note-view', function(e){
+                e.preventDefault();
+                var id = $(this).attr('id');
+                $("#view-nurse-note").prop('disabled', false);
+                $("#update-nurse-note").css("display","block");
+                $(this).css("display","none");
+            });   
+
+            $('#update-nurse-note').click(function(e){
+                var id = $("#nurse_note_id").val();
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url('/api/inpatient/v1/notes/update') }}",
+                    data: JSON.stringify({
+                         id : id,
+                         notes: $("#view-nurse-note").val(),
+                         user: {{ Auth::user()->id }}
+                     }),
+                    success: function (resp) {
+                         if(resp.type === "success"){
+                            alertify.success(resp.message);
+                            $("#modal-view-nurse-note").modal('toggle');
+                            // update 
+                        }else{
+                             alertify.error(resp.message);
+                        }
+                    },
+                    error: function (resp) {
+                        alertify.error(resp.message);
+                    }
+                });
+            }); 
+
+
+            $('body').on('click', '.delete-nurse-note', function(e){
                 e.preventDefault();
                 var id = $(this).attr('id');
                 $(".yes-delete-nurse-note").attr('id', id); 

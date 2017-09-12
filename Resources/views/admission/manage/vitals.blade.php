@@ -19,7 +19,7 @@
                         </div>
                         <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                             <label for="" class="control-label">Time recorded:</label>
-                            <input type="time" class="form-control" name="time_recorded" id ="time_recorded" value = "{{ \Carbon\Carbon::now()->format('H:i') }}" required>
+                            <input type="text" class="form-control" name="time_recorded" id ="time_recorded" value = "{{ \Carbon\Carbon::now()->format('H:i') }}" required>
                         </div>
                     </div>                    
 
@@ -134,8 +134,7 @@
                                 <td>{{ $v['oxygen'] }}</td>
                                 <td>
                                     <div class="btn-group">
-                                        <button type="button" class="btn btn-primary"><i class = "fa fa-eye"></i> View</button>
-                                        <button type="button" class="btn btn-success"><i class = "fa fa-pencil"></i> Edit</button>
+                                       {{--  <button type="button" class="btn btn-primary"><i class = "fa fa-eye"></i> View</button> --}}
                                         <button type="button" class="btn btn-danger"><i class = "fa fa-trash-o"></i> Delete</button>
                                     </div>
                                 </td>
@@ -169,6 +168,8 @@
 
         $("#vitals-table").dataTable();
 
+        $("#time_recorded").timepicker({ 'scrollDefault': 'now' });
+
         function getDate(){
             var d = new Date();
             let dateNow = d.getDay() + '/' + d.getMonth() + '/' + d.getYear();
@@ -180,7 +181,7 @@
 
         function getTime(){
             var d = new Date();
-            let timeNow = d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+            let timeNow = d.getHours() + ':' + d.getMinutes();
             $("#time_recorded").val(timeNow);
         }
 
@@ -194,7 +195,7 @@
 
         function validateValues(){
             if($("#temperature").val() > 40){
-                 alertify.error("The Temperature can't be above 40 Degrees Celcius!");
+                alertify.error("The Temperature can't be above 40 Degrees Celcius!");
                 return false;
             }else if($("#temperature").val() <= 0){
                 alertify.error("The Temperature can't be below 0 Degrees Celcius!");
@@ -212,18 +213,18 @@
                             visit_id : {{ $admission->visit_id }},
                             admission_id: {{ $admission->id }},
                             user_id: {{ Auth::user()->id }},
-                            height : $("#height").val(),
-                            weight : $("#weight").val(),
-                            bp_systolic : $("#bp_systolic").val(),
-                            bp_diastolic : $("#bp_diastolic").val(),
-                            pulse : $("#pulse").val(),
-                            respiration : $("#respiration").val(),
-                            temperature : $("#temperature").val(),
+                            height : parseFloat($("#height").val()),
+                            weight : parseFloat($("#weight").val()),
+                            bp_systolic : parseInt($("#bp_systolic").val()),
+                            bp_diastolic : parseInt($("#bp_diastolic").val()),
+                            pulse : parseInt($("#pulse").val()),
+                            respiration : parseInt($("#respiration").val()),
+                            temperature : parseFloat($("#temperature").val()),
                             temperature_location : $("#temperature_location").val(),
-                            oxygen : $("#oxygen").val(),
-                            waist : $("#waist").val(),
-                            hip : $("#hip").val(),
-                            blood_sugar : $("#blood_sugar").val(),
+                            oxygen : parseFloat($("#oxygen").val()),
+                            waist : parseFloat($("#waist").val()),
+                            hip : parseFloat($("#hip").val()),
+                            blood_sugar : parseFloat($("#blood_sugar").val()),
                             blood_sugar_units : $("#blood_sugar_units").val(),
                             allergies : $("#allergies").val(),
                             chronic_illnesses : $("chronic_illnesses").val(),
@@ -236,7 +237,6 @@
                             alertify.success(resp.message);
                             // append To Table
                             let data = JSON.parse(resp.data);
-                            // console.log(data);
                             data.map( (item, index) => {
                                 return(
                                     $("#vitals-table > tbody").append("<tr id = '"+item.id+"'>\
@@ -250,6 +250,7 @@
                                         <td>"+ item.respiration +"</td>\
                                         <td>"+ item.pulse +"</td>\
                                         <td>"+ item.oxygen +"</td>\
+                                        <td><button type='button' class='btn btn-danger'><i class = 'fa fa-trash-o'></i> Delete</button></td>\
                                     </tr>")
                                 );
                             });

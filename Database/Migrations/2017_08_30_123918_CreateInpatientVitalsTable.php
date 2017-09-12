@@ -33,7 +33,7 @@ class CreateInpatientVitalsTable extends Migration
             $column->longText('chronic_illnesses')->nullable();
             $column->unsignedInteger('user_id');
             $column->date('date_recorded');
-            $column->time('time_recorded');
+            $column->string('time_recorded');
             $column->timestamps();
 
             $column->foreign('user_id')

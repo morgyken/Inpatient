@@ -109,7 +109,8 @@ class InpatientController extends AdminBaseController
     {
 
         $css_assets = [
-            'vertical-tabs.css' => m_asset('inpatient:css/vertical-tabs.css')
+            'vertical-tabs.css' => m_asset('inpatient:css/vertical-tabs.css'),
+            'jquery.timepicker' => m_asset('inpatient:css/jquery.timepicker.css'),
         ];
 
         $js_assets = [
@@ -124,6 +125,8 @@ class InpatientController extends AdminBaseController
             // //'order-investigation.js' => m_asset('evaluation:js/doctor-treatment.min.js'),
             // 'nurse_eye_preliminary.js' => m_asset('evaluation:js/nurse_eye_preliminary.min.js'),
             'inpatient-scripts.js' => m_asset('inpatient:js/inpatient-scripts.js'),
+            'jquery.timepicker.min.js' =>  m_asset('inpatient:js/jquery.timepicker.min.js'),
+            'prescriptions.js' => m_asset('inpatient:js/inpatient/prescriptions.js'),
             'canvas-to-blob.min.js' => m_asset('inpatient:js/jpeg_camera/canvas-to-blob.min.js'),
             'jpeg_camera_with_dependencies.min.js' => m_asset('inpatient:js/jpeg_camera/jpeg_camera_with_dependencies.min.js')
         ];

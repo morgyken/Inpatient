@@ -19,7 +19,7 @@
             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                 <div class="form-group">
                     <label>Time</label>
-                    <input type="time" name="time_recorded" id="time_recorded" class="form-control" value = "{{ \Carbon\Carbon::now()->format('H:i') }}" required>
+                    <input type="text" name="time_recorded" id="time_recorded" class="form-control" value = "{{ \Carbon\Carbon::now()->format('H:i') }}" required>
                 </div>
             </div>
 
@@ -74,7 +74,7 @@
                             <td>{{ $n->user->profile->fullName }}</td>
                             <td>
                                 <div class='btn-group'>
-                                    <button type='button' class='btn btn-primary view-plan' id = '{{ $n->id }}'><i class = 'fa fa-pencil' ></i> View</button>
+                                  {{--   <button type='button' class='btn btn-primary view-plan' id = '{{ $n->id }}'><i class = 'fa fa-pencil' ></i> View</button> --}}
                                     <button type='button' class='btn btn-danger delete-plan' id = '{{ $n->id }}'><i class = 'fa fa-times' ></i> Delete</button>
                                 </div>
                             </td>
@@ -122,6 +122,8 @@
             
             $("#care-plan-table").dataTable();
 
+            $("#time_recorded").timepicker({ 'scrollDefault': 'now' });
+
             $('#save-plan').click(function(e){
                 e.preventDefault();
 
@@ -155,7 +157,6 @@
                                         <td>" + item.expected_outcome + "</td>\
                                         <td>" + item.name + "</td>\
                                         <td><div class='btn-group'>\
-                                            <button type='button' class='btn btn-primary view-plan' id = '"+ item.id + "'><i class = 'fa fa-pencil' ></i> View</button>\
                                              <button type='button' class='btn btn-danger delete-plan' id = '"+ item.id + "'><i class = 'fa fa-times' ></i> Delete</button>\
                                          </div></td></tr>")
                                 );
@@ -171,8 +172,14 @@
                 });
             });
 
+            $('body').on('click','.view-plan', function(e){
+                e.preventDefault();
+                let id =  $(this).attr('id');
+                 
+                $("#modal-view-care-plan").modal();
+            });
 
-            $('.delete-plan').click(function(e){
+            $('body').on('click','.delete-plan', function(e){
                 e.preventDefault();
                 let id =  $(this).attr('id');
                 $(".yes-delete-plan").attr('id', id); 

@@ -63,7 +63,11 @@ Route::group(['prefix' => 'v1'], function () {
         // Update Prescription
         Route::post('/update', 'InpatientApiController@updatePrescription');
 
+        // Cancel prescription
         Route::post('/delete', 'InpatientApiController@deletePrescription');
+
+        // Stop prescription
+        Route::post('/stop', 'InpatientApiController@stopPrescription');
 
         Route::get('/administration/{prescription_id}', 'InpatientApiController@getAdministrationLogs');
 
@@ -111,7 +115,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('/delete', 'InpatientApiController@deleteNote');
 
         // Update Doctor's and Nurse's notes
-        Route::post('/{id}/update', 'InpatientApiController@updateNote');
+        Route::post('/update', 'InpatientApiController@updateNote');
 
     });
 
@@ -156,11 +160,11 @@ Route::group(['prefix' => 'v1'], function () {
     Route::group(['prefix' => 'plans'], function () {
         Route::get('/admission/{admission_id}', 'InpatientApiController@getNursingCarePlans');
 
-        Route::post('', 'InpatientApiController@addNursingCarePlans');
+        Route::post('', 'InpatientApiController@addNursingCarePlan');
 
-        Route::post('/update', 'InpatientApiController@updateNursingCarePlans');
+        Route::post('/update', 'InpatientApiController@updateNursingCarePlan');
 
-        Route::post('/delete', 'InpatientApiController@deleteNursingCarePlans');
+        Route::post('/delete', 'InpatientApiController@deleteNursingCarePlan');
     });
 
 

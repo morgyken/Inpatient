@@ -24,7 +24,7 @@ class CreateInpatientNursingCarePlanTable extends Migration
             $column->longText('reasons');
             $column->longText('evaluation');
             $column->date('date_recorded');
-            $column->time('time_recorded');
+            $column->string('time_recorded');
             $column->timestamps();
 
             $column->foreign('admission_id')->references('id')->on('admissions')

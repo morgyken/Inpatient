@@ -22,6 +22,8 @@ class CreateBloodTransfusionsTable extends Migration
             $column->integer('temperature')->nullable();
             $column->integer('respiration')->nullable();
             $column->longText('remarks')->nullable();
+            $column->date('date_recorded');
+            $column->string('time_recorded');
             $column->timestamps();
 
             $column->foreign('admission_id')->references('id')->on('admissions')
