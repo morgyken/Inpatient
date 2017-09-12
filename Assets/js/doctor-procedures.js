@@ -10,30 +10,21 @@
  * =========================================================================
  * */
 
-/* global DIAGNOSIS_URL, USER_ID, VISIT_ID, alertify */
+/* global DIAGNOSIS_URL, USER_ID, VISIT_ID, alertify,THE_PROCEDURE_URL */
+
 $(function () {
     //mock hide this
     $('.instructions').hide();
-
-    $('#radiology_form input,#radilogy_form textarea, #diagnosis_form input,#diagnosis_form textarea,#laboratory_form input,#laboratory_form textarea').blur(function () {
-        show_selection_investigation();
+    $('#doctor_form input,#doctor_form textarea,#nurse_form input,#nurse_form textarea').blur(function () {
+        show_procedures_selected();
     });
-    $('#in_table').dataTable({
-        ajax: THE_TABLE_URL
+    $('#in_procedures_table').dataTable({
+        ajax: THE_PROCEDURE_URL
     });
-
-    $('#diagnosis_form input:text').keyup(function () {
-        show_selection_investigation();
+    $('#doctor_form,#nurse_form').find('input:text').keyup(function () {
+        show_procedures_selected();
     });
-
-    $('#laboratory_form input:text').keyup(function () {
-        show_selection_investigation();
-    });
-
-    $('#radiology_form input:text').keyup(function () {
-        show_selection_investigation();
-    });
-    $('input').on('ifChanged', function (event) {
+    $('input').on('ifChanged', function () {
         var elements = $(this).parents('tr').find('input');
         var texts = $(this).parents('tr').find('textarea');
         if ($(this).is(':checked')) {
@@ -46,9 +37,9 @@ $(function () {
             $(texts).parent().hide();
         }
         $(this).prop('disabled', false);
-        show_selection_investigation();
+        show_procedures_selected();
     });
-    $('#radiology_form .check,#laboratory_form .check,#diagnosis_form .check').click(function () {
+    $('#nurse_form .check,#doctor_form .check').click(function () {
         var elements = $(this).parent().parent().find('input');
         var texts = $(this).parent().parent().find('textarea');
         if ($(this).is(':checked')) {
@@ -61,68 +52,53 @@ $(function () {
             $(texts).parent().hide();
         }
         $(this).prop('disabled', false);
-        show_selection_investigation();
+        show_procedures_selected();
     });
 
-    function show_selection_investigation() {
-        $('#show_procedure_selection').hide();
-        $('#diagnosisInfo > tbody > tr').remove();
+    function show_procedures_selected() {
+        $('#show_selection').hide();
+        $('#procedureInfo > tbody > tr').remove();
         var total = 0;
-        $("#diagnosis_form input:checkbox:checked").each(function () {
+        $("#doctor_form input:checkbox:checked").each(function () {
             var procedure_id = $(this).val();
             var name = $('#name' + procedure_id).html();
             var amount = john_doe(procedure_id);
             total += parseInt(amount);
-            $('#diagnosisInfo > tbody').append('<tr><td>' + name + '</td><td>' + amount + '</td></tr>');
+            $('#procedureInfo > tbody').append('<tr><td>' + name + '</td><td>' + amount + '</td></tr>');
         });
-
         //for labs
-        $("#laboratory_form input:checkbox:checked").each(function () {
+        $("#nurse_form input:checkbox:checked").each(function () {
             var procedure_id = $(this).val();
             var name = $('#name' + procedure_id).html();
             var amount = john_doe(procedure_id);
             total += parseInt(amount);
-            $('#diagnosisInfo > tbody').append('<tr><td>' + name + '</td><td>' + amount + '</td></tr>');
+            $('#procedureInfo > tbody').append('<tr><td>' + name + '</td><td>' + amount + '</td></tr>');
         });
-
-        //for radiology
-        $("#radiology_form input:checkbox:checked").each(function () {
-            var procedure_id = $(this).val();
-            var name = $('#name' + procedure_id).html();
-            var amount = john_doe(procedure_id);
-            total += parseInt(amount);
-            $('#diagnosisInfo > tbody').append('<tr><td>' + name + '</td><td>' + amount + '</td></tr>');
-        });
-
         if (total) {
-            $('#diagnosisInfo > tbody').append('<tr><td>Total</td><td><strong>' + total + '</strong></td></tr>');
+            $('#procedureInfo > tbody').append('<tr><td>Total</td><td><strong>' + total + '</strong></td></tr>');
         }
-        $('#show_procedure_selection').show();
-        /*
-         save_diagnosis();
-         save_lab_tests();
-         */
+        $('#show_selection').show();
     }
 
-    $('#saveInvestigations').click(function () {
+    $('#saveProcedure').click(function (e) {
+        e.preventDefault();
         $.ajax({
             type: "POST",
             url: DIAGNOSIS_URL,
-            data: $('#radiology_form,#diagnosis_form, #laboratory_form').serialize(),
+            data: $('#doctor_form, #nurse_form').serialize(),
             success: function () {
-                alertify.success('<i class="fa fa-check-circle"></i> Patient investigation updated');
-                $('#investigationTab').find('input').iCheck('uncheck');
-                $('#in_table').dataTable().api().ajax.reload()
+                alertify.success('<i class="fa fa-check-circle"></i> Patient procedure updated');
+                $('#procedureTab').find('input').iCheck('uncheck');
+                $('#in_procedures_table').dataTable().api().ajax.reload()
             },
             error: function () {
-                alertify.error('<i class="fa fa-check-warning"></i> Could not save investigation');
+                alertify.error('<i class="fa fa-check-warning"></i> Could not save procedure');
             }
         });
     });
-    //sick of this
-    $('#laboratory_form,#diagnosis_form,#radiology_form')
+    $('#doctor_form,#nurse_form')
         .find('input:radio, input:checkbox').prop('checked', false);
-    $('#show_procedure_selection').hide();
+    $('#show_selection').hide();
 
     function get_amount_given(price, qty, discount) {
         try {

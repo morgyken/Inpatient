@@ -46,7 +46,8 @@ $co = null;
                     <textarea placeholder="Instructions" name="instructions{{$procedure->id}}" disabled cols="50">
                     </textarea>
                 </span>
-                    <input type="hidden" name="type{{$procedure->id}}" value="inpatient-radiology" disabled/>
+                    <input type="hidden" name="type{{$procedure->id}}" value="inpatient.investigation-radiology"
+                           disabled/>
                 </td>
                 <td>
                     <input type="text" name="price{{$procedure->id}}" value="{{$price}}" id="cost{{$procedure->id}}"
@@ -63,7 +64,8 @@ $co = null;
                                type="text" name="discount{{$procedure->id}}" readonly=""/>
                     @endif
                 </td>
-                <td><input size="5" id="amount{{$procedure->id}}" type="text" name="amount{{$procedure->id}}"/></td>
+                <td><input value="{{$price}}" size="5" id="amount{{$procedure->id}}" type="text"
+                           name="amount{{$procedure->id}}"/></td>
             </tr>
         @endforeach
         </tbody>

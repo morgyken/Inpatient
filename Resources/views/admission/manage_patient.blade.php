@@ -63,10 +63,11 @@ $visit = \Ignite\Inpatient\Entities\Visit::findOrNew($admission->visit_id);
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#vitals">Patient Vitals</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#bp">Blood Pressure</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#temp">Temperature</a></li>
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#investigationTab">Investigations</a></li>
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#procedureTab">Procedures</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#blood">Blood Trans.</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#plan">Care Plan</a></li>
-                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#investigationTab">Investigations</a></li>
-                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#proceduresTab">Procedures</a></li>
+
                 {{--   <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#discharge">Discharge</a></li>
                   <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#summary">Summary</a></li>
                   <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#history">History</a></li> --}}
@@ -80,14 +81,9 @@ $visit = \Ignite\Inpatient\Entities\Visit::findOrNew($admission->visit_id);
                 @include('inpatient::admission.graphs.bp')
                 @include('inpatient::admission.graphs.temperature')
                 @include("Inpatient::admission.manage.investigations")
-                @include("Inpatient::admission.manage.procedures")
+                @include("Inpatient::admission.manage.procedure")
                 @include('inpatient::admission.manage.transfusion')
                 @include('inpatient::admission.manage.care_plan')
-               {{--   @include("Inpatient::admission.manage.discharge")
-                 @include("Inpatient::admission.manage.summary")
-                 @include("Inpatient::admission.manage.history") --}}
-            </div>
-
         </div>
 
     </div>

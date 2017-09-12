@@ -16,7 +16,7 @@ $co = null;
 ?>
 @if($labs->isEmpty())
     <div class="alert alert-info">
-        <i class="fa fa-info-circle"></i> There are no procedures. Please go to setup and add some.
+        <i class="fa fa-info-circle"></i> There are no laboratory investigations. Please go to setup and add some.
     </div>
 @else
     {!! Form::open(['id'=>'laboratory_form'])!!}
@@ -25,8 +25,9 @@ $co = null;
         <tbody>
         @foreach($labs as $procedure)
             <?php
-            $c_price = \Ignite\Settings\Entities\CompanyPrice::whereCompany(intval($co))
-                ->whereProcedure(intval($procedure->id))
+
+            $c_price = \Ignite\Settings\Entities\CompanyPrice::whereCompany((int)$co)
+                ->whereProcedure((int)$procedure->id)
                 ->get()
                 ->first();
             if (isset($c_price)) {
@@ -65,7 +66,8 @@ $co = null;
 @endif
                             -->
                 </span>
-                    <input type="hidden" name="type{{$procedure->id}}" value="inpatient-laboratory" disabled/>
+                    <input type="hidden" name="type{{$procedure->id}}" value="inpatient.investigation-laboratory"
+                           disabled/>
                 </td>
                 <td>
                     <input type="text" name="price{{$procedure->id}}" value="{{$price}}" id="cost{{$procedure->id}}"
@@ -82,7 +84,8 @@ $co = null;
                                type="text" name="discount{{$procedure->id}}" readonly=""/>
                     @endif
                 </td>
-                <td><input size="5" id="amount{{$procedure->id}}" type="text" name="amount{{$procedure->id}}"/></td>
+                <td><input size="5" id="amount{{$procedure->id}}" type="text" name="amount{{$procedure->id}}"
+                           value="{{$price}}"/></td>
             </tr>
         @endforeach
         </tbody>
