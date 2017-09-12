@@ -67,9 +67,9 @@ $visit = \Ignite\Inpatient\Entities\Visit::findOrNew($admission->visit_id);
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#plan">Care Plan</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#investigationTab">Investigations</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#proceduresTab">Procedures</a></li>
-                {{--   <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#discharge">Discharge</a></li>
-                  <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#summary">Summary</a></li>
-                  <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#history">History</a></li> --}}
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#discharge">Discharge</a></li>
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#chargesheet">Charge Sheet</a></li>
+                {{-- <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#history">History</a></li> --}}
             </ul>
 
             <div class="tab-content">
@@ -83,9 +83,9 @@ $visit = \Ignite\Inpatient\Entities\Visit::findOrNew($admission->visit_id);
                 @include("Inpatient::admission.manage.procedures")
                 @include('inpatient::admission.manage.transfusion')
                 @include('inpatient::admission.manage.care_plan')
-               {{--   @include("Inpatient::admission.manage.discharge")
-                 @include("Inpatient::admission.manage.summary")
-                 @include("Inpatient::admission.manage.history") --}}
+                @include("Inpatient::admission.manage.discharge")
+                @include("Inpatient::admission.manage.chargesheet")
+                {{-- @include("Inpatient::admission.manage.history") --}}
             </div>
 
         </div>
