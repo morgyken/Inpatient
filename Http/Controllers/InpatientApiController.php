@@ -21,6 +21,7 @@ use Ignite\Inpatient\Entities\Administration;
 use Ignite\Inpatient\Entities\Admission;
 use Ignite\Inpatient\Entities\BloodPressure;
 use Ignite\Inpatient\Entities\BloodTransfusion;
+use Ignite\Inpatient\Entities\CanceledPrescriptions;
 use Ignite\Inpatient\Entities\FluidBalance;
 use Ignite\Inpatient\Entities\HeadInjury;
 use Ignite\Inpatient\Entities\Notes;
@@ -900,11 +901,24 @@ class InpatientApiController extends Controller
         \DB::beginTransaction();
         try {
             $request = $request->json()->all();
-            $p = Prescription::where("id", $request['id']);
-            $prescription = $this->getPrescription($request['id']);
-            $prescription['reason'] = $request['reason'];
-            $c = CanceledPrescriptions::create($prescription);
+            $p = Prescription::where("id", $request['id'])->first();
+            $prescription = $this->getPrescription($request['id']); 
+            $c = new CanceledPrescriptions;
+            $c->admission_id = $request['admission_id'];
+            $c->visit_id = $request['visit_id'];
+            $c->reason = $request['reason'];
+            $c->drug = $prescription->drug;
+            $c->take = $prescription->take;
+            $c->whereto = $prescription->whereto;
+            $c->method = $prescription->method;
+            $c->duration = $prescription->duration;
+            $c->allow_substitution = $prescription->allow_substitution;
+            $c->time_measure = $prescription->time_measure;
+            $c->user_id = $request['user_id'];
+
+            $c->save();
 			$p->delete();
+
 			if($p && $c) {
 				\DB::commit();
 				return Response::json(['type' => 'success', 'message' => 'Prescription canceled successfully']);
@@ -939,7 +953,7 @@ class InpatientApiController extends Controller
 
     private function getPrescription($id){
         try{
-            return Prescription::find($id)->first(['admission_id','visit_id','drug','take', 'whereto', 'method', 'duration', 'allow_substitution','time_measure'])->toArray();
+            return Prescription::find($id)->first(['drug','take', 'whereto', 'method', 'duration', 'allow_substitution','time_measure']);
         }catch(\Exception $e){
             return $e->getMessage();
         }

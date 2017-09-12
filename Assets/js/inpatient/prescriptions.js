@@ -125,11 +125,18 @@ $(document).ready(function(){
         var id = $(this).attr('id');
         var type = parseInt($("#is_reg").val());
         var reason = $.trim($("#cancel_reasons").val());
+        console.log("VISIT ID: "+ VISIT_ID);
         if(reason.length > 0){
             $.ajax({
                 type: "POST",
                 url: PRESCRIPTIONS_DELETE_URL,
-                data: JSON.stringify({ id : id, reason: reason }),
+                data: JSON.stringify({  
+                    visit_id : VISIT_ID,
+                    admission_id: ADMISSION_ID,
+                    user_id: USER_ID,
+                    id : id, 
+                    reason: reason 
+                }),
                 success: function (resp) {
                      if(resp.type === "success"){
                         alertify.success(resp.message);
