@@ -32,6 +32,7 @@ use Ignite\Users\Entities\User;
  * @property-read \Ignite\Inventory\Entities\InventoryProducts $drugs
  * @property-read string $dose
  * @property-read string $sub
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ignite\Inpatient\Entities\Administration[] $logs
  * @property-read \Ignite\Users\Entities\User $users
  * @property-read \Ignite\Inpatient\Entities\Visit $visits
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereAdmissionId($value)

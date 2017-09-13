@@ -178,4 +178,5 @@ Route::group(['prefix' => 'v1'], function () {
     Route::get('get/temperature', ['as' => 'temperature', 'uses' => 'InpatientApiController@getTemperature']);
     Route::get('get/inpatient-investigations/{visit}', ['as' => 'investigations', 'uses' => 'InpatientApiController@getDoneInvestigations']);
     Route::get('get/inpatient-procedures/{visit}', ['as' => 'procedure', 'uses' => 'InpatientApiController@getDoneProcedures']);
+    Route::get('get/inpatient-consumables/{visit}', ['as' => 'consumable', 'uses' => 'InpatientApiController@getDoneConsumables']);
 });

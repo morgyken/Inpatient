@@ -108,6 +108,7 @@ class InpatientController extends AdminBaseController
         $js_assets = [
             'doctor-investigations.js' => m_asset('inpatient:js/doctor-investigations.js'),
             'doctor-procedures.js' => m_asset('inpatient:js/doctor-procedures.js'),
+            'doctor-consumables.js' => m_asset('inpatient:js/consumables.js'),
             'inpatient-scripts.js' => m_asset('inpatient:js/inpatient-scripts.js'),
             'jquery.timepicker.min.js' =>  m_asset('inpatient:js/jquery.timepicker.min.js'),
             'prescriptions.js' => m_asset('inpatient:js/inpatient/prescriptions.js'),
