@@ -27,6 +27,8 @@ $products = get_inventory_consumables();
                     <input type="text" name="price{{$item->id}}" value="{{$item->selling_p}}" id="cost{{$item->id}}"
                            size="5" readonly/>
                 </td>
+                <td><input style="color:red" class="discount" size="5" value="0" id="discount{{$item->id}}"
+                           type="text" name="discount{{$item->id}}" readonly=""/></td>
                 <td><input class="quantity" size="5" value="1" id="quantity{{$item->id}}" type="text"
                            name="quantity{{$item->id}}"/></td>
                 <td><input size="5" id="amount{{$item->id}}" type="text" name="amount{{$item->id}}"

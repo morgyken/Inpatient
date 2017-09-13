@@ -62,8 +62,8 @@ $(function () {
         var total = 0;
         $("#consumable_form").find("input:checkbox:checked").each(function () {
             var consumable_id = $(this).val();
-            var name = $('#name' + consumable_id).html();
-            var amount = john_doe(consumable_id);
+            var name = $('#consumable_form').find('#name' + consumable_id).html();
+            var amount = get_item_amount(consumable_id);
             total += parseInt(amount);
             $('#consumableInfo > tbody').append('<tr><td>' + name + '</td><td>' + amount + '</td></tr>');
         });
@@ -89,27 +89,28 @@ $(function () {
             }
         });
     });
-    $('#doctor_form,#nurse_form')
+    $('#consumable_form')
         .find('input:radio, input:checkbox').prop('checked', false);
     $('#show_consumable_selection').hide();
 
-    function get_amount_given(price, qty, discount) {
-        try {
-            var total = price * qty;
-            var d = total * (discount / 100);
-            var discounted = total - d;
-            return discounted;
-        } catch (e) {
-            return price;
-        }
-    }
+    function get_item_amount(consumable_id) {
 
-    function john_doe(consumable_id) {
-        var cost = $('#cost' + consumable_id).val();
-        var discount = $('#discount' + consumable_id).val();
-        var quantity = $('#quantity' + consumable_id).val();
+        function get_amount_given(price, qty, discount) {
+            try {
+                var total = price * qty;
+                var d = total * (discount / 100);
+                return total - d;
+            } catch (e) {
+                return price;
+            }
+        }
+
+        var $myforms = $('#consumable_form');
+        var cost = $myforms.find('#cost' + consumable_id).val();
+        var discount = $myforms.find('#discount' + consumable_id).val();
+        var quantity = $myforms.find('#quantity' + consumable_id).val();
         var amount = get_amount_given(cost, quantity, discount);
-        $('#amount' + consumable_id).val(amount);
+        $myforms.find('#amount' + consumable_id).val(amount);
         return amount;
     }
 });

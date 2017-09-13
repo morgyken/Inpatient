@@ -21,7 +21,7 @@
                                     <table id="consumableInfo" class=" table table-condensed">
                                         <thead>
                                         <tr>
-                                            <th>Test</th>
+                                            <th>Consumable</th>
                                             <th>Price</th>
                                         </tr>
                                         </thead>

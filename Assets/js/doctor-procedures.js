@@ -60,17 +60,9 @@ $(function () {
         $('#show_selection').hide();
         $('#procedureInfo > tbody > tr').remove();
         var total = 0;
-        $("#doctor_form input:checkbox:checked").each(function () {
+        $("#doctor_form,#nurse_form").find("input:checkbox:checked").each(function () {
             var procedure_id = $(this).val();
-            var name = $('#name' + procedure_id).html();
-            var amount = john_doe(procedure_id);
-            total += parseInt(amount);
-            $('#procedureInfo > tbody').append('<tr><td>' + name + '</td><td>' + amount + '</td></tr>');
-        });
-        //for labs
-        $("#nurse_form input:checkbox:checked").each(function () {
-            var procedure_id = $(this).val();
-            var name = $('#name' + procedure_id).html();
+            var name = $('#doctor_form,#nurse_form').find('#name' + procedure_id).html();
             var amount = john_doe(procedure_id);
             total += parseInt(amount);
             $('#procedureInfo > tbody').append('<tr><td>' + name + '</td><td>' + amount + '</td></tr>');
@@ -101,18 +93,18 @@ $(function () {
         .find('input:radio, input:checkbox').prop('checked', false);
     $('#show_selection').hide();
 
-    function get_amount_given(price, qty, discount) {
-        try {
-            var total = price * qty;
-            var d = total * (discount / 100);
-            var discounted = total - d;
-            return discounted;
-        } catch (e) {
-            return price;
-        }
-    }
-
     function john_doe(procedure_id) {
+        function get_amount_given(price, qty, discount) {
+            try {
+                var total = price * qty;
+                var d = total * (discount / 100);
+                var discounted = total - d;
+                return discounted;
+            } catch (e) {
+                return price;
+            }
+        }
+
         var cost = $('#cost' + procedure_id).val();
         var discount = $('#discount' + procedure_id).val();
         var quantity = $('#quantity' + procedure_id).val();
