@@ -918,11 +918,18 @@ class InpatientApiController extends Controller
     public function getDoneConsumables($visit)
     {
         /** @var InpatientConsumable[] $data */
-        $data = get_inpatient_investigations($visit, 'procedure');
-        foreach ($data as $item) {
-            //todo logic
-        }
+        $data = InpatientConsumable::whereVisit($visit)->get();
         $return = [];
+        foreach ($data as $item) {
+            $return[] = [
+                str_limit($item->product->name, 20, '...'),
+                ucfirst(substr($item->type, 1 + strpos($item->type, '.'))),
+                $item->price, $item->quantity, $item->discount,
+                $item->amount > 0 ? $item->amount : $item->price,
+                $item->created_at->format('d/m/Y h:i a'),
+                payment_label($item->is_paid)
+            ];
+        }
         return response()->json(['data' => $return]);
     }
 

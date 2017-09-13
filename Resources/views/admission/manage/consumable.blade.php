@@ -59,7 +59,6 @@
                             <th>Amount</th>
                             <th>Date</th>
                             <th>Payment</th>
-                            <th>Result</th>
                         </tr>
                         </thead>
                         <tbody>

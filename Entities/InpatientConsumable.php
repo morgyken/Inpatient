@@ -2,6 +2,7 @@
 
 namespace Ignite\Inpatient\Entities;
 
+use Ignite\Inventory\Entities\InventoryProducts;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $ordered
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ * @property-read \Ignite\Inventory\Entities\InventoryProducts $product
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\InpatientConsumable whereAmount($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\InpatientConsumable whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\InpatientConsumable whereDiscount($value)
@@ -38,4 +40,9 @@ use Illuminate\Database\Eloquent\Model;
 class InpatientConsumable extends Model
 {
     protected $guarded = [];
+
+    public function product()
+    {
+        return $this->belongsTo(InventoryProducts::class, 'product_id');
+    }
 }
