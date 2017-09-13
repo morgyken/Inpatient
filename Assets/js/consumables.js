@@ -10,7 +10,7 @@
  * =========================================================================
  * */
 
-/* global DIAGNOSIS_URL, USER_ID, VISIT_ID, alertify,THE_consumable_URL */
+/* global DIAGNOSIS_URL, USER_ID, VISIT_ID, alertify,CONSUMABLE_URL*/
 
 $(function () {
     //mock hide this
@@ -25,24 +25,9 @@ $(function () {
     $('#consumable_form').find('input:text').keyup(function () {
         show_consumables_selected();
     });
-    $('input').on('ifChanged', function () {
+    $('#consumable_form').find('input').on('ifChanged', function () {
         var elements = $(this).parents('tr').find('input');
         var texts = $(this).parents('tr').find('textarea');
-        if ($(this).is(':checked')) {
-            elements.prop('disabled', false);
-            texts.prop('disabled', false);
-            $(texts).parent().show();
-        } else {
-            elements.prop('disabled', true);
-            texts.prop('disabled', true);
-            $(texts).parent().hide();
-        }
-        $(this).prop('disabled', false);
-        show_consumables_selected();
-    });
-    $('#consumable_form.check').click(function () {
-        var elements = $(this).parent().parent().find('input');
-        var texts = $(this).parent().parent().find('textarea');
         if ($(this).is(':checked')) {
             elements.prop('disabled', false);
             texts.prop('disabled', false);
@@ -77,8 +62,8 @@ $(function () {
         e.preventDefault();
         $.ajax({
             type: "POST",
-            url: DIAGNOSIS_URL,
-            data: $('#doctor_form, #nurse_form').serialize(),
+            url: CONSUMABLE_URL,
+            data: $('#consumable_form').serialize(),
             success: function () {
                 alertify.success('<i class="fa fa-check-circle"></i> Patient consumable updated');
                 $('#consumableTab').find('input').iCheck('uncheck');

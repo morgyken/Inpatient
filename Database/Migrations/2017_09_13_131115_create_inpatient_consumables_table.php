@@ -18,6 +18,9 @@ class CreateInpatientConsumablesTable extends Migration
             $table->unsignedInteger('visit');
             $table->string('type')->default('diagnosis');
             $table->unsignedInteger('product_id');
+            $table->integer('quantity');
+            $table->double('discount');
+            $table->double('amount', 10, 2);
             $table->double('price', 10, 2);
             $table->integer('user')->unsigned()->nullable();
             $table->longText('instructions')->nullable();

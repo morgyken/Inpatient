@@ -831,6 +831,44 @@ class InpatientApiController extends Controller
         return response()->json($result);
     }
 
+    /**
+     * Build an index of items dynamically
+     * @param Request $request
+     * @return array
+     */
+    private function _get_selected_stack(Request $request)
+    {
+        $stack = [];
+        $this->input = \request()->all();
+        foreach ($this->input as $key => $one) {
+            if (starts_with($key, 'item')) {
+                $stack[] = substr($key, 4);
+            }
+        }
+        return $stack;
+    }
+
+    public function saveConsumables(Request $request)
+    {
+        \DB::transaction(function () use ($request) {
+            foreach ($this->_get_selected_stack($request) as $consumable) {
+                InpatientConsumable::create([
+                    'type' => $this->input['type' . $consumable],
+                    'visit' => $request->visit,
+                    'product_id' => $consumable,
+                    'quantity' => $this->input['quantity' . $consumable],
+                    'price' => $this->input['price' . $consumable],
+                    'discount' => $this->input['discount' . $consumable],
+                    'amount' => $this->input['amount' . $consumable],
+                    'instructions' => empty($this->input['instructions' . $consumable]) ? null : $this->input['instructions' . $consumable],
+                    'user' => $request->user()->id,
+                    'ordered' => true
+                ]);
+//                $this->check_in_at($this->input['type' . $consumable]);
+            }
+        });
+    }
+
     public function postTemperature(Request $request)
     {
         $input = $request->all();

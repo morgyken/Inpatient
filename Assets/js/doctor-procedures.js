@@ -25,7 +25,7 @@ $(function () {
     $('#doctor_form,#nurse_form').find('input:text').keyup(function () {
         show_procedures_selected();
     });
-    $('input').on('ifChanged', function () {
+    $('#doctor_form,#nurse_form').find('input').on('ifChanged', function () {
         var elements = $(this).parents('tr').find('input');
         var texts = $(this).parents('tr').find('textarea');
         if ($(this).is(':checked')) {
@@ -63,7 +63,7 @@ $(function () {
         $("#doctor_form,#nurse_form").find("input:checkbox:checked").each(function () {
             var procedure_id = $(this).val();
             var name = $('#doctor_form,#nurse_form').find('#name' + procedure_id).html();
-            var amount = john_doe(procedure_id);
+            var amount = get_procedure_price(procedure_id);
             total += parseInt(amount);
             $('#procedureInfo > tbody').append('<tr><td>' + name + '</td><td>' + amount + '</td></tr>');
         });
@@ -93,7 +93,7 @@ $(function () {
         .find('input:radio, input:checkbox').prop('checked', false);
     $('#show_selection').hide();
 
-    function john_doe(procedure_id) {
+    function get_procedure_price(procedure_id) {
         function get_amount_given(price, qty, discount) {
             try {
                 var total = price * qty;

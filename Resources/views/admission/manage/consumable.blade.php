@@ -81,7 +81,7 @@
 <script>
     var USER_ID = parseInt("{{ Auth::user()->id }}");
     var VISIT_ID = parseInt("{{ $admission->visit_id }}");
-    var DIAGNOSIS_URL = "{{route('api.evaluation.save_diagnosis')}}";
+    var CONSUMABLE_URL = "{{url('api/inpatient/v1/saver/consumables')}}";
     var THE_CONSUMABLE_URL = "{{url('/api/inpatient/v1/get/inpatient-consumables/'.$admission->visit_id)}}";
     $(document).ready(function () {
         $('.accordion').accordion({heightStyle: "content"});

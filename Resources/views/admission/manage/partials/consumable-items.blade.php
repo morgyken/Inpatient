@@ -18,7 +18,7 @@ $products = get_inventory_consumables();
                 <td>
                     <span id="name{{$item->id}}"> {{$item->name}}</span>
                     <br/>
-                    <input type="hidden" name="type{{$item->id}}" value="inpatient.procedure-doctor" disabled/>
+                    <input type="hidden" name="type{{$item->id}}" value="inpatient.consumable" disabled/>
                     <span class="instructions">
                     <textarea placeholder="Instructions" name="instructions{{$item->id}}" disabled
                               cols="50"></textarea></span>
@@ -27,10 +27,11 @@ $products = get_inventory_consumables();
                     <input type="text" name="price{{$item->id}}" value="{{$item->selling_p}}" id="cost{{$item->id}}"
                            size="5" readonly/>
                 </td>
-                <td><input style="color:red" class="discount" size="5" value="0" id="discount{{$item->id}}"
-                           type="text" name="discount{{$item->id}}" readonly=""/></td>
+
                 <td><input class="quantity" size="5" value="1" id="quantity{{$item->id}}" type="text"
                            name="quantity{{$item->id}}"/></td>
+                <td><input style="color:red" class="discount" size="5" value="0" id="discount{{$item->id}}"
+                           type="text" name="discount{{$item->id}}" readonly=""/></td>
                 <td><input size="5" id="amount{{$item->id}}" type="text" name="amount{{$item->id}}"
                            value="{{$item->selling_p}}"/></td>
             </tr>
