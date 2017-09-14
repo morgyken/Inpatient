@@ -137,8 +137,14 @@ Route::group(['prefix' => 'v1'], function () {
         // Get Fluid Balance Data
         Route::get('/admission/{admission_id}', 'InpatientApiController@getFluidBalances');
 
-        // Save head Injury data
+        // Save fluid balance data
         Route::post('', 'InpatientApiController@addFluidBalances');
+
+        // Update fluid balance data
+        Route::post('/update', 'InpatientApiController@updateFluidBalances');
+
+        // Delete fluid balance data
+        Route::post('/delete', 'InpatientApiController@deleteFluidBalances');
     });
 
     Route::group(['prefix' => 'transfusions'], function () {
@@ -157,7 +163,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('', 'InpatientApiController@deleteBloodTransfusions');
     });
 
-    Route::group(['prefix' => 'plans'], function () {
+    Route::group(['prefix' => 'plans'], function() {
         Route::get('/admission/{admission_id}', 'InpatientApiController@getNursingCarePlans');
 
         Route::post('', 'InpatientApiController@addNursingCarePlan');
@@ -167,10 +173,15 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('/delete', 'InpatientApiController@deleteNursingCarePlan');
     });
 
+    Route::group(['prefix' => 'discharge'], function(){
+
+        Route::post('/request','InpatientApiController@requestDischarge');
+
+         Route::post('','InpatientApiController@discharge');
+    });
+
 
     // Get patient Temperature for plotting
-
-
     // Get patient blood pressure for plotting
 
     Route::post('saver/blood_pressure', ['as' => 'mark_bp', 'uses' => 'InpatientApiController@postBp']);

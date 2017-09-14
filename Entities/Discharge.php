@@ -34,11 +34,32 @@ class Discharge extends Model
     protected $fillable = [
         'visit_id',
         'doctor_id',
-        'DischargeNote',
+        'discharge_notes_id',
         'dateofdeath',
         'type',
         'timeofdeath'
     ];
 
     protected $table = 'discharges';
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function visit() {
+        return $this->belongsTo(Visit::class, 'visit_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function doctor() {
+        return $this->belongsTo(User::class, 'doctor_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function doctor() {
+        return $this->belongsTo(User::class, 'doctor_id');
+    }
 }

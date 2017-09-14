@@ -17,7 +17,7 @@
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding: 0 !important;">
                         <label for="" class="control-label">Time recorded:</label>
-                        <input type="text" class="form-control" name="blood_time_recorded" id ="blood_time_recorded" value = "{{ \Carbon\Carbon::now()->format('H:i') }}" required>
+                        <input type="text" class="form-control" name="blood_time_recorded" id ="blood_time_recorded" value = "{{ \Carbon\Carbon::now()->format('H:i a') }}" required>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0 !important;">
                          <div class="form-group">
@@ -133,6 +133,9 @@
     <script type="text/javascript">
 
         $(document).ready(function(){
+
+            $("#transfusion-table").dataTable();
+            
             $('#save-transfusion').click(function(e){
                 e.preventDefault();
 

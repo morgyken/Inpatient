@@ -10,7 +10,7 @@
 
             <div class="form-group">
                  <label>Write your notes here:</label>
-                <textarea name="notes" id="nurses-notes" class="form-control" rows="10" placeholder="Nurse's Notes..." required autofocus></textarea>
+                <textarea name="notes" id="nurses-notes" class="form-control summernote" rows="10" placeholder="Nurse's Notes..." required autofocus></textarea>
             </div>
            
             <button type="button" class="btn btn-lg btn-primary" id = "save-nurse-note"><i class = "fa fa-save"></i> Save</button>
@@ -59,7 +59,7 @@
                     <div class="modal-body">
                          <form>
                             <input type="hidden" name="nurse_note_id" id = "nurse_note_id" required>
-                            <textarea name="view-nurse-note" disabled="true" id="view-nurse-note" class="form-control" rows="3"  cols= "10" required></textarea>
+                            <textarea name="view-nurse-note" disabled="true" id="view-nurse-note" class="form-control summernote" rows="3"  cols= "10" required></textarea>
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -87,12 +87,25 @@
                 </div>
             </div>
         </div>
-        
     <script type="text/javascript">
 
         $(document).ready(function(){
             
-            $("#nurses-table").dataTable();
+            $("#nurses-table").dataTable({
+                "columnDefs": [ 
+                    { 
+                        "targets": [1], 
+                        "type": "html", 
+                        "render": function(data, type, row) { 
+                            return $("<div/>").html(data).text();
+                        } 
+                    }
+                ]
+            });
+
+            $('.summernote').summernote({
+                height: 200
+            });  
 
             $('#save-nurse-note').click(function(e){
                 e.preventDefault();
@@ -149,7 +162,7 @@
                         if(resp.type === "success"){                      
                             resp.data.map( (item, index) => {
                                 return(
-                                    $("#view-nurse-note").val(item.notes)
+                                    $("#view-nurse-note").text(item.notes)
                                 );
                             });
 

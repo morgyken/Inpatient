@@ -10,7 +10,7 @@
 
             <div class="form-group">
                 <label>Write your notes here:</label>
-                <textarea name="notes" id="doctors-notes" class="form-control" rows="10" placeholder="Doctor's Notes..." required autofocus></textarea>
+                <textarea name="notes" id="doctors-notes" class="form-control summernote" rows="10" placeholder="Doctor's Notes..." required autofocus></textarea>
             </div>
             
             <br/>
@@ -67,7 +67,7 @@
                     <div class="modal-body">
                         <form>
                             <input type="hidden" name="note_id" id = "note_id" required>
-                            <textarea name="view-doctors-note" disabled="true" id="view-doctors-note" class="form-control" rows="3"  cols= "10" required></textarea>
+                            <textarea name="view-doctors-note" disabled="true" id="view-doctors-note" class="form-control summernote" rows="3"  cols= "10" required></textarea>
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -126,7 +126,21 @@
 
         $(document).ready(function(){
             
-            $("#doctors-table").dataTable();
+            $("#doctors-table").dataTable({
+                "columnDefs": [ 
+                    { 
+                        "targets": [1], 
+                        "type": "html", 
+                        "render": function(data, type, row) { 
+                            return $("<div/>").html(data).text();
+                        } 
+                    }
+                ]
+            });
+
+            $('.summernote').summernote({
+                height: 200
+            });
 
             function startCamera(){
                 // Grab elements, create settings, etc.
@@ -141,6 +155,9 @@
                         video.src = window.URL.createObjectURL(stream);
                         video.play();
                     });
+                }else{
+                    alertify.info("<i class = 'fa fa-exclamation-circle'></i> Camera not accessible!");
+                    $("#modal-capture").modal("toggle");
                 }
 
                 // Trigger photo take
@@ -157,13 +174,24 @@
 
              $("#stopCapture").click(function(e){
                 e.preventDefault();
-                 var video = document.getElementById('video');
-                 if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                    // Not adding `{ audio: true }` since we only want video now
-                    navigator.mediaDevices.getUserMedia({ video: false }).then(function(stream) {
-                        video.src ="";
-                        video.stop();
-                    });
+                var video = document.getElementById('video');
+                var MediaStream = window.MediaStream;
+
+                if (typeof MediaStream === 'undefined' && typeof webkitMediaStream !== 'undefined') {
+                    MediaStream = webkitMediaStream;
+                }
+
+                /*global MediaStream:true */
+                if (typeof MediaStream !== 'undefined' && !('stop' in MediaStream.prototype)) {
+                    MediaStream.prototype.stop = function() {
+                        this.getAudioTracks().forEach(function(track) {
+                            track.stop();
+                        });
+
+                        this.getVideoTracks().forEach(function(track) {
+                            track.stop();
+                        });
+                    };
                 }
                 $("#modal-capture").modal("toggle");
             });          
@@ -220,7 +248,7 @@
                         if(resp.type === "success"){                      
                             resp.data.map( (item, index) => {
                                 return(
-                                    $("#view-doctors-note").val(item.notes)
+                                    $("#view-doctors-note").code($('#view-doctors-note').text(item.notes))
                                 );
                             });
 

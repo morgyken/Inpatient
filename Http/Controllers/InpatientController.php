@@ -16,6 +16,7 @@ use Ignite\Inpatient\Entities\BloodPressure;
 use Ignite\Inpatient\Entities\BloodTransfusion;
 use Ignite\Inpatient\Entities\Deposit;
 use Ignite\Inpatient\Entities\DischargeNote;
+use Ignite\Inpatient\Entities\FluidBalance;
 use Ignite\Inpatient\Entities\Notes;
 use Ignite\Inpatient\Entities\NursingCarePlan;
 use Ignite\Inpatient\Entities\NursingCharge;
@@ -103,12 +104,14 @@ class InpatientController extends AdminBaseController
         $css_assets = [
             'vertical-tabs.css' => m_asset('inpatient:css/vertical-tabs.css'),
             'jquery.timepicker' => m_asset('inpatient:css/jquery.timepicker.css'),
+            'summernote.css' => m_asset('inpatient:css/summernote.css')
         ];
 
         $js_assets = [
             'doctor-investigations.js' => m_asset('inpatient:js/doctor-investigations.js'),
             'doctor-treatment.js' => m_asset('inpatient:js/doctor-treatment.js'),
             'inpatient-scripts.js' => m_asset('inpatient:js/inpatient-scripts.js'),
+            'summernote.js' => m_asset('inpatient:js/summernote.js'),
             'jquery.timepicker.min.js' =>  m_asset('inpatient:js/jquery.timepicker.min.js'),
             'prescriptions.js' => m_asset('inpatient:js/inpatient/prescriptions.js'),
             'canvas-to-blob.min.js' => m_asset('inpatient:js/jpeg_camera/canvas-to-blob.min.js'),
@@ -133,9 +136,8 @@ class InpatientController extends AdminBaseController
      */
     public function index()
     {
-        $patientIds = $this->patients->where('id', '!=', null)->get(['id'])->toArray();
         $patients = $this->patients->all();
-        return view('inpatient::index', ['patientIds' => $patientIds, 'patients' => $patients]);
+        return view('inpatient::index', [ 'patients' => $patients]);
     }
 
     public function awaiting()
@@ -165,7 +167,6 @@ class InpatientController extends AdminBaseController
 
     public function admitWalkInPatient($id)
     {
-        //dd($id);
         $doctor_rule = Roles::where('name', 'Doctor')->first();
         $doctor_ids = UserRoles::where('role_id', $doctor_rule->id)
             ->get(['user_id'])
@@ -174,13 +175,10 @@ class InpatientController extends AdminBaseController
         $doctors = User::findMany($doctor_ids);
 
         $patient = Patients::find($id);
-
-        // $visit = Visit::find($visit_id);
         $wards = Ward::all();
         $beds = Bed::all();
         $bedpositions = BedPosition::all();
         $deposits = Deposit::all();
-        // $request_id = RequestAdmission::where('visit_id', $visit_id)->first()->id;
         $admissions = NursingCharge::all();
         return view('inpatient::admission.admit_form', compact('doctors', 'patient', 'wards', 'deposits', 'beds', 'bedpositions', 'admissions'));
     }
@@ -295,7 +293,11 @@ class InpatientController extends AdminBaseController
             //the bed should change status to occupied
             if (count(Bed::find($request->bed_id)) > 0) {
                 $bed = Bed::find($request->bed_id)->first();
-                $bed->update(['status' => 'occupied']);
+                if($bed->status == 'occupied'){
+                    return back()->with('error', 'That bed is already occupied!');
+                }else{
+                    $bed->update(['status' => 'occupied']);
+                }
             }
 
             $admission = $a->where("patient_id", $request->patient_id)->where("visit_id", $request->visit_id)->first();
@@ -447,31 +449,44 @@ class InpatientController extends AdminBaseController
             $nursesNotes = Notes::where('visit_id', $visit_id)->where("type", 0)->get();
             $nursingCarePlans = NursingCarePlan::where('visit_id', $visit_id)->get();
             $transfusions = BloodTransfusion::where('visit_id', $visit_id)->get();
+            $fluidbalances =  FluidBalance::where("visit_id", $visit_id)->get()->map(function($item){
+                return  
+                [
+                    "id"                                    => $item->id,
+                    // "intravenous_infusion_instructions"     => $item->intravenous_infusion,
+                    "intake_intravenous"                    => unserialize($item->intake_intravenous),
+                    "intake_alimentary"                     => unserialize($item->intake_alimentary),
+                    "output"                                => unserialize($item->output),
+                    "recorded_by"                           => $item->user->profile->fullName,
+                    "recorded_on"                           => $item->time_recorded . " " . $item->date_recorded
+                ];
+            });
+
+            $investigations = Investigations::where("visit", $visit_id)->where("type", "laboratory")->get()->map(function ($item) {
+                    return
+                        [
+                            "id" => $item->id,
+                            "type" => $item->type,
+                            "procedure" => $item->procedures->name,
+                            "quantity" => $item->quantity,
+                            "price" => $item->price,
+                            "discount" => $item->discount,
+                            "amount" => $item->amount,
+                            "user" => $item->doctors->profile->fullName,
+                            "instructions" => $item->instructions,
+                            "ordered" => $item->ordered,
+                            "invoiced" => $item->invoiced,
+                            "requested_on" => $this->carbon->parse($item->updated_at)->format('H:i A d/m/Y ')
+                        ];
+            });
+
         }
 
         $bpChart = $this->getCharts($patient->id, $admission->id);
         $tempChart = $this->getTemperatureChart($patient->id, $admission->id);
 
-        $investigations = Investigations::where("visit", $visit_id)->where("type", "laboratory")->get()->map(function ($item) {
-            return
-                [
-                    "id" => $item->id,
-                    "type" => $item->type,
-                    "procedure" => $item->procedures->name,
-                    "quantity" => $item->quantity,
-                    "price" => $item->price,
-                    "discount" => $item->discount,
-                    "amount" => $item->amount,
-                    "user" => $item->doctors->profile->fullName,
-                    "instructions" => $item->instructions,
-                    "ordered" => $item->ordered,
-                    "invoiced" => $item->invoiced,
-                    "requested_on" => $this->carbon->parse($item->updated_at)->format('H:i A d/m/Y ')
-                ];
-
-        });
-
-        return view('Inpatient::admission.manage_patient', compact('tempChart', 'investigations', 'bpChart', 'patient', 'ward', 'admission', 'vitals', 'doctorsNotes', 'nursesNotes', 'once_only_prescriptions', 'regular_prescriptions', 'nursingCarePlans', 'transfusions'));
+        
+        return view('Inpatient::admission.manage_patient', compact('tempChart', 'investigations', 'bpChart', 'patient', 'ward', 'admission', 'vitals', 'doctorsNotes', 'nursesNotes', 'once_only_prescriptions', 'regular_prescriptions', 'nursingCarePlans', 'transfusions', 'fluidbalances'));
     }
 
     private function getTemperatureChart($patient, $admission)
@@ -546,12 +561,14 @@ class InpatientController extends AdminBaseController
         if ($request->type == 'discharge') {
             DischargeNote::create([
                 'summary_note' => $request->summaryNote,
+                'admission_id' => 2,
                 'doctor_id' => \Auth::user()->id,
                 'visit_id' => $request->visit_id
             ]);
         } else {
             DischargeNote::create(array(
                 'case_note' => $request->caseNote,
+                'admission_id' => 2,
                 'doctor_id' => \Auth::user()->id,
                 'visit_id' => $request->visit_id,
             ));
@@ -560,37 +577,37 @@ class InpatientController extends AdminBaseController
 
     }
 
-    public function request_discharge($id)
+    public function request_discharge($id, $visit_id)
     {
         //THE Doctor should be able to write a note
-        $visit_id = $id;
         $v = Visit::findorfail($visit_id);
         $patient = Patients::findorfail($v->patient);
         $account = PatientAccount::where('patient_id', $patient->id)->first();
 
         $wardCharges = 0;
-        $wards = WardAssigned::where('visit_id', $id)->get();
+        $wards = WardAssigned::where('visit_id', $visit_id)->get();
         foreach ($wards as $ward) {
             $wardCharges += ($ward->price/** date_diff($ward->discharged_at,$ward->created_at) */);
         }
         $recuCharges = 0;
         //subscribed reccurrent charges
-        $rcnt = RecurrentCharge::where('visit_id', $id)->where('status', 'unpaid')->get();
+        $rcnt = RecurrentCharge::where('visit_id', $visit_id)->where('status', 'unpaid')->get();
         foreach ($rcnt as $recurrent) {
             //nursing charges times no. of days..
             $recuCharges += NursingCharge::find($recurrent->recurrent_charge_id)->cost/** date_diff($ward->discharged_at,$ward->created_at) */
             ;
         }
+
         $totalCharges = $wardCharges + $recuCharges;
 
-        return view('Evaluation::inpatient.request_patient_discharge', compact('account', 'patient', 'visit_id', 'v', 'totalCharges'));
+        return view('Inpatient::admission.request_patient_discharge', compact('account', 'patient', 'visit_id', 'v', 'totalCharges'));
 
         //add a record to request discharge table
         $user_id = (\Auth::user()->id);
 
         RequestDischarge::create([
             'doctor_id' => $user_id,
-            'visit_id' => $id,
+            'visit_id' => $visit_id,
             'status' => 'unconfirmed'
         ]);
         return redirect()->back()->with('success', 'Successfully requested for discharge');

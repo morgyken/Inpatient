@@ -17,7 +17,7 @@ Route::group(['as' => 'inpatient.'], function() {
     Route::get('/awaiting', 'InpatientController@awaiting');
     Route::post('/requestAdmission', 'InpatientController@requestAdmission');
     Route::get('/admit/{id}', 'InpatientController@admitWalkInPatient');
-    Route::get('/admit/{id}/{visit_id}', 'InpatientController@admitPatientForm');
+    Route::get('/admit/{id}/visit/{visit_id}', 'InpatientController@admitPatientForm');
     Route::post('/admit_patient', 'InpatientController@admit');
     Route::get('/admit_check', 'InpatientController@admit_check');
     Route::get('/admissions', 'InpatientController@admissionList');

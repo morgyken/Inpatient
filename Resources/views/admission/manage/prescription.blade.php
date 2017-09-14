@@ -39,20 +39,20 @@
 		        </td>
 		    </tr>
 		    <tr>
-		        <th>Substitution Allowed?(Check if yes) </th>
+		        <th>Substitution Allowed? (Check if yes) </th>
 		        <td>
-		            <input type="checkbox" name="allow_substitution" class = "checkbox" id = "allow_substitution" style="width: 20px !important; height: 20px !important;" required />
+		            <input type="checkbox" name="allow_substitution" class = "checkbox" id = "allow_substitution" style="width: 20px !important; height: 20px !important;"/>
 		        </td>
 		    </tr>
 
 		    <tr>
 		        <th>Regular prescription? (Check if yes) </th>
 		        <td>
-		            <input type="checkbox" name="type" class = "checkbox" id = "type" style="width: 20px !important; height: 20px !important;" required />
+		            <input type="checkbox" name="type" class = "checkbox" id = "type" style="width: 20px !important; height: 20px !important;"/>
 		        </td>
 		    </tr>
 		</table>
-		<button type="submit" class="btn btn-lg btn-primary " id="savePrescription">
+		<button type="button" class="btn btn-lg btn-primary " id="savePrescription">
 		    <i class="fa fa-save"></i> Save
 		</button>
 	</form>

@@ -17,7 +17,7 @@ class CreateRecurrentChargesTable extends Migration
             $table->increments('id');
             $table->integer('visit_id')->unsigned();
             $table->integer('recurrent_charge_id')->unsigned();
-            $table->string('status')->defualt('unpaid');
+            $table->string('status')->default('unpaid');
             $table->timestamps();
 
             $table->foreign('visit_id')

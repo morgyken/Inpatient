@@ -61,7 +61,7 @@
     <div class="form-horizontal">
 
     @if(\Ignite\Evaluation\Entities\DischargeNote::where('visit_id',$v->id)->count())
-        {{Form::open(['url'=>'/evaluation/inpatient/postDischargeNote/'.$v->id])}}
+        {{Form::open(['url'=>'/inpatient/postDischargeNote/'.$v->id])}}
              <div class="col-md-12">
                 <input type="hidden" name="visit_id" value="{{$v->id}}">
             <div class="col-md-6">
@@ -100,12 +100,10 @@
         </div> 
         {{Form::close()}}
     @else
-        {{Form::open(['url'=>'/evaluation/inpatient/postDischargeNote'])}}
+        {{Form::open(['url'=>'/inpatient/postDischargeNote'])}}
              <div class="col-md-12">
                 <input type="hidden" name="visit_id" value="{{$v->id}}">
             <div class="col-md-8">
-
-
                  <div class="form-group {{ $errors->has('type') ? ' has-error' : '' }}">
                     <label class="control-label col-md-4">Discharge Type</label>
                     <div class="col-md-8">

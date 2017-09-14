@@ -27,8 +27,24 @@ use Illuminate\Database\Eloquent\Model;
  */
 class DischargeNote extends Model
 {
-    protected $fillable = [
-        'case_note','summary_note','visit_id','patient_id'
-    ];
-    protected $table = 'dischargeNotes';
+   
+    protected $table = 'inpatient_discharge_notes';
+
+    public function admission(){
+        return $this->belongsTo(Admission::class, "admission_id", "id");
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function visit() {
+        return $this->belongsTo(Visit::class, 'visit_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function doctor() {
+        return $this->belongsTo(User::class, 'doctor_id');
+    }
 }

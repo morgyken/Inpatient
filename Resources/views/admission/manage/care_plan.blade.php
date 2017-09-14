@@ -19,7 +19,7 @@
             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                 <div class="form-group">
                     <label>Time</label>
-                    <input type="text" name="time_recorded" id="time_recorded" class="form-control" value = "{{ \Carbon\Carbon::now()->format('H:i') }}" required>
+                    <input type="text" name="time_recorded" id="time_recorded" class="form-control" value = "{{ \Carbon\Carbon::now()->format('H:i a') }}" required>
                 </div>
             </div>
 

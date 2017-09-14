@@ -19,7 +19,7 @@
                     <span>There are no patients recorded</span>
                 </div>
             @else
-                <table class="table table-stripped table-condensed">
+                <table class="table table-stripped table-hover table-condensed">
                     <caption>The Patient list: All The Patients</caption>
                     <thead>
                         <th>ID/Passport</th>
@@ -33,10 +33,10 @@
                             <td>{{ $patient->id_no }}</td>
                             <td>{{ $patient->full_name }}</td>
                             <td>
-                                {{ (new Date($patient->created_at))->format('m/d/y') }}
+                                {{ $patient->created_at->format('m/d/Y') }}
                             </td>
                             <td>
-                                <a class="btn btn-primary btn-xs" href="{{ url('inpatient/admit/'.$patient->id).'/'.$patient->visit_id }}">Admit</a>
+                                <a class="btn btn-primary btn-xs" href="{{ url('inpatient/admit/'.$patient->id) }}">Admit</a>
                             </td>
                         </tr>
                     @endforeach

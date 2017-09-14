@@ -483,26 +483,150 @@ class InpatientApiController extends Controller
 		}
 	}
 
+    public function addFluidBalances(Request $request){
+        \DB::beginTransaction();
+        try{
+            $request = $request->json()->all();
+            $intake_intraveneous = [
+                                    'type'      => $request['intravenous_type'], 
+                                    'bottle'    => $request['bottle'], 
+                                    'infused'   => $request['infused']
+                                ];
+            $intake_alimentary  = [
+                                    'type'      => $request['alimentary_type'],
+                                    'amount'    => $request['alimentary_amount']
+                                ];
+            $output             = [
+                                    'vomit'                 => $request['vomit'],
+                                    'stool'                 => $request['stool'],
+                                    'ngast'                 => $request['ngast'],
+                                    'others'                => $request['others'],
+                                    'urine_amount'          => $request['urine_amount'],
+                                    'specific_gravidity'    => $request['specific_gravidity']
+                                ];
+            $fb = new FluidBalance;
+            $fb->admission_id         = $request['admission_id'];
+            $fb->visit_id             = $request['visit_id'];
+            $fb->intravenous_infusion = $request['intravenous_infusion'];
+            $fb->other_instructions   = $request['other_instructions'];
+            $fb->intake_intraveneous  = serialize($intake_intraveneous);
+            $fb->intake_alimentary    = serialize($intake_alimentary);
+            $fb->output               = serialize($output);
+            $fb->user_id              = $request['user_id'];
+            $fb->time_recorded        = $request['time_recorded'];
+            $fb->date_recorded        = $request['date_recorded'];
+            $fb->save();
+            \DB::commit();
+            return ($fb) ? Response::json(['type' => 'success', 'message' => 'Fluid Balance saved!', 'data' => $this->getFluidBalanceData($request['admission_id'])]) : Response::json(['type' => 'error', 'message' => 'The fluid balance could not be saved']);
+        }catch(\Exception $e){
+            \DB::rollback();
+            return Response::json(['type' => 'error', 'message' => 'Your fluid balance could not be saved. '. $e->getMessage()]);
+        }
+    }
+
+    public function getFluidBalanceData($admission_id){
+        try{
+            $data =  FluidBalance::where("admission_id", $admission_id)->get()->map(function($item){
+                return 
+                [
+                    "id"                                    => $item->id,
+                    "intravenous_infusion_instructions"     => $item->intravenous_infusion,
+                    "intake_intravenous"                    => unserialize($item->intake_intravenous),
+                    "intake_alimentary"                     => unserialize($item->intake_alimentary),
+                    "output"                                => unserialize($item->output),
+                    "recorded_by"                           => $item->user->profile->fullName,
+                    "recorded_on"                           => $item->time_recorded . " " . $item->date_recorded
+                ];
+            })->toArray();
+            return json_encode($data);
+        }catch(\Exception $e){
+            return $e->getMessage();
+        }
+    }
+
 	public function getFluidBalances($admission_id){
 		try{
-			$data = FluidBalance::where("admission_id", $admission_id)->orderBy("updated_at", "DESC")->get()->map(function($item){
+            $fb = FluidBalance::where("admission_id", $admission_id)->orderBy("updated_at", "DESC")->get();
+			$data = $fb->map(function($item){
 				return 
 				[
-					"id" 					=> $item->id,
-					"admission_id"			=> $item->admission_id,
+					"id" 					                => $item->id,
+                    "intravenous_infusion_instructions"     => $item->intravenous_infusion,
+                    "intake_intravenous"                    => unserialize($item->intake_intravenous),
+                    "intake_alimentary"                     => unserialize($item->intake_alimentary),
+                    "output"                                => unserialize($item->output),
+                    "recorded_by"                           => $item->user->profile->fullName,
+                    "recorded_on"                           => $item->time_recorded . " " . $item->date_recorded
 				];
 			})->toArray();
 			
-			return json_encode(['type' => 'success', 'data' => $data]);
+			// return $data;
+
+            return Response::json(['type' => 'success', 'data' => $data ]);
 
 		}catch(\Exception $e){
 			return Response::json(['type' => 'error', 'message' => 'An error occured during fetching. '. $e->getMessage()]);
 		}
 	}
 
+    public function updateFluidBalances(Request $request){
+        \DB::beginTransaction();
+        try{
+            $request = $request->json()->all();
+            $fb = FluidBalance::find($request['id'])->first();
+            $intake_intraveneous = [
+                                    'type'      => $request['intravenous_type'], 
+                                    'bottle'    => $request['bottle'], 
+                                    'infused'   => $request['infused']
+                                ];
+            $intake_alimentary  = [
+                                    'type'      => $request['alimentary_type'],
+                                    'amount'    => $request['alimentary_amount']
+                                ];
+            $output             = [
+                                    'vomit'                 => $request['vomit'],
+                                    'stool'                 => $request['stool'],
+                                    'ngast'                 => $request['ngast'],
+                                    'others'                => $request['others'],
+                                    'urine_amount'          => $request['urine_amount'],
+                                    'specific_gravidity'    => $request['specific_gravidity']
+                                ];
+            $fb->admission_id         = $request['admission_id'];
+            $fb->visit_id             = $request['visit_id'];
+            $fb->intravenous_infusion = $request['intravenous_infusion'];
+            $fb->other_instructions   = $request['other_instructions'];
+            $fb->intake_intraveneous  = serialize($intake_intraveneous);
+            $fb->intake_alimentary    = serialize($intake_alimentary);
+            $fb->output               = serialize($output);
+            $fb->user_id              = $request['user_id'];
+            $fb->time_recorded        = $request['time_recorded'];
+            $fb->date_recorded        = $request['date_recorded'];
+            $fb->save();
+            \DB::commit();
+            return ($fb->id > 0) ? Response::json(['type' => 'success', 'message' => 'Fluid Balance updated!', 'data' => $this->getFluidBalanceData($fb->admission_id)]) : Response::json(['type' => 'error', 'message' => 'Fluid Balance could not be updated']);
+        }catch(\Exception $e){
+            \DB::rollback();
+            return Response::json(['type' => 'error', 'message' => 'The fluid balance could not be updated. '. $e->getMessage()]);
+        }
+    }
+
+    public function deleteFluidBalances(Request $request){
+        \DB::beginTransaction();
+        try{
+            $request = $request->json()->all();
+            $fb = FluidBalance::find($request)->first();
+            $fb->delete();
+            \DB::commit();
+            return ($fb->id > 0) ? Response::json(['type' => 'success', 'message' => 'Fluid deleted!']) : Response::json(['type' => 'error', 'message' => 'The fluid balance could not be deleted']);
+        }catch(\Exception $e){
+            \DB::rollback();
+            return Response::json(['type' => 'error', 'message' => 'The fluid balance could not be deleted. '. $e->getMessage()]);
+        }
+    }    
+
 	public function getBloodTransfusions($admission_id){
 		try{
-			
+			//
 		}catch(\Exception $e){
 			return Response::json(['type' => 'error', 'message' => 'An error occured during fetching. '. $e->getMessage()]);
 		}
@@ -1051,7 +1175,19 @@ class InpatientApiController extends Controller
         \DB::beginTransaction();
         try {
             $request = $request->json()->all();
-            $n = NursingCarePlan::find($request);
+            $n = new NursingCarePlan;
+            $n->visit_id          = $request['visit_id'];
+            $n->admission_id      = $request['admission_id'];
+            $n->diagnosis         = $request['diagnosis'];
+            $n->expected_outcome  = $request['expected_outcome'];
+            $n->intervention      = $request['intervention'];
+            $n->reasons           = $request['reasons'];
+            $n->evaluation        = $request['evaluation'];
+            $n->date_recorded     = $request['date_recorded'];
+            $n->time_recorded     = $request['time_recorded'];
+            $n->user_id           = $request['user_id'];
+            $n->save();
+            
             \DB::commit();
             return ($n) ? Response::json(['type' => 'success', 'message' => 'The nursing care plan has been saved!', 'data' => $this->getCarePlanData($request['admission_id'])]) : Response::json(['type' => 'error', 'message' => 'The nursing care plan could not be saved']);
         } catch (\Exception $e) {
@@ -1104,6 +1240,116 @@ class InpatientApiController extends Controller
         } catch (\Exception $e) {
             \DB::rollback();
             return Response::json(['type' => 'error', 'message' => 'An error occured. The nursing care plan could not be deleted. ' . $e->getMessage()]);
+        }
+    }
+
+    public function requestDischarge(Request $request){
+        \DB::beginTransaction();
+        try {
+            $request = $request->json()->all();
+            //add a record to request discharge table
+            $r = RequestDischarge::create(
+                [
+                    'doctor_id' => $request['user_id'],
+                    'visit_id'  => $request['visit_id'],
+                    'status'    => 'unconfirmed'
+                ]
+            );
+            \DB::commit();
+            if($r){
+                return Response::json(['type' => 'success', 'message' => 'Discharge requested successfully']);
+            }else{
+                \DB::rollback();
+                return Response::json(['type' => 'error', 'message' => 'An error occured. The discharge request could not be completed. ' . $e->getMessage()]);
+            }
+        }catch (\Exception $e) {
+            \DB::rollback();
+            return Response::json(['type' => 'error', 'message' => 'An error occured. The discharge request could not be completed. ' . $e->getMessage()]);
+        }
+    }
+
+    public function discharge(Request $request){
+        \DB::beginTransaction();
+        try {
+            $request = $request->json()->all();
+
+            //the discharge isfor
+            if ($request['type'] != 'case') {
+                $request['dateofdeath'] = null;
+                $request['timeofdeath'] = null;
+            }
+
+            // Check the pending reccurrent charges.
+            // the ward's charges
+            $wardCharges = 0;
+            $wards = WardAssigned::where('visit_id', $request['visit_id'])->get();
+
+            foreach ($wards as $ward) {
+                $wardCharges += $ward->price * date_diff($ward->discharged_at,$ward->created_at) ;
+            }
+
+            $recuCharges = 0;
+            //subscribed reccurrent charges
+            $rcnt = RecurrentCharge::where('visit_id', $request['visit_id'])->where('status', 'unpaid')->get();
+
+            foreach ($rcnt as $recurrent) {
+                //nursing charges times no. of days..
+                $recuCharges += NursingCharge::find($recurrent->recurrent_charge_id)->cost * date_diff($ward->discharged_at,$ward->created_at);
+            }
+
+            $totalCharges = $wardCharges + $recuCharges;
+
+            //check patient account balance..
+            $visit = Visit::find($request['visit_id']);
+            $acc = PatientAccount::find($visit->patient);
+            $acc_balance = 0;
+
+            if ($acc) { $acc_balance = $acc->balance; }
+
+            if ($totalCharges > $acc_balance) {
+                $message = 'You have a pending charges of Kshs.'
+                    . number_format($totalCharges) . '. Your account balance is Kshs. '
+                    . number_format($acc_balance) . '. Please deposit Kshs.'
+                    . number_format(($totalCharges - $acc_balance)) . ' to complete the discharge process.';
+
+               $message2 = 'You have pending reccurrent charges. Please make the payment to proceed with the discharge';
+                return Response::json(['type' => 'error', 'message' => $message.'\n'.$message2]);
+            }
+
+            //charge the recurrent charges from the patient acc.
+            $acc->update(['balance' => ($acc->balance - $totalCharges)]);
+
+            Discharge::create([
+                'visit_id'                  => $request['visit_id'],
+                'admission_id'              => $request['admission_id'],
+                'doctor_id'                 => $request['doctor_id'],
+                'case_notes'                => $request['case_notes'],
+                'principal_diagnosis'       => $request['principal_diagnosis'],
+                'other_diagnosis'           => $request['other_diagnosis'],
+                'admission_complaints'      => $request['admission_complaints'],
+                'investigations_courses'    => $request['investigations_courses'],
+                'discharge_condition'       => $request['discharge_medications'],
+                'discharge_medications'     => serialize($request['discharge_medications']),
+                'dateofdeath'               => $request['dateofdeath'],
+                'timeofdeath'               => $request['timeofdeath'],
+                'type'                      => $request['type']
+            ]);
+
+            //release the bed for reassignment.
+            $admission = Admission::orderBy('created_at', 'desc')->where('visit_id', $request['visit_id'])->first();
+            $bed = Bed::find($admission->visit_id);
+            $bed->update(['status' => 'available']);
+            //record these charges to the patient
+            //remove the discharge request.
+            $request_dis = RequestDischarge::orderBy('created_at', 'desc')->where('visit_id', $request['visit_id'])->first();
+            if ($request_dis) {
+                $request_dis->delete();
+            }
+            \DB::commit();
+            return Response::json(['type' => 'success', 'message' => 'Patient has been discharged!']);
+        }catch (\Exception $e) {
+            \DB::rollback();
+            return Response::json(['type' => 'error', 'message' => 'An error occured. The discharge could not be completed. ' . $e->getMessage()]);
         }
     }
 

@@ -17,12 +17,11 @@ class CreateInpatientFluidBalanceTable extends Migration
             $column->unsignedInteger('admission_id');
             $column->unsignedInteger('visit_id');
             $column->unsignedInteger('user_id');
-            $column->string('bp_systolic')->nullable();
             $column->longText('intravenous_infusion')->nullable();
             $column->longText('other_instructions')->nullable();
-            $column->text('intake_intraveneous');
-            $column->text('intake_alimentary');
-            $column->text('output');
+            $column->longText('intake_intraveneous');
+            $column->longText('intake_alimentary');
+            $column->longText('output');
             $column->timestamps();
            
             $column->foreign('admission_id')->references('id')->on('admissions')

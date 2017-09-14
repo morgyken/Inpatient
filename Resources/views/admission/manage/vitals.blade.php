@@ -19,7 +19,7 @@
                         </div>
                         <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
                             <label for="" class="control-label">Time recorded:</label>
-                            <input type="text" class="form-control" name="time_recorded" id ="time_recorded" value = "{{ \Carbon\Carbon::now()->format('H:i') }}" required>
+                            <input type="text" class="form-control" name="time_recorded" id ="time_recorded" value = "{{ \Carbon\Carbon::now()->format('H:i A') }}" required>
                         </div>
                     </div>                    
 
@@ -169,21 +169,6 @@
         $("#vitals-table").dataTable();
 
         $("#time_recorded").timepicker({ 'scrollDefault': 'now' });
-
-        function getDate(){
-            var d = new Date();
-            let dateNow = d.getDay() + '/' + d.getMonth() + '/' + d.getYear();
-            $("#date_recorded").val(dateNow);
-        }
-        
-        getDate();
-        getTime();
-
-        function getTime(){
-            var d = new Date();
-            let timeNow = d.getHours() + ':' + d.getMinutes();
-            $("#time_recorded").val(timeNow);
-        }
 
         $('#record-vitals').click(function(e){
             e.preventDefault();

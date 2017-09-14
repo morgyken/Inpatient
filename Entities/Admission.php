@@ -61,6 +61,10 @@ class Admission extends Model
 
     protected $table = "admissions";
 
+    public function getDischargedAttribute(){
+        return ($this->is_discharged == 0) ? false : true ;
+    }
+
     public function patient()
     {
         return $this->belongsTo(Patients::class, "patient_id", "id");

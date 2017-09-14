@@ -1,6 +1,5 @@
 $(document).ready(function(){
-    // $("#single-prescriptions-table").dataTable();
-    // $("#regular-prescriptions-table").dataTable();
+   $("#single-prescriptions-table, #regular-prescriptions-table").dataTable();
 
     getTime();
 
