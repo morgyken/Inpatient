@@ -1250,11 +1250,14 @@ class InpatientApiController extends Controller
             //add a record to request discharge table
             $r = RequestDischarge::create(
                 [
-                    'doctor_id' => $request['user_id'],
-                    'visit_id'  => $request['visit_id'],
-                    'status'    => 'unconfirmed'
+                    'doctor_id'     => $request['user_id'],
+                    'admission_id'  => $request['admission_id'],
+                    'visit_id'      => $request['visit_id'],
+                    'reason'        => $request['reason'],
+                    'status'        => 'unconfirmed'
                 ]
             );
+            
             \DB::commit();
             if($r){
                 return Response::json(['type' => 'success', 'message' => 'Discharge requested successfully']);

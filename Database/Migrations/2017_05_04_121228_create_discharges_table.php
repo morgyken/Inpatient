@@ -18,14 +18,14 @@ class CreateDischargesTable extends Migration
             $table->unsignedInteger('admission_id');
             $table->unsignedInteger('visit_id')->nullable();
             $table->unsignedInteger('doctor_id')->nullable();
-            $table->string('type');
-            $table->string('DischargeNote');
-            $table->string('dateofdeath')->nullable();
-            $table->string('timeofdeath')->nullable();
+            $table->string('discharge_notes_id');
             $table->timestamps();
 
             $table->foreign('admission_id')->references('id')
             ->on('admissions')->onDelete('cascade')->onUpdate('cascade');
+
+            $table->foreign('discharge_notes_id')->references('id')
+            ->on('inpatient_discharge_notes')->onDelete('cascade')->onUpdate('cascade');
             
             $table->foreign('visit_id')
             ->references('id')->on('evaluation_visits')

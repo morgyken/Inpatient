@@ -13,7 +13,7 @@ class CreateRequestAdmissionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('request_admissions', function (Blueprint $table) {
+        Schema::create('inpatient_request_admissions', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('patient_id');
             $table->unsignedInteger('visit_id')->nullable();
@@ -27,7 +27,6 @@ class CreateRequestAdmissionsTable extends Migration
             $table->foreign('patient_id')
                 ->references('id')->on('reception_patients')
                 ->onDelete('cascade')->onUpdate('cascade');
-
         });
     }
 
@@ -38,6 +37,6 @@ class CreateRequestAdmissionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('request_admissions');
+        Schema::dropIfExists('inpatient_request_admissions');
     }
 }

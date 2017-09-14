@@ -13,8 +13,9 @@ class CreateRecurrentChargesTable extends Migration
      */
     public function up()
     {
-        Schema::create('recurrent_charges', function (Blueprint $table) {
+        Schema::create('inpatient_recurrent_charges', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('admission_id')->unsigned();
             $table->integer('visit_id')->unsigned();
             $table->integer('recurrent_charge_id')->unsigned();
             $table->string('status')->default('unpaid');
@@ -41,6 +42,6 @@ class CreateRecurrentChargesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('recurrent_charges');
+        Schema::dropIfExists('inpatient_recurrent_charges');
     }
 }

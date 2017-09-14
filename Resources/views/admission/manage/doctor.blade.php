@@ -67,7 +67,7 @@
                     <div class="modal-body">
                         <form>
                             <input type="hidden" name="note_id" id = "note_id" required>
-                            <textarea name="view-doctors-note" disabled="true" id="view-doctors-note" class="form-control summernote" rows="3"  cols= "10" required></textarea>
+                            <textarea name="view-doctors-note" disabled="true" id="view-doctors-note" class="form-control" rows="3" cols= "10" required></textarea>
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -149,6 +149,7 @@
                 var video = document.getElementById('video');
 
                 // Get access to the camera!
+                
                 if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                     // Not adding `{ audio: true }` since we only want video now
                     navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
@@ -168,8 +169,14 @@
 
             $("#open-capture-modal").click(function(e){
                 e.preventDefault();
-                $("#modal-capture").modal();
-                startCamera();
+                $("#modal-capture").modal(); 
+                try{
+                    startCamera();
+                }catch(e){
+                    console.log(e);
+                    alertify.info("<i class = 'fa fa-exclamation-circle'></i> Camera not accessible!");
+                    $("#modal-capture").modal("toggle");
+                }
             });
 
              $("#stopCapture").click(function(e){
@@ -248,7 +255,7 @@
                         if(resp.type === "success"){                      
                             resp.data.map( (item, index) => {
                                 return(
-                                    $("#view-doctors-note").code($('#view-doctors-note').text(item.notes))
+                                    $("#view-doctors-note").text(item.notes)
                                 );
                             });
 

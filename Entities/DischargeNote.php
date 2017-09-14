@@ -4,6 +4,10 @@ namespace Ignite\Inpatient\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 
+use Ignite\Inpatient\Entities\Admission;
+use Ignite\Inpatient\Entities\Visit;
+use Ignite\Users\Entities\User;
+
 /**
  * Ignite\Inpatient\Entities\DischargeNote
  *

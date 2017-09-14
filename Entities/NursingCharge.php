@@ -4,6 +4,8 @@ namespace Ignite\Inpatient\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 
+use Ignite\Inpatient\Entities\Ward;
+
 /**
  * Ignite\Inpatient\Entities\NursingCharge
  *
@@ -26,4 +28,8 @@ use Illuminate\Database\Eloquent\Model;
 class NursingCharge extends Model
 {
     protected $fillable = [];
+
+    public function ward(){
+    	return $this->belongsTo(Ward::class,'ward_id');
+    }
 }

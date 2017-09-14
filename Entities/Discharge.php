@@ -4,6 +4,10 @@ namespace Ignite\Inpatient\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 
+use Ignite\Inpatient\Entities\Visit;
+use Ignite\Inpatient\DischargeNote;
+use Ignite\Users\Entities\User;
+
 /**
  * Ignite\Inpatient\Entities\Discharge
  *
@@ -34,10 +38,7 @@ class Discharge extends Model
     protected $fillable = [
         'visit_id',
         'doctor_id',
-        'discharge_notes_id',
-        'dateofdeath',
-        'type',
-        'timeofdeath'
+        'discharge_notes_id'
     ];
 
     protected $table = 'discharges';
@@ -59,7 +60,7 @@ class Discharge extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function doctor() {
-        return $this->belongsTo(User::class, 'doctor_id');
+    public function notes() {
+        return $this->belongsTo(DischargeNote::class, 'discharge_notes_id');
     }
 }

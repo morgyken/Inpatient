@@ -13,7 +13,7 @@ class CreateRequestDischargesTable extends Migration
      */
     public function up()
     {
-        Schema::create('request_discharges', function (Blueprint $table) {
+        Schema::create('inpatient_request_discharges', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('admission_id');
             $table->unsignedInteger('visit_id')->nullable();
@@ -38,9 +38,7 @@ class CreateRequestDischargesTable extends Migration
             ->references('id')
             ->on('evaluation_visits')
             ->onDelete('cascade')
-            ->onUpdate('cascade');
-
-            
+            ->onUpdate('cascade');            
         });
     }
 
@@ -51,6 +49,6 @@ class CreateRequestDischargesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('request_discharges');
+        Schema::dropIfExists('inpatient_request_discharges');
     }
 }
