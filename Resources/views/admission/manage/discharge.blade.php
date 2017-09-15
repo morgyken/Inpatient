@@ -140,7 +140,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                           {{--  @foreach($discharge_prescriptions as $p)
+                            @foreach($discharge_prescriptions as $p)
                                 <tr id = "discharge_row_{{ $p->id }}">
                                     <td>{{ $p->drugs->name }}</td>
                                     <td>{{ $p->dose }}</td>
@@ -152,7 +152,7 @@
                                         </div>
                                     </td>
                                 </tr>
-                            @endforeach --}}
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -172,7 +172,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
       	
@@ -221,6 +220,42 @@
                 $("#discharge_type").change(function(){
                     check_type();
                 });
+
+                 $('#save-plan').click(function(e){
+                    e.preventDefault();
+                    let data = JSON.stringify({
+                        visit_id : {{ $admission->visit_id }},
+                        admission_id: {{ $admission->id }},
+                        user_id: {{ Auth::user()->id }},
+
+
+                    });
+
+                 $.ajax({
+                    type: "POST",
+                    url: "{{ url('/api/inpatient/v1/discharge') }}",
+                    data: data,
+                    success: function (resp) {
+                        
+                         if(resp.type === "success"){
+                            alertify.success(resp.message);
+                            let data = JSON.parse(resp.data);
+                            // append new prescriptions if any to table
+                            data.map( (item, index) => {
+                                return(
+                                   
+                                );
+                            });
+                        }else{
+                             alertify.error(resp.message);
+                        }
+                    },
+                    error: function (resp) {
+                        console.log(resp);
+                         alertify.error(resp.message);
+                    }
+                });
+            });
         });
       </script>
     @else

@@ -18,7 +18,7 @@ class CreateDischargesTable extends Migration
             $table->unsignedInteger('admission_id');
             $table->unsignedInteger('visit_id')->nullable();
             $table->unsignedInteger('doctor_id')->nullable();
-            $table->string('discharge_notes_id');
+            $table->unsignedInteger('discharge_notes_id');
             $table->timestamps();
 
             $table->foreign('admission_id')->references('id')

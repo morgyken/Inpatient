@@ -56,21 +56,20 @@ $visit = \Ignite\Inpatient\Entities\Visit::findOrNew($admission->visit_id);
         <div class="box-body">
 
             <ul class="nav nav-tabs inpatient-tabs">
-                <li role="presentation" class="active"><a data-toggle="tab" aria-controls="doctor" href="#doctor">Doctor's
-                        Notes</a></li>
+                <li role="presentation" class="active"><a data-toggle="tab" aria-controls="doctor" href="#doctor">Doctor's Notes</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#nurse">Nurse's Notes</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#prescription">Prescriptions</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#vitals">Patient Vitals</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#bp">Blood Pressure</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#temp">Temperature</a></li>
-                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#blood">Blood Trans.</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#investigationTab">Investigations</a></li>
-                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#proceduresTab">Procedures</a></li>
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#procedureTab">Procedures</a></li>
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#blood">Blood Trans.</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#fluidbalance">Fluid Balance</a></li>
-                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#plan">Care Plan</a></li>
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#plan">Care Plan</a></li> 
+                <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#consumableTab">Consumables</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#discharge">Discharge</a></li>
                 <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#chargesheet">Charge Sheet</a></li>
-                {{-- <li role="presentation"><a data-toggle="tab" aria-controls="tab" href="#history">History</a></li> --}}
             </ul>
 
             <div class="tab-content">
@@ -81,31 +80,29 @@ $visit = \Ignite\Inpatient\Entities\Visit::findOrNew($admission->visit_id);
                 @include('inpatient::admission.graphs.bp')
                 @include('inpatient::admission.graphs.temperature')
                 @include("Inpatient::admission.manage.investigations")
-                @include("Inpatient::admission.manage.procedures")
+                @include("Inpatient::admission.manage.procedure")
                 @include('inpatient::admission.manage.transfusion')
                 @include('inpatient::admission.manage.fluidbalance')
                 @include('inpatient::admission.manage.care_plan')
+                @include("Inpatient::admission.manage.consumable")
                 @include("Inpatient::admission.manage.discharge")
                 @include("Inpatient::admission.manage.chargesheet")
-                {{-- @include("Inpatient::admission.manage.history") --}}
             </div>
 
         </div>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                var toggled = false;
 
-    </div>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            var toggled = false;
-
-            $("#btnCollapse").click(function () {
-                if (!toggled) {
-                    $("#btnCollapse > i").attr('class', "fa fa-chevron-down");
-                    toggled = true;
-                } else {
-                    $("#btnCollapse > i").attr('class', "fa fa-chevron-up");
-                    toggled = false;
-                }
+                $("#btnCollapse").click(function () {
+                    if (!toggled) {
+                        $("#btnCollapse > i").attr('class', "fa fa-chevron-down");
+                        toggled = true;
+                    } else {
+                        $("#btnCollapse > i").attr('class', "fa fa-chevron-up");
+                        toggled = false;
+                    }
+                });
             });
-        });
-    </script>
+        </script>
 @endsection

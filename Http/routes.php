@@ -1,11 +1,21 @@
 <?php
 
-// header('Access-Control-Allow-Origin: *');
-// header('Access-Control-Allow-Methods:GET,POST');
-// header('Access-Control-Allow-Headers:Content-Type, Access-Control-Allow-Origin, Access-Control-Allow-Credentials, Access-Control-Allow-Headers, Authorization, X-Requested-With,  X-XSRF-TOKEN, X-CSRF-TOKEN');
-// header('Access-Control-Allow-Credentials: true');
-
 Route::group(['as' => 'inpatient.'], function() {
+
+    /*
+    |--------------------------------------------------------------------------
+    | TESTING
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/summary', function(){
+        $admission = \Ignite\Inpatient\Entities\Admission::where("id", 21)->first();
+        return view('inpatient::admission.print.discharge_summary', compact('admission'));
+    });
+
+    Route::get('/chargesheet', function(){
+        $admission = \Ignite\Inpatient\Entities\Admission::where("id", 21)->first();
+        return view('inpatient::admission.print.charge_sheet', compact('admission'));
+    });
 
 	/*
     |--------------------------------------------------------------------------

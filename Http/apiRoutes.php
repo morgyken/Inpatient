@@ -17,8 +17,11 @@ Route::group(['prefix' => 'v1'], function () {
     });
 
     Route::group(['prefix' => 'vitals'], function () {
-        // Get Patient Vitals
+        // Get All Patient Vitals
         Route::get('/admission/{admission_id}', 'InpatientApiController@getPatientVitals');
+
+        // Get Single Recorded Patient Vitals
+        Route::get('/{id}', 'InpatientApiController@getPatientVital');
 
         // Save vitals
         Route::post('', 'InpatientApiController@saveUpdateVitals');
@@ -27,7 +30,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('/update', 'InpatientApiController@saveUpdateVitals');
 
         // Delete vitals
-        // Route::post('/delete', 'InpatientApiController@deleteVitals');
+        Route::post('/delete', 'InpatientApiController@deleteVitals');
     });
 
     Route::group(['prefix' => 'investigations'], function () {
@@ -166,6 +169,8 @@ Route::group(['prefix' => 'v1'], function () {
     Route::group(['prefix' => 'plans'], function() {
         Route::get('/admission/{admission_id}', 'InpatientApiController@getNursingCarePlans');
 
+        Route::get('/{id}', 'InpatientApiController@getNursingCarePlan');
+
         Route::post('', 'InpatientApiController@addNursingCarePlan');
 
         Route::post('/update', 'InpatientApiController@updateNursingCarePlan');
@@ -177,7 +182,7 @@ Route::group(['prefix' => 'v1'], function () {
 
         Route::post('/request','InpatientApiController@requestDischarge');
 
-         Route::post('','InpatientApiController@discharge');
+        Route::post('','InpatientApiController@discharge');
     });
 
 
@@ -186,6 +191,9 @@ Route::group(['prefix' => 'v1'], function () {
 
     Route::post('saver/blood_pressure', ['as' => 'mark_bp', 'uses' => 'InpatientApiController@postBp']);
     Route::post('saver/temperature', ['as' => 'temperature', 'uses' => 'InpatientApiController@postTemperature']);
+    Route::post('saver/consumables', ['as' => 'consumables', 'uses' => 'InpatientApiController@saveConsumables']);
     Route::get('get/temperature', ['as' => 'temperature', 'uses' => 'InpatientApiController@getTemperature']);
-    Route::get('get/inpatient-procurement/{visit}', ['as' => 'procedure', 'uses' => 'InpatientApiController@getDoneProcedures']);
+    Route::get('get/inpatient-investigations/{visit}', ['as' => 'investigations', 'uses' => 'InpatientApiController@getDoneInvestigations']);
+    Route::get('get/inpatient-procedures/{visit}', ['as' => 'procedure', 'uses' => 'InpatientApiController@getDoneProcedures']);
+    Route::get('get/inpatient-consumables/{visit}', ['as' => 'consumable', 'uses' => 'InpatientApiController@getDoneConsumables']);
 });

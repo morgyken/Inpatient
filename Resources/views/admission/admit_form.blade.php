@@ -163,19 +163,20 @@
                         {!! $errors->first('deposit', '<span class="help-block">:message</span>') !!}
                     </div>
                 </div>
-<!-- the admission and nursing charges -->
+                
+                <!-- the admission and nursing charges -->
                     
-                {{--  @foreach($admissions as $adm)
+                 @foreach($admissions as $adm)
 
                       <div class="form-group ">
                         {!! Form::label($adm->name, $adm->name,['class'=>'control-label col-md-4']) !!}
                         <div class="col-md-8">
-                            <input name="recurrent_charge[]" class="admission" type="checkbox" value="{{ $adm->id }}">
+                            <input name="recurrent_charges[]" class="admission" type="checkbox" value="{{ $adm->id }}">
                             {{ $adm->name }} @ price {{ $adm->cost }}
                         </div>
                     </div>
 
-                @endforeach  --}}
+                @endforeach 
                 
                 <div class="pull-right">
                     <button type="submit" id="admitPatient" class="btn btn-success"><i class="fa fa-user-plus"></i> Admit Patient</button>
@@ -232,7 +233,7 @@
                 }
 
                 var loadBeds = function(){
-                    var urlAvailableBeds = '{{ url('/inpatient/availableBeds/') }}';
+                    var urlAvailableBeds = '{{ url('/inpatient/beds/availableBeds/') }}';
                     urlAvailableBeds = urlAvailableBeds + '/' + ($("#selectedWard").val());
                     $.ajax({
                         url:urlAvailableBeds,
@@ -240,7 +241,7 @@
                     }).done(function (data) {
                         $("#selectPos").html("");
                         $.each(data, function (index,value) {
-                            console.info("index=>"+index+'value=>'+value.number);
+                            // console.info("index=>"+index+'value=>'+value.number);
                             $("#selectPos").append("<option value='"+value.id+"'>"+value.name+"</option>")
                         })
 

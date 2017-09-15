@@ -6,7 +6,7 @@
  */
 //$diagnosis=
 
-$diagnosis = get_procedures_for('diagnostics');
+$diagnosis = get_procedures_for('doctor');
 $discount_allowed = json_decode(m_setting('evaluation.discount'));
 $co = null;
 ?>
@@ -15,9 +15,9 @@ $co = null;
         <i class="fa fa-info-circle"></i> There are no procedures. Please go to setup and add some.
     </div>
 @else
-    {!! Form::open(['id'=>'diagnosis_form'])!!}
+    {!! Form::open(['id'=>'doctor_form'])!!}
     {!! Form::hidden('visit',$admission->visit_id) !!}
-    <table class="table table-condensed table-borderless table-responsive" id="procedures">
+    <table class="table table-condensed table-borderless table-responsive" id="doctor-procedures">
         <tbody>
         @foreach($diagnosis as $procedure)
             <?php
@@ -40,7 +40,7 @@ $co = null;
                 <td>
                     <span id="name{{$procedure->id}}"> {{$procedure->name}}</span>
                     <br/>
-                    <input type="hidden" name="type{{$procedure->id}}" value="inpatient.investigation-diagnostics" disabled/>
+                    <input type="hidden" name="type{{$procedure->id}}" value="inpatient.procedure-doctor" disabled/>
                     <span class="instructions">
                     <textarea placeholder="Instructions" name="instructions{{$procedure->id}}" disabled
                               cols="50"></textarea></span>
@@ -60,7 +60,8 @@ $co = null;
                                type="text" name="discount{{$procedure->id}}" readonly=""/>
                     @endif
                 </td>
-                <td><input value="{{$price}}" size="5" id="amount{{$procedure->id}}" type="text" name="amount{{$procedure->id}}"/></td>
+                <td><input size="5" id="amount{{$procedure->id}}" type="text" name="amount{{$procedure->id}}"
+                    value="{{$price}}"/></td>
             </tr>
         @endforeach
         </tbody>

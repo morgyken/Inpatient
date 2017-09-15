@@ -55,7 +55,7 @@
             <h3>Previous Care Plans</h3><hr/>            
 
             <div class="table-responsive">
-                <table class="table table-stripped" id = "care-plan-table">
+                <table class="table table-stripped table-hover" id = "care-plan-table">
                     <thead>
                         <tr>
                             <th>Date & Time</th>
@@ -67,14 +67,14 @@
                     </thead>
                     <tbody>
                     @foreach($nursingCarePlans as $n)
-                        <tr id = "{{ $n->id }}">
+                        <tr id = "plan_row_{{ $n->id }}">
                             <td>{{ $n->date_recorded }}&nbsp;{{ $n->time_recorded }}</td>
                             <td>{{ $n->diagnosis }}</td>
                             <td>{{ $n->expected_outcome }}</td>
                             <td>{{ $n->user->profile->fullName }}</td>
                             <td>
                                 <div class='btn-group'>
-                                  {{--   <button type='button' class='btn btn-primary view-plan' id = '{{ $n->id }}'><i class = 'fa fa-pencil' ></i> View</button> --}}
+                                    <button type='button' class='btn btn-primary view-plan' id = '{{ $n->id }}'><i class = 'fa fa-eye' ></i> View</button>
                                     <button type='button' class='btn btn-danger delete-plan' id = '{{ $n->id }}'><i class = 'fa fa-times' ></i> Delete</button>
                                 </div>
                             </td>
@@ -93,9 +93,43 @@
                         <h4 class="modal-title">View Care Plan</h4>
                     </div>
                     <div class="modal-body">
-                        <p id = "plan-view"></p>
+                        <input type="hidden" id="plan_id" >
+                        <table class="table table-stripped table-hover">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <td id = "date_time_view"></td>
+                                </tr>
+                                <tr>
+                                    <th>Nursing Diagnosis</th>
+                                    <td id = "diagnosis_view"></td>
+                                </tr>
+                                <tr>
+                                    <th>Expected Outcome</th>
+                                    <td id = "outcome_view"></td>
+                                </tr>
+                                <tr>
+                                    <th>Intervention/Implementation</th>
+                                    <td id = "intervention_view"></td>
+                                </tr>
+                                <tr>
+                                    <th>Scientific Rationale/ Reasosn</th>
+                                    <td id = "reasons_view"></td>
+                                </tr>
+                                <tr>
+                                    <th>Evaluation</th>
+                                    <td id = "evaluation_view"></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                     <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id = 'edit-plan'>Edit</button>&nbsp;
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -106,7 +140,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-body">
-                        <h3>Are you sure you want to delete this note?</h3>
+                        <h3>Are you sure you want to delete this care plan?</h3>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger yes-delete-plan">Yes</button>
@@ -157,7 +191,8 @@
                                         <td>" + item.expected_outcome + "</td>\
                                         <td>" + item.name + "</td>\
                                         <td><div class='btn-group'>\
-                                             <button type='button' class='btn btn-danger delete-plan' id = '"+ item.id + "'><i class = 'fa fa-times' ></i> Delete</button>\
+                                            <button type='button' class='btn btn-primary view-plan' id = '"+ item.id +"'><i class = 'fa fa-eye' ></i> View</button>\
+                                            <button type='button' class='btn btn-danger delete-plan' id = '"+ item.id + "'><i class = 'fa fa-times' ></i> Delete</button>\
                                          </div></td></tr>")
                                 );
                             });
@@ -172,11 +207,33 @@
                 });
             });
 
+
             $('body').on('click','.view-plan', function(e){
                 e.preventDefault();
-                let id =  $(this).attr('id');
-                 
-                $("#modal-view-care-plan").modal();
+                var id = $(this).attr('id');
+                $("#plan_id").val(id);
+
+                $.ajax({
+                    type: "GET",
+                    url: "{{ url('/api/inpatient/v1/plans') }}/"+id,
+                    success: function (resp) {
+                        if(resp.type === "success"){                      
+                            resp.data.map( (item, index) => {
+                                return(
+                                    $("#date_time_view").html(item.date_time_recorded)
+                                    $("#diagnosis_view").html(item.diagnosis)
+                                );
+                            });
+                    
+                            $("#modal-view-care-plan").modal();
+                        }else{
+                             alertify.error(resp.data);
+                        }
+                    },
+                    error: function (resp) {
+                        alertify.error(resp.message);
+                    }
+                });
             });
 
             $('body').on('click','.delete-plan', function(e){

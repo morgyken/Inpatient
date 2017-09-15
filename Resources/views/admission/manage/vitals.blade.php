@@ -109,7 +109,7 @@
             @endif
 
             <div class="table-responsive">
-                <table class="table table-stripped" id = "vitals-table">
+                <table class="table table-stripped table-hover" id = "vitals-table">
                     <thead>
                         <tr>
                             <th>DateTime</th>
@@ -127,15 +127,15 @@
                             <tr id = "vitals_row_{{ $v['id'] }}">
                                 <td>{{ $v['date_time_recorded'] }}</td>
                                 <td>{{ $v['bmi_status'] }}</td>
-                                <td>{{ $v['temperature'] }}<sup>o</sup>C</td>
+                                <td>{{ $v['temperature'] }} <sup>o</sup>C</td>
                                 <td>{{ $v['bp'] }}</td>
                                 <td>{{ $v['respiration'] }}</td>
                                 <td>{{ $v['pulse'] }}</td>
                                 <td>{{ $v['oxygen'] }}</td>
                                 <td>
                                     <div class="btn-group">
-                                       {{--  <button type="button" class="btn btn-primary"><i class = "fa fa-eye"></i> View</button> --}}
-                                        <button type="button" class="btn btn-danger"><i class = "fa fa-trash-o"></i> Delete</button>
+                                       {{--  <button type='button' class='btn btn-primary view-vitals'><i class = 'fa fa-eye'></i> View</button> --}}
+                                        <button type="button" class="btn btn-danger delete-vitals" id = "{{ $v['id']}}"><i class = "fa fa-trash-o"></i> Delete</button>
                                     </div>
                                 </td>
                             </tr>
@@ -169,32 +169,47 @@
         $("#vitals-table").dataTable();
 
         $("#time_recorded").timepicker({ 'scrollDefault': 'now' });
-
+                
         $('#record-vitals').click(function(e){
             e.preventDefault();
-            var isValid = validateValues();
+            var errors = validateValues();
+            var isValid = (errors.length > 0) ? false : true;
+
             if(isValid){
                submitForm();
+            }else{
+                errors.forEach(item => {
+                    alertify.error("<i class = 'fa fa-exclamation-circle'></i>" + item);
+                });
             }
         });
 
         function validateValues(){
-            if($("#temperature").val() > 40){
-                alertify.error("The Temperature can't be above 40 Degrees Celcius!");
-                return false;
-            }else if($("#temperature").val() <= 0){
-                alertify.error("The Temperature can't be below 0 Degrees Celcius!");
-                return false;
-            }else{
-                return true;
+            var errors = [];
+
+            if($("#temperature").val() > 40) {
+                errors.push("The Temperature can't be above 40 Degrees Celcius!");
+            }else if($("#temperature").val() <= 0) {
+                errors.push("The Temperature can't be below 0 Degrees Celcius!");
+            }else if($("#bp_systolic").val() <= 0 || $("#bp_diastolic").val() <= 0) {
+                errors.push("You have Invalid Blood Pressure Values!");
+            }else if($("#pulse").val() <= 0) {
+                errors.push("You have Invalid pulse Values!");
+            }else if($("#respiration").val() <= 0) {
+                errors.push("You have an Invalid Respiration rate value!");
+            }else if($("#oxygen").val() <= 0) {
+                 errors.push("You have an Invalid Oxygen Saturation Value!");
+            }else if($("#weight").val() < 0) {
+                errors.push("You have an Invalid Weight Value!");
+            }else if($("#height").val() < 0) {
+                errors.push("You have an Invalid Weight Value!");
             }
+
+            return errors;
         }
 
         function submitForm(){
-            $.ajax({
-                    type: "POST",
-                    url: "{{ url('/api/inpatient/v1/vitals') }}",
-                    data: JSON.stringify({
+            let data = JSON.stringify({
                             visit_id : {{ $admission->visit_id }},
                             admission_id: {{ $admission->id }},
                             user_id: {{ Auth::user()->id }},
@@ -212,10 +227,15 @@
                             blood_sugar : parseFloat($("#blood_sugar").val()),
                             blood_sugar_units : $("#blood_sugar_units").val(),
                             allergies : $("#allergies").val(),
-                            chronic_illnesses : $("chronic_illnesses").val(),
+                            chronic_illnesses : $("#chronic_illnesses").val(),
                             date_recorded : $("#date_recorded").val(),
                             time_recorded: $("#time_recorded").val()
-                     }),
+                    });
+
+            $.ajax({
+                    type: "POST",
+                    url: "{{ url('/api/inpatient/v1/vitals') }}",
+                    data: data,
                     success: function (resp) {
                         // add table rows
                          if(resp.type === "success"){
@@ -224,18 +244,18 @@
                             let data = JSON.parse(resp.data);
                             data.map( (item, index) => {
                                 return(
-                                    $("#vitals-table > tbody").append("<tr id = '"+item.id+"'>\
+                                    $("#vitals-table > tbody").append("<tr id = 'vitals_row_"+item.id+"'>\
                                         <td>"+ item.date_time_recorded +"</td>\
                                         <td>"+ item.weight +" Kgs</td>\
                                         <td>"+ item.height +" m</td>\
                                         <td>"+ item.bmi +"</td>\
                                         <td>"+ item.bmi_status +"</td>\
-                                        <td>"+ item.temperature +"</td>\
+                                        <td>"+ item.temperature +" <sup>o</sup>C</td>\
                                         <td>"+ item.bp +"</td>\
                                         <td>"+ item.respiration +"</td>\
                                         <td>"+ item.pulse +"</td>\
                                         <td>"+ item.oxygen +"</td>\
-                                        <td><button type='button' class='btn btn-danger'><i class = 'fa fa-trash-o'></i> Delete</button></td>\
+                                        <td><button type='button' class='btn btn-danger delete-vitals' id = '"+ item.id +"'><i class = 'fa fa-trash-o'></i> Delete</button></td>\
                                     </tr>")
                                 );
                             });
@@ -248,6 +268,35 @@
                     }
                 });
         }
+
+        $('body').on('click', '.delete-vitals', function(e){
+                e.preventDefault();
+                var id = $(this).attr('id');
+                $(".yes-delete-vitals").attr('id', id); 
+                $("#modal-delete-vitals").modal();
+            });
+
+
+            $('.yes-delete-vitals').click(function(e){
+                var id = $(this).attr('id');
+                 $.ajax({
+                    type: "POST",
+                    url: "{{ url('/api/inpatient/v1/vitals/delete') }}",
+                    data: JSON.stringify({ id : id }),
+                    success: function (resp) {
+                         if(resp.type === "success"){
+                            alertify.success(resp.message);
+                            $("#modal-delete-vitals").modal('toggle');
+                            $("#vitals_row_"+id+"").remove();
+                        }else{
+                             alertify.error(resp.message);
+                        }
+                    },
+                    error: function (resp) {
+                        alertify.error(resp.message);
+                    }
+                });
+            });
 
     });
 </script>

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddDischargeFlagToPrescriptionsTable extends Migration
+class CreateInventoryConsumablesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddDischargeFlagToPrescriptionsTable extends Migration
      */
     public function up()
     {
-        Schema::table('evaluation_prescriptions', function (Blueprint $table) {
-            $table->integer('for_discharge')->default(0); // 0 - No , 1 - Yes
+        Schema::table('inventory_products', function (Blueprint $table) {
+            $table->boolean('consumable')->default(false);
         });
     }
 
@@ -25,6 +25,6 @@ class AddDischargeFlagToPrescriptionsTable extends Migration
      */
     public function down()
     {
-        //
+
     }
 }
