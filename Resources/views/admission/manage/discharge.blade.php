@@ -75,7 +75,7 @@
                   <table class="table" style="width: 100%">
                     <tr>
                         <th>Drug</th>
-                        <td><select name="drug" id="item_0" class="form-control select2-single" style="width: 100%" required></select></td>
+                        <td><select name="drug" id="item_1" class="form-control select2-single" style="width: 100%" required></select></td>
                     </tr>
                     <tr>
                         <th>Dose</th>
@@ -178,7 +178,7 @@
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <br/><br/>
             <div class="pull-right">
-                <button type="submit" class="btn btn-lg btn-primary" id = "request_discharge"><i class="fa fa-save"></i> Request Discharge</button>&nbsp;<button type="button" class="btn btn-default" id = "print_summary" style="display: none !important;"><i class="fa fa-print"></i> Print</button>
+                <button type="button" class="btn btn-lg btn-primary" id = "discharge"><i class="fa fa-save"></i> Discharge</button>&nbsp;<button type="button" class="btn btn-default" id = "print_summary" style="display: none !important;"><i class="fa fa-print"></i> Print</button>
             </div>
         </div>
       
@@ -221,13 +221,13 @@
                     check_type();
                 });
 
-                 $('#save-plan').click(function(e){
+                $('#dishcarge').click(function(e){
                     e.preventDefault();
                     let data = JSON.stringify({
                         visit_id : {{ $admission->visit_id }},
                         admission_id: {{ $admission->id }},
                         user_id: {{ Auth::user()->id }},
-
+                        
 
                     });
 
@@ -241,11 +241,11 @@
                             alertify.success(resp.message);
                             let data = JSON.parse(resp.data);
                             // append new prescriptions if any to table
-                            data.map( (item, index) => {
-                                return(
+                            // data.map( (item, index) => {
+                            //     return(
                                    
-                                );
-                            });
+                            //     );
+                            // });
                         }else{
                              alertify.error(resp.message);
                         }

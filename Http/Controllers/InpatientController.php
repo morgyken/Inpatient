@@ -29,13 +29,16 @@ use Ignite\Inpatient\Entities\Vitals;
 use Ignite\Inpatient\Entities\Ward;
 use Ignite\Inpatient\Entities\WardAssigned;
 use Ignite\Inpatient\Helpers\InpatientHelpers;
+use Ignite\Inpatient\Entities\InpatientConsumable;
 use Ignite\Reception\Entities\Patients;
 use Ignite\Users\Entities\Roles;
 use Ignite\Users\Entities\User;
 use Ignite\Users\Entities\UserRoles;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+
 use Validator;
+use Dompdf\Dompdf;
 
 class InpatientController extends AdminBaseController
 {
@@ -518,13 +521,14 @@ class InpatientController extends AdminBaseController
                         ];
             });
 
+            $charges = $this->buildChargeSheet($visit_id,1);
+
         }
 
         $bpChart = $this->getCharts($patient->id, $admission->id);
         $tempChart = $this->getTemperatureChart($patient->id, $admission->id);
-
         
-        return view('Inpatient::admission.manage_patient', compact('tempChart', 'investigations', 'bpChart', 'patient', 'ward', 'admission', 'vitals', 'doctorsNotes', 'nursesNotes', 'once_only_prescriptions', 'regular_prescriptions', 'nursingCarePlans', 'transfusions', 'fluidbalances', 'discharge_prescriptions'));
+        return view('Inpatient::admission.manage_patient', compact('tempChart', 'investigations', 'bpChart', 'patient', 'ward', 'admission', 'vitals', 'doctorsNotes', 'nursesNotes', 'once_only_prescriptions', 'regular_prescriptions', 'nursingCarePlans', 'transfusions', 'fluidbalances', 'discharge_prescriptions', 'charges'));
     }
 
     private function getTemperatureChart($patient, $admission)
@@ -764,36 +768,50 @@ class InpatientController extends AdminBaseController
         return redirect()->back()->with('success', 'Successfully edited a bed');
     }
 
-    public function buildChargeSheet($visit_id){
+    public function buildChargeSheet($visit_id, $type = null){
         $wardCharges = 0; 
         $recuCharges = 0;
         $totalNursingAndWardCharges = 0;
-        $totalInvestigationsCharge = 0;
-        $totalProceduresCharge = 0;
-        $totalPrescriptionsCharge = 0;
-        $totalCharges = 0;
 
+        $admission = Admission::where('visit_id', $visit_id)->first();
+        // Check total days based on discharge and admission date
+        $daysAdmitted = $admission->created_at->diffInDays($this->carbon->now());
         $wards = WardAssigned::where('visit_id', $visit_id)->get(); 
         $rcnt = RecurrentCharge::where('visit_id', $visit_id)->get();
 
         foreach ($wards as $ward) {
-            $wardCharges += ($ward->price * date_diff($ward->discharged_at, $ward->created_at) );
+            $wardCharges += ($ward->discharged_at != null) ? ($ward->price * ($ward->discharged_at->diffInDays($ward->created_at) )) : $ward->price * $this->carbon->now()->diffInDays($ward->created_at);
             //subscribed reccurrent charges
             foreach ($rcnt as $recurrent) {
                 //nursing charges times no. of days..
-                $recuCharges += NursingCharge::find($recurrent->recurrent_charge_id)->cost * date_diff($ward->discharged_at, $ward->created_at);
+                $recuCharges +=  ($ward->discharged_at != null) ? NursingCharge::find($recurrent->recurrent_charge_id)->cost * $ward->discharged_at->diffInDays($ward->created_at) : NursingCharge::find($recurrent->recurrent_charge_id)->cost;
             }
         }
 
         $totalNursingAndWardCharges = $wardCharges + $recuCharges;
 
-        $done_investigations =  get_inpatient_investigations($visit_id);
+        $done_investigations = get_inpatient_investigations($visit_id);
         $consumption_list = InpatientConsumable::whereVisit($visit_id)->get();
         $done_procedures = get_inpatient_investigations($visit_id, 'procedure');
-        $dispensed_drugs = Prescription::where("visit_id", $visit_id)->where("status", 1)->get();
-        $discharge_drugs = Prescription::where("visit_id", $visit_id)->where("for_discharge", 1)->get();
+        $dispensed_drugs = Prescriptions::where("visit", $visit_id)->where("status", 1)->get();
+        $discharge_drugs = Prescriptions::where("visit", $visit_id)->where("for_discharge", 1)->get();
+        $admission = Admission::where("visit_id", $visit_id)->first();
 
-        return [];
+        $charges = ['admission' => $admission,'recurrent_charges' => $rcnt, 'wards' => $wards, 'investigations' => $done_investigations, 'consumables' => $consumption_list, 'procedures' => $done_procedures, 'dispensed_drugs' => $dispensed_drugs, 'discharge_drugs' => $discharge_drugs, 'totalNursingAndWardCharges' => $totalNursingAndWardCharges, 'daysAdmitted' => $daysAdmitted];
+
+        if($type == 1){
+            return $charges;
+        }
+
+        return view('Inpatient::admission.print.charge_sheet', compact('charges'));  
+
+        // $pdf =\PDF::loadView('Inpatient::admission.print.charge_sheet', ['charges' => $charges]);        
+        // $pdf->setPaper('a4', 'portrait');
+        // // dd($pdf);
+        // return $pdf->download('charge_sheet_'.mt_rand(0,100).'.pdf');
+
     }
+
+
 
 }

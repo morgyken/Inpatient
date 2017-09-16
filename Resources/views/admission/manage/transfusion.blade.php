@@ -79,8 +79,11 @@
                     @foreach($transfusions as $t)
                         <tr id = "transfusion_row_{{ $t->id }}">
                             <td>{{ $t->date_recorded }} {{ $t->time_recorded }}</td>
-                            <td>{{ $t->temperature }}</td>
-                            <td>{{ $t->users->profile->fullName }}</td>
+                            <td>{{ $t->temperature }} <sup>o</sup>C</td>
+                            <td>{{ $t->bp_systolic }} / {{ $t->bp_diastolic }}</td>
+                            <td>{{ $t->respiration }}</td>
+                            <td>{{ (strlen($t->remarks) > 0) ? substr($t->remarks, 0, 20) : 'None' }}</td>
+                            <td>{{ $t->user->profile->fullName }}</td>
                             <td>
                                 <div class='btn-group'>
                                    {{--  <button class='btn btn-primary view-transfusion' id = '{{ $t->id }}'><i class = 'fa fa-eye'></i> View</button>
@@ -116,15 +119,15 @@
             </div>
         </div>
 
-        <div class="modal fade" id="modal-delete-id">
+        <div class="modal fade" id="modal-delete-transfusion">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-body">
                         <h3>Are you sure you want to delete this note?</h3>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger yes">Yes</button>
-                        <button type="button" class="btn btn-success" id = "no"  data-dismiss="modal">No</button>
+                        <button type="button" class="btn btn-danger yes-delete-transfusion">Yes</button>
+                        <button type="button" class="btn btn-success" id = "no-delete-transfusion"  data-dismiss="modal">No</button>
                     </div>
                 </div>
             </div>
@@ -135,25 +138,59 @@
         $(document).ready(function(){
 
             $("#transfusion-table").dataTable();
+
+            $("#blood_time_recorded").timepicker({ 'scrollDefault': 'now' });
             
             $('#save-transfusion').click(function(e){
                 e.preventDefault();
 
-                 $.ajax({
+                var errors = validateValues();
+                var isValid = (errors.length > 0) ? false : true;
+
+                if(isValid){
+                   supmitForm();
+                }else{
+                    errors.forEach(item => { alertify.error("<i class = 'fa fa-exclamation-circle'></i> " + item); });
+                }
+            });
+
+            function validateValues(){
+                var errors = [];
+                if($("#blood_temperature").val() > 40) {
+                    errors.push("The Temperature can't be above 40 Degrees Celcius!");
+                }else if($("#blood_temperature").val() <= 0) {
+                    errors.push("The Temperature can't be below 0 Degrees Celcius!");
+                }else if($("#blood_bp_systolic").val() <= 0 || $("#blood_bp_diastolic").val() <= 0) {
+                    errors.push("You have Invalid Blood Pressure Values!");
+                }else if($("#blood_respiration").val() <= 0) {
+                    errors.push("You have an Invalid Respiration rate value!");
+                }else if($("#blood_time_recorded").val().trim().length <= 0){
+                     errors.push("You must specify the time recorded!");
+                }else if($("#blood_date_recorded").val().trim().length <= 0){
+                     errors.push("You must specify the date recorded!");
+                }
+                return errors;
+            }
+
+            function supmitForm(){
+
+                let data = JSON.stringify({
+                     visit_id : {{ $admission->visit_id }},
+                     admission_id: {{ $admission->id }},
+                     temperature: parseInt($("#blood_temperature").val()),
+                     bp_diastolic: parseInt($("#blood_bp_diastolic").val()),
+                     bp_systolic: parseInt($("#blood_bp_systolic").val()),
+                     respiration:   parseInt($("#blood_respiration").val()),
+                     remarks: $("#blood_remarks").val(),
+                     date_recorded: $("#blood_date_recorded").val(),
+                     time_recorded: $("#blood_time_recorded").val(),
+                     user_id: {{ Auth::user()->id }}
+                 });
+
+                $.ajax({
                     type: "POST",
                     url: "{{ url('/api/inpatient/v1/transfusions') }}",
-                    data: JSON.stringify({
-                         visit_id : {{ $admission->visit_id }},
-                         admission_id: {{ $admission->id }},
-                         temperature: parseInt($("#blood_temperature").val()),
-                         bp_diastolic: parseInt($("#blood_bp_diastolic").val()),
-                         bp_systolic: parseInt($("#blood_bp_systolic").val()),
-                         respiration:   parseInt($("#blood_respiration").val()),
-                         remarks: $("#blood_remarks").val(),
-                         date_recorded: $("#blood_date_recorded").val(),
-                         time_recorded: $("#blood_time_recorded").val(),
-                         user_id: {{ Auth::user()->id }}
-                     }),
+                    data: data,
                     success: function (resp) {
                         
                          if(resp.type === "success"){
@@ -165,13 +202,13 @@
                                 return(
                                     $("#transfusion-table > tbody").append("<tr id = 'transfusion_row_"+ item.id +"'>\
                                         <td>" + item.date_time + "</td>\
-                                        <td>" + item.temperature + "</td>\
+                                        <td>" + item.temperature + "<sup>o</sup>C</td>\
                                         <td>" + item.bp + "</td>\
                                         <td>" + item.respiration + "</td>\
-                                        <td>" + item.remarks +"</td>\
+                                        <td>" + (item.remarks.length > 0) ? item.remarks : 'None' +"</td>\
                                         <td>\
                                             <div class='btn-group'>\
-                                                <button type='button' class='btn btn-danger delete-transfusion' id = '"+ item.id +"'><i class = 'fa fa-times' ></i> Delete</button>\
+                                            <button type='button' class='btn btn-danger delete-transfusion' id = '"+ item.id +"'><i class = 'fa fa-times' ></i> Delete</button>\
                                             </div>\
                                         </td></tr>")
                                 );
@@ -185,7 +222,37 @@
                         alertify.error(resp.message);
                     }
                 });
+            }
+
+            $('body').on('click','.delete-transfusion', function(e){
+                e.preventDefault();
+                let id =  $(this).attr('id');
+                $(".yes-delete-transfusion").attr('id', id); 
+                $("#modal-delete-transfusion").modal();
             });
+
+            $('.yes-delete-transfusion').click(function(e){
+                var id = $(this).attr('id');
+                 $.ajax({
+                    type: "POST",
+                    url: "{{ url('/api/inpatient/v1/transfusions/delete') }}",
+                    data: JSON.stringify({ id : id }),
+                    success: function (resp) {
+                         if(resp.type === "success"){
+                            alertify.success(resp.message);
+                            $("#transfusion_row_"+id+"").remove();
+                            $("#modal-delete-transfusion").modal('toggle');
+                        }else{
+                             alertify.error(resp.message);
+                        }
+                    },
+                    error: function (resp) {
+                        alertify.error(resp.message);
+                    }
+                });
+            });
+
+
         });    
     </script>
   

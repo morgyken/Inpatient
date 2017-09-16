@@ -1,7 +1,5 @@
 <div role="tabpanel" id="chargesheet" class="tab-pane fade col-md-12">
-	<h3 class="text-center">INPATIENT CHARGE SHEET</h3>
-
-  <table class="table">
+    <table class="table">
          <thead>
             <tr>
                <th colspan="4"><h2 class="text-center"><u>IN-PATIENT CHARGE SHEET</u></h2></th>
@@ -30,23 +28,33 @@
              </tr>
              <tr>
                  <th>Description</th>
-                 <th>Qty</th>
+                 <th>Days</th>
                  <th>Rate</th>
                  <th>Total</th>
              </tr>
           </thead>
           <tbody>
+            @foreach($charges['recurrent_charges'] as $c)
              <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>{{ $c->charge->name }}</td>
+                <td>{{ $charges['daysAdmitted'] }}</td>
+                <td>{{ $c->charge->cost }}</td>
+                <td>{{ $c->charge->cost * $charges['daysAdmitted'] }}</td>
              </tr>
+            @endforeach
+            @foreach($charges['wards'] as $w)
+              <tr>
+                <td>Ward {{ $w->name }} ({{ $w->category }} {{ $w->cost }}/per day)  {{ ($w->discharged_at != null) ? $w->discharged_at->diffInDays($w->created_at) : \Carbon\Carbon::now()->diffInDays($w->created_at) }} days</td>
+                <td>{{ ($w->discharged_at != null) ? $w->discharged_at->diffInDays($w->created_at) : \Carbon\Carbon::now()->diffInDays($w->created_at) }}</td>
+                <td>{{ $w->cost }}</td>
+                <td>{{ $w->cost * (($w->discharged_at != null) ? $w->discharged_at->diffInDays($w->created_at) : \Carbon\Carbon::now()->diffInDays($w->created_at)) }}</td>
+              </tr>
+            @endforeach
           </tbody>
           <tfoot>
             <tr>
-                <td colspan = "3"><h5>TOTAL</h5></td>
-                <td id = "total_recurrent_charge"></td>
+                <th colspan = "3"><h5>TOTAL</h5></th>
+                <td id = "total_recurrent_charge"><h5>Ksh. {{ $charges['totalNursingAndWardCharges'] }}</h5></td>
             </tr>
         </tfoot>
        </table>
@@ -66,20 +74,21 @@
              </tr>
           </thead>
           <tbody>
-             <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-             </tr>
+            @foreach($charges['procedures'] as $p)
+              <tr>
+                <td>{{ $p->created_at->format('d/m/Y H:i a') }}</td>
+                <td>{{ $p->procedures->name }}</td>
+                <td>{{ $p->quantity }}</td>
+                <td>{{ $p->price }}</td>
+                <td>{{ $p->amount }}</td>
+                <td>{{ $p->isPaid ? 'Yes' : 'No' }}</td>
+              </tr>
+            @endforeach
           </tbody>
           <tfoot>
             <tr>
-                <td colspan = "4"><h5>TOTAL</h5></td>
-                <td id = "total_procedures_charge"></td>
-                <td></td>
+                <th colspan = "4"><h5>TOTAL</h5></th>
+                <td colspan= "2" id = "total_procedures_charge">Ksh. {{ $charges['procedures']->sum('amount') }}</td>
             </tr>
         </tfoot>
        </table>
@@ -87,35 +96,74 @@
        <table class="table table-hover table-bordered">
           <thead>
              <tr>
-                <th colspan="6" class="text-center">INVESTIGATIONS</th>
+                <th colspan="7" class="text-center">INVESTIGATIONS</th>
              </tr>
              <tr>
                 <th>DATE</th>
                 <th>CATEGORY</th>
                 <th>ITEM</th>
+                <th>UNITS</th>
                 <th>UNIT COST</th>
                 <th>TOTAL COST</th>
                 <th>PAID</th>
              </tr>
           </thead>
           <tbody>
-             <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-             </tr>
+            @foreach($charges['investigations'] as $i)
+              <tr>
+                <td>{{ $i->created_at->format('d/m/Y H:i a') }}</td>
+                <td>{{ $i->procedures->categories->name }}</td>
+                <td>{{ $i->procedures->name }}</td>
+                <td>{{ $i->quantity }}</td>
+                <td>{{ $i->price }}</td>
+                <td>{{ $i->amount }}</td>
+                <td>{{ $i->isPaid ? 'Yes' : 'No' }}</td>
+              </tr>
+            @endforeach
           </tbody>
            <tfoot>
             <tr>
-                <td colspan = "4"><h5>TOTAL</h5></td>
-                <td id = "total_investigations_charge"></td>
-                <td></td>
+                <th colspan = "4"><h5>TOTAL</h5></th>
+                <td colspan = "3" id = "total_investigations_charge">Ksh. {{ $charges['investigations']->sum('amount') }}</td>
             </tr>
         </tfoot>
        </table>
+
+       @if($charges['consumables']->count() > 0)
+           <table class="table table-bordered">
+               <thead>
+                   <tr>
+                       <th colspan="6" class="text-center">CONSUMPTION LIST</th>
+                   </tr>
+                   <tr>
+                       <th>DATE</th>
+                       <th>ITEM</th>
+                       <th>UNITS USED</th>
+                       <th>UNIT COST</th>
+                       <th>TOTAL COST</th>
+                       <th>PAID</th>
+                   </tr>
+               </thead>
+               <tbody>
+                    @foreach($charges['consumables'] as $c)
+                       <tr>
+                           <td>{{ $c->created_at->format('d/m/Y H:i a') }}</td>
+                           <td>{{ $c->product->name }}</td>
+                           <td>{{ $c->quantity }}</td>
+                           <td>{{ $c->price > 0 ? $c->price : 0 }}</td>
+                           <td>{{ $c->amount }}</td>
+                           <td>{{ $c->is_paid ? 'Yes' :  'No'}}</td>
+                       </tr>
+                   @endforeach
+               </tbody>
+               <tfoot>
+                <tr>
+                    <th colspan = "4"><h5>TOTAL</h5></th>
+                    <td colspan = "2" id = "total_consumables_charge">Ksh. {{ $charges['consumables']->sum('amount') }}</td>
+                </tr>
+            </tfoot>
+           </table>
+        @endif
 
        <table class="table table-hover table-bordered">
         <thead>
@@ -125,28 +173,68 @@
             <tr>
                 <th>DATE</th>
                 <th>DRUG NAME</th>
-                <th>UNITS</th>
+                <th>UNITS GIVEN</th>
                 <th>UNIT COST</th>
                 <th>TOTAL COST</th>
                 <th>PAID</th>
             </tr>
         </thead>
         <tbody>
+          @foreach($charges['dispensed_drugs'] as $d)
             <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>{{ $d->created_at->format('d/m/Y H:i a') }}</td>
+                <td>{{ $d->drugs->name }}</td>
+                <td>{{ \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() }}</td>
+                <td>{{ $admission->visit->payment_mode == 'cash' ?  $d->drugs->prices[0]->cash_price : $d->drugs->prices[0]->credit_price }}</td>
+                <td>{{ $admission->visit->payment_mode == 'cash' ?  $d->drugs->prices[0]->cash_price * \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() : $d->drugs->prices[0]->credit_price * \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() }}</td>
+                <td>
+                  @if(\Ignite\Evaluation\Entities\Dispensing::where('prescription', $d->id)->first() != null )
+                    {{ (\Ignite\Evaluation\Entities\Dispensing::where('prescription', $d->id)->first()->payment_status == 0) ? 'No' : 'Yes' }}
+                  @else
+                    No
+                  @endif
+                  </td>
             </tr>
+          @endforeach
+          @foreach($charges['discharge_drugs'] as $d)
+            <tr>
+                <td>{{ $d->created_at->format('d/m/Y H:i a') }}</td>
+                <td>{{ $d->drugs->name }}</td>
+                <td>{{ \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() }}</td>
+                <td>{{ $admission->visit->payment_mode == 'cash' ?  $d->drugs->prices[0]->cash_price : $d->drugs->prices[0]->credit_price }}</td>
+                <td>{{ $admission->visit->payment_mode == 'cash' ?  $d->drugs->prices[0]->cash_price * \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() : $d->drugs->prices[0]->credit_price * \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() }}</td>
+                <td>
+                  @if(\Ignite\Evaluation\Entities\Dispensing::where('prescription', $d->id)->first() != null )
+                    {{ (\Ignite\Evaluation\Entities\Dispensing::where('prescription', $d->id)->first()->payment_status == 0) ? 'No' : 'Yes' }}
+                  @else
+                    No
+                  @endif
+                </td>
+            </tr>
+          @endforeach
         </tbody>
         <tfoot>
             <tr>
-                <td colspan = "4"><h5>TOTAL</h5></td>
-                <td id = "total_prescription_charge"></td>
-                <td></td>
+                <th colspan = "4"><h5>TOTAL</h5></th>
+                <td colspan = "2" id = "total_prescription_charge">Ksh. </td>
+            </tr>
+            <tr>
+                <th colspan="2">TOTAL BILL: Ksh. </th>
+                <th colspan="2">Max Allowed By Insurance: Ksh. 0</th>
+                <th>PAID AMOUNT: Ksh. </th>
+                <th>BALANCE: Ksh. {{ $charges['admission']->patient->account->balance }}</th>
             </tr>
         </tfoot>
        </table>
+
+       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <a class="btn btn-lg btn-default" target="_blank" id = "print-summary"><i class="fa fa-print"></i> Print</a>
+       </div>
+
+       <script type="text/javascript">
+           $("#print-summary").click(function(e){
+                e.preventDefault();
+                window.open("{{ url('/inpatient/chargesheet/'.$admission->visit_id.'') }}","","top=50,left=400,  right=400,menubar=no,toolbar=no,scrollbars=yes,resizable=no,status=no");
+           });
+       </script>
 </div>

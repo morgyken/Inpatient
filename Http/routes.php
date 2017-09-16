@@ -7,15 +7,23 @@ Route::group(['as' => 'inpatient.'], function() {
     | TESTING
     |--------------------------------------------------------------------------
     */
-    Route::get('/summary', function(){
-        $admission = \Ignite\Inpatient\Entities\Admission::where("id", 21)->first();
-        return view('inpatient::admission.print.discharge_summary', compact('admission'));
-    });
+    // Route::get('/test/summary', function(){
+    //     $admission = \Ignite\Inpatient\Entities\Admission::where("id", 21)->first();
+    //     return view('inpatient::admission.print.discharge_summary', compact('admission'));
+    // });
 
-    Route::get('/chargesheet', function(){
-        $admission = \Ignite\Inpatient\Entities\Admission::where("id", 21)->first();
-        return view('inpatient::admission.print.charge_sheet', compact('admission'));
-    });
+    // Route::get('/test/chargesheet', function(){
+    //     $admission = \Ignite\Inpatient\Entities\Admission::where("id", 21)->first();
+    //     return view('inpatient::admission.print.charge_sheet', compact('admission'));
+    // });
+
+     /*
+    |--------------------------------------------------------------------------
+    | PRINTING
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/chargesheet/{visit_id}', 'InpatientController@buildChargeSheet');
 
 	/*
     |--------------------------------------------------------------------------

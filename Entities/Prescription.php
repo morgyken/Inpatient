@@ -114,6 +114,10 @@ class Prescription extends Model
     */
     public function logs()
     {
-         return $this->hasMany(Administration::class, 'prescription_id', 'id');
+        return $this->hasMany(Administration::class, 'prescription_id', 'id');
+    }
+
+    public function getLogCountAttribute(){
+        return ($this->logs) ? $this->logs->count() : 0;
     }
 }

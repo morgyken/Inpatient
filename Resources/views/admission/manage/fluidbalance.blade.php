@@ -149,13 +149,17 @@
                         @endforeach   
                     </tbody>
                     <tfoot>
-                        <tr rowspan = "4">
-                            <td colspan="3">INTRAVENOUS/ALIMENTARY</td>
-                            <td><b>Total Intake</b></td>
+                        <tr>
+                            
+                        </tr>
+                        <tr>
+                            <th colspan="3">INTRAVENOUS/ALIMENTARY</th>
+                            <th><b>Total Intake</b></th>
                             <td></td>
                         </tr>
                         <tr>
-                            <td><b>Total Output</b></td>
+                            <th colspan="3"></th>
+                            <th><b>Total Output</b></th>
                             <td></td>
                         </tr>
                     </tfoot>

@@ -83,13 +83,12 @@
 		    				<td>
 			    				@if($p->status == 1)
 			    					<div class='btn-group'>
-			    						@if(count($p->logs) <= 0)
+			    						@if(\Ignite\Inpatient\Entities\Administration::where("prescription_id", $p->id)->count() <= 0)
 			    							<button class='btn btn-primary administer-once' id = '{{ $p->id }}'><i class = 'fa fa-plus'></i> Administer</button>
 			    						@endif
 			    						<button type='button' class='btn btn-success view-logs' id = '{{ $p->id }}'><i class = 'fa fa-eye'></i> View</button>
 			    						<button type='button' class='btn btn-info stop-o-prescription' id = '{{ $p->id }}'><i class = 'fa fa-times' ></i> Stop</button>
 				    					<button type='button' class='btn btn-danger cancel-o-prescription' id = '{{ $p->id }}'><i class = 'fa fa-times' ></i> Cancel</button>
-
 				    				</div>
 				    			@else
 				    				<div class='btn-group'>

@@ -189,7 +189,7 @@ class InpatientApiController extends Controller
                 })->toArray();
                 return json_encode(['type' => 'success', 'data' => $data]);
             } else {
-                return json_encode(['type' => 'success', 'message' => 'No patient vitals found', 'data' => []]);
+                return json_encode(['type' => 'success', 'message' => 'No patient vitals found']);
             }
         } catch (\Exception $e) {
             return json_encode(['type' => 'error', 'message' => 'An error occured fetching vitals. ' . $e->getMessage()]);
@@ -883,16 +883,18 @@ class InpatientApiController extends Controller
     public function getTransfusionData($admission_id)
     {
         try {
-            return BloodTransfusion::where("admission_id", $admission_id)->latest()->limit(1)->get()->map(function ($item) {
+            $data = BloodTransfusion::where("admission_id", $admission_id)->latest()->limit(1)->get()->map(function ($item) {
                 return [
                     "id" => $item->id,
                     "temperature" => $item->temperature,
                     "bp" => $item->bp_systolic . "/" . $item->bp_diastolic,
                     "respiration" => $item->respiration,
-                    "remarks" => $item->remarks,
+                    "remarks" => substr($item->remarks, 0, 20),
                     "date_time" => $item->date_recorded . " " . $item->time_recorded
                 ];
             })->toArray();
+
+            return json_encode($data);
         } catch (\Exception $e) {
             return $e->getMessage();
         }

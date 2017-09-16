@@ -218,12 +218,12 @@
                     url: "{{ url('/api/inpatient/v1/plans') }}/"+id,
                     success: function (resp) {
                         if(resp.type === "success"){                      
-                            resp.data.map( (item, index) => {
-                                return(
-                                    $("#date_time_view").html(item.date_time_recorded)
-                                    $("#diagnosis_view").html(item.diagnosis)
-                                );
-                            });
+                            // resp.data.map( (item, index) => {
+                            //     return(
+                            //         $("#date_time_view").html(item.date_time_recorded)
+                            //         $("#diagnosis_view").html(item.diagnosis)
+                            //     );
+                            // });
                     
                             $("#modal-view-care-plan").modal();
                         }else{

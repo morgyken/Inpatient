@@ -163,7 +163,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('/update', 'InpatientApiController@updateBloodTransfusions');
 
         // Delete Blood Transfusion data
-        Route::post('', 'InpatientApiController@deleteBloodTransfusions');
+        Route::post('/delete', 'InpatientApiController@deleteBloodTransfusions');
     });
 
     Route::group(['prefix' => 'plans'], function() {

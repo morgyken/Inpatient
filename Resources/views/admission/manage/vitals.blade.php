@@ -179,7 +179,7 @@
                submitForm();
             }else{
                 errors.forEach(item => {
-                    alertify.error("<i class = 'fa fa-exclamation-circle'></i>" + item);
+                    alertify.error("<i class = 'fa fa-exclamation-circle'></i> " + item);
                 });
             }
         });
