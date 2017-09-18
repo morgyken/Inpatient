@@ -786,8 +786,6 @@ class InpatientController extends AdminBaseController
             $totalDischargeDrugs += $admission->visit->payment_mode == 'cash' ?  $d->drugs->prices[0]->cash_price * Administration::where("prescription_id", $d->id)->count() : $d->drugs->prices[0]->credit_price * Administration::where("prescription_id", $d->id)->count();
         }
 
-
-
         $totalNursingAndWardCharges = $wardCharges + $recuCharges;
         $totalInvestigationsCharges = $done_investigations->sum('amount'); 
         $totalConsumablesCharges = $consumption_list->sum('amount');
@@ -808,9 +806,11 @@ class InpatientController extends AdminBaseController
         // $pdf->setPaper('a4', 'portrait');
         // // dd($pdf);
         // return $pdf->download('charge_sheet_'.mt_rand(0,100).'.pdf');
-
     }
 
-
+    public function buildDischargeSummary($visit_id){
+         $admission = Admission::where("visit_id", $visit_id)->first();
+        return view('inpatient::admission.print.discharge_summary', compact('admission'));
+    }
 
 }
