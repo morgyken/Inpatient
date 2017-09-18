@@ -30,6 +30,7 @@ use Ignite\Inpatient\Entities\Notes;
 use Ignite\Inpatient\Entities\NursingCarePlan;
 use Ignite\Inpatient\Entities\NursingCharge;
 use Ignite\Inpatient\Entities\Prescription;
+use Ignite\Inpatient\Entities\PatientAccount;
 use Ignite\Inpatient\Entities\RequestAdmission;
 use Ignite\Inpatient\Entities\RequestDischarge;
 use Ignite\Inpatient\Entities\Temperature;
@@ -529,7 +530,7 @@ class InpatientApiController extends Controller
                         "id" => $item->id,
                         "admission_id" => $item->admission_id,
                         "visit_id" => $item->visit_id,
-                        "notes" => $item->notes,
+                        "notes" => substr($item->notes,0,20),
                         "name" => $item->users->profile->fullName,
                         "written_on" => $this->carbon->parse($item->created_at)->format('d/m/y H:i A')
                     ];
@@ -714,7 +715,7 @@ class InpatientApiController extends Controller
                         "id" => $item->id,
                         "admission_id" => $item->admission_id,
                         "visit_id" => $item->visit_id,
-                        "notes" => $item->notes,
+                        "notes" => substr($item->notes,0,20).'...',
                         "name" => $item->users->profile->fullName,
                         "written_on" => $this->carbon->parse($item->created_at)->format('d/m/y H:i A')
                     ];
@@ -1388,11 +1389,12 @@ class InpatientApiController extends Controller
             $request = $request->json()->all();
             $data = NursingCarePlan::where("admission_id", $id)->get()->map(function ($item) {
                 return [
-                    "id" => $item->id,
-                    "diagnosis" => $item->diagnosis,
-                    "expected_outcome" => $item->expected_outcome,
-                    "intervention" => $item->intervention,
-                    "recorded_by" => $item->recorded_by,
+                    "id"                    => $item->id,
+                    "diagnosis"             => $item->diagnosis,
+                    "expected_outcome"      => $item->expected_outcome,
+                    "intervention"          => $item->intervention,
+                    "recorded_by"           => $item->user->profile->fullName,
+                    "reasons"               => $item->reasons,
                     "date_time_recorded"    => $item->date_recorded . " " . $item->time_recorded
                 ];
             })->toArray();
@@ -1408,11 +1410,13 @@ class InpatientApiController extends Controller
         try {
             $data = NursingCarePlan::where("id",$id)->get()->map(function ($item) {
                 return [
-                    "id" => $item->id,
-                    "diagnosis" => $item->diagnosis,
-                    "expected_outcome" => $item->expected_outcome,
-                    "intervention" => $item->intervention,
-                    "recorded_by" => $item->recorded_by,
+                    "id"                    => $item->id,
+                    "diagnosis"             => $item->diagnosis,
+                    "expected_outcome"      => $item->expected_outcome,
+                    "intervention"          => $item->intervention,
+                    "reasons"               => $item->reasons,
+                    "evaluation"            => $item->evaluation, 
+                    "recorded_by"           => $item->user->profile->fullName,
                     "date_time_recorded"    => $item->date_recorded . " " . $item->time_recorded
                 ];
             })->toArray();
@@ -1542,21 +1546,21 @@ class InpatientApiController extends Controller
             $wardCharges = 0; $recuCharges = 0;
             $wards = WardAssigned::where('visit_id', $request['visit_id'])->get();
 
-            foreach ($wards as $ward) {
-                $wardCharges += $ward->price * $this->carbon->now()->diffInDays($ward->created_at);
+            // foreach ($wards as $ward) {
+            //     $wardCharges += $ward->price * $this->carbon->now()->diffInDays($ward->created_at);
 
-                //subscribed reccurrent charges
-                $rcnt = RecurrentCharge::where('visit_id', $request['visit_id'])->where('status', 'unpaid')->get();
+            //     //subscribed reccurrent charges
+            //     $rcnt = RecurrentCharge::where('visit_id', $request['visit_id'])->where('status', 'unpaid')->get();
 
-                $recuCharges = $rcnt->sum(function($recurrent){
-                    return $sum += NursingCharge::find($recurrent->recurrent_charge_id)->cost * $this->carbon->now()->diffInDays($ward->created_at);
-                });
-            }
+            //     $recuCharges = $rcnt->sum(function($recurrent){
+            //         return $sum += NursingCharge::find($recurrent->recurrent_charge_id)->cost * $this->carbon->now()->diffInDays($ward->created_at);
+            //     });
+            // }
 
              foreach ($wards as $ward) {
                 $wardCharges += ($this->carbon->now() != null) ? ($ward->price * ($this->carbon->parse($this->carbon->now())->diffInDays($ward->created_at) )) : $ward->price * $this->carbon->now()->diffInDays($ward->created_at);
                 //subscribed reccurrent charges
-                foreach ($rcnt as $recurrent) {
+                foreach (RecurrentCharge::where('visit_id', $request['visit_id'])->where('status', 'unpaid')->get() as $recurrent) {
                     //nursing charges times no. of days..
                     $recuCharges +=  ($this->carbon->now() != null) ? NursingCharge::find($recurrent->recurrent_charge_id)->cost * $this->carbon->parse($this->carbon->now())->diffInDays($ward->created_at) : NursingCharge::find($recurrent->recurrent_charge_id)->cost;
                 }

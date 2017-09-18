@@ -408,7 +408,7 @@ class InpatientController extends AdminBaseController
 
     public function admissionList()
     {
-        $admissions = Admission::all();
+        $admissions = Admission::where("is_discharged",0)->get();
         return view('Inpatient::admission.admissionList', compact('admissions'));
     }
 

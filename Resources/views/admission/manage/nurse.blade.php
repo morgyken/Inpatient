@@ -33,7 +33,7 @@
                     @foreach($nursesNotes as $n)
                         <tr id = "nurse_noterow_{{ $n->id }}">
                             <td>{{ \Carbon\Carbon::parse($n->updated_at)->format('H:i A d/m/Y ') }}</td>
-                            <td>{{ substr($n->notes,0,30) }}</td>
+                            <td>{{ substr($n->notes,0,20) }}...</td>
                             <td>{{ $n->users->profile->fullName }}</td>
                             <td>
                                 <div class='btn-group'>
@@ -59,7 +59,7 @@
                     <div class="modal-body">
                          <form>
                             <input type="hidden" name="nurse_note_id" id = "nurse_note_id" required>
-                            <textarea name="view-nurse-note" disabled="true" id="view-nurse-note" class="form-control summernote" rows="3"  cols= "10" required></textarea>
+                            <textarea name="view-nurse-note" disabled="true" id="view-nurse-note" class="form-control" rows="3"  cols= "10" required></textarea>
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -166,6 +166,8 @@
                                 );
                             });
 
+                             $('#view-nurse-note').summernote('disable');
+
                             $("#view-nurse-note").prop('disabled', true);
                             $("#edit-nurse-note-view").css("display","block");
                             $("#update-nurse-note").css("display","none");
@@ -185,6 +187,7 @@
                 e.preventDefault();
                 var id = $(this).attr('id');
                 $("#view-nurse-note").prop('disabled', false);
+                $("#view-nurse-note").summernote('enable');
                 $("#update-nurse-note").css("display","block");
                 $(this).css("display","none");
             });   

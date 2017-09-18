@@ -41,7 +41,7 @@
                     @foreach($doctorsNotes as $n)
                         <tr id = "noterow_{{ $n->id }}">
                             <td>{{ \Carbon\Carbon::parse($n->updated_at)->format('H:i A d/m/Y ') }}</td>
-                            <td>{{ substr($n->notes,0,30) }}</td>
+                            <td>{{ substr($n->notes,0,20) }}...</td>
                             <td>{{ $n->users->profile->fullName }}</td>
                             <td>
                                 <div class='btn-group'>
@@ -259,6 +259,8 @@
                                 );
                             });
 
+                            $('#view-doctors-note').summernote('disable');
+
                             $("#view-doctors-note").prop('disabled', true);
                             $("#edit-note-view").css("display","block");
                             $("#update-doctor-note").css("display","none");
@@ -278,6 +280,7 @@
                 e.preventDefault();
                 var id = $(this).attr('id');
                 $("#view-doctors-note").prop('disabled', false);
+                $('#view-doctors-note').summernote('enable');
                 $("#update-doctor-note").css("display","block");
                 $(this).css("display","none");
             });   

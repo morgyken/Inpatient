@@ -94,38 +94,8 @@
                     </div>
                     <div class="modal-body">
                         <input type="hidden" id="plan_id" >
-                        <table class="table table-stripped table-hover">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th>Date & Time</th>
-                                    <td id = "date_time_view"></td>
-                                </tr>
-                                <tr>
-                                    <th>Nursing Diagnosis</th>
-                                    <td id = "diagnosis_view"></td>
-                                </tr>
-                                <tr>
-                                    <th>Expected Outcome</th>
-                                    <td id = "outcome_view"></td>
-                                </tr>
-                                <tr>
-                                    <th>Intervention/Implementation</th>
-                                    <td id = "intervention_view"></td>
-                                </tr>
-                                <tr>
-                                    <th>Scientific Rationale/ Reasosn</th>
-                                    <td id = "reasons_view"></td>
-                                </tr>
-                                <tr>
-                                    <th>Evaluation</th>
-                                    <td id = "evaluation_view"></td>
-                                </tr>
-                            </tbody>
+                        <table class="table table-bordered table-stripped table-hover" id = "view-care-plan-table">
+                            <tbody></tbody>
                         </table>
                     </div>
                     <div class="modal-footer">
@@ -217,13 +187,44 @@
                     type: "GET",
                     url: "{{ url('/api/inpatient/v1/plans') }}/"+id,
                     success: function (resp) {
-                        if(resp.type === "success"){                      
-                            // resp.data.map( (item, index) => {
-                            //     return(
-                            //         $("#date_time_view").html(item.date_time_recorded)
-                            //         $("#diagnosis_view").html(item.diagnosis)
-                            //     );
-                            // });
+                        if(resp.type === "success"){   
+
+                            $("#view-care-plan-table > tbody tr").remove();
+
+                            resp.data.map( (item, index) => {
+                                return(
+                                    $("#view-care-plan-table > tbody").append("\
+                                        <tr>\
+                                            <th>Date & Time</th>\
+                                            <td>"+ item.date_time_recorded +"</td>\
+                                        </tr>\
+                                        <tr>\
+                                            <th>Nursing Diagnosis</th>\
+                                            <td>"+ item.diagnosis +"</td>\
+                                        </tr>\
+                                        <tr>\
+                                            <th>Expected Outcome</th>\
+                                            <td>"+ item.expected_outcome +"</td>\
+                                        </tr>\
+                                        <tr>\
+                                            <th>Intervention/Implementation</th>\
+                                            <td>"+ item.intervention +"</td>\
+                                        </tr>\
+                                        <tr>\
+                                            <th>Scientific Rationale/ Reasons</th>\
+                                            <td>"+ item.reasons +"</td>\
+                                        </tr>\
+                                        <tr>\
+                                            <th>Evaluation</th>\
+                                            <td>"+ item.evaluation +"</td>\
+                                        </tr>\
+                                        <tr>\
+                                            <th>Recorded By</th>\
+                                            <td>"+ item.recorded_by +"</td>\
+                                        </tr>\
+                                        </tr>")
+                                );
+                            });
                     
                             $("#modal-view-care-plan").modal();
                         }else{
