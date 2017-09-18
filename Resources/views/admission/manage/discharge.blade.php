@@ -227,6 +227,11 @@
 
         <script type="text/javascript">
             $(document).ready(function(){
+
+               $("#print_summary").click(function(e){
+                    e.preventDefault();
+                    window.open("{{ url('/inpatient/summary/'.$admission->visit_id.'') }}","","top=50,left=400,  right=400,menubar=no,toolbar=no,scrollbars=yes,resizable=no,status=no");
+               });
                 
                 // $("#discharge-prescriptions-table").dataTable();
 

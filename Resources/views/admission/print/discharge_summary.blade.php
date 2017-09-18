@@ -129,34 +129,34 @@
     			</tr>
     			<tr>
     				<th>TO COME AGAIN</th>
-    				<td colspan="2"></td>
+    				<td colspan="2">{{ $discharge->notes->to_come_again }}</td>
     			</tr>
     		</tbody>
     	</table>
 
-    	<div class = "sections">
+    	<div class = "sections"><br/>
     		<h4>PRINCIPAL DIAGNOSIS</h4>
-    		<p></p>
+    		<p>{{ $discharge->notes->pricipal_diagnosis}}</p>
     	</div>
 
-    	<div class = "sections">
+    	<div class = "sections"><br/>
     		<h4>OTHER DIAGNOSIS</h4>
-    		<p></p>
+    		<p>{{ $discharge->notes->other_diagnosis }}</p>
     	</div>
 
-    	<div class = "sections">
+    	<div class = "sections"><br/>
     		<h4>COMPLAINTS DIAGNOSIS</h4>
-    		<p></p>
+    		<p>{{ $discharge->notes->admission_complaints }}</p>
     	</div>
 
-    	<div class = "sections">
+    	<div class = "sections"><br/>
     		<h4>INVESTIGATIONS AND HOSPITAL COURSES</h4>
-    		<p></p>
+    		<p>{{ $discharge->notes->investigations_courses }}</p>
     	</div>
 
-    	<div class = "sections">
+    	<div class = "sections"><br/>
     		<h4>DISCHARGE CONDITIONS</h4>
-    		<p></p>
+    		<p>{{ $discharge->notes->discharge_condition }}</p>
     	</div>
 
     	<div class = "sections">
@@ -164,13 +164,19 @@
     		<table class="table table-hover">
                 <thead>
                     <tr>
-                        <th></th>
+                        <th>#</th>
+                        <th>Drug</th>
+                        <th>Dosage & Duration</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td></td>
-                    </tr>
+                    @foreach($prescriptions as $p)
+                        <tr>
+                            <td>#{{ $p->id }}</td>
+                            <td>{{ $p->drugs->name }}</td>
+                            <td>{{ $p->dose }}</td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
     	</div>
@@ -178,7 +184,7 @@
         <table class="table table-hover" style="border: none !important;">
              <tbody style="border: none !important;">
                <tr style="border: none !important;">
-                  <td style="border: none !important;" colspan="2"><u>{{$admission->full_name}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                  <td style="border: none !important;" colspan="2"><u>{{ $discharge->doctor->profile->fullName}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
                   <td style="border: none !important; padding-left: 25% !important;" colspan="2"><u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u></td>
                </tr>
                <tr style="border: none !important;">

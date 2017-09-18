@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddInpatientToEvaluationVisitsTable extends Migration
+class AddDateAndTimeOfDeathToDischageNotesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,10 @@ class AddInpatientToEvaluationVisitsTable extends Migration
      */
     public function up()
     {
-        Schema::table('evaluation_visits', function (Blueprint $table) {
-            $table->boolean('inpatient')->default(0)->after('status');
+        Schema::table('inpatient_discharge_notes', function (Blueprint $table) {
+            $table->date('dateofdeath')->nullable(); 
+            $table->string('timeofdeath')->nullable();
+            $table->string('type'); // case or discharge
         });
     }
 
@@ -25,8 +27,6 @@ class AddInpatientToEvaluationVisitsTable extends Migration
      */
     public function down()
     {
-        Schema::table('evaluation_visits', function (Blueprint $table) {
-
-        });
+        //
     }
 }

@@ -37,15 +37,15 @@
             @foreach($charges['recurrent_charges'] as $c)
              <tr>
                 <td>{{ $c->charge->name }}</td>
-                <td>{{ $charges['daysAdmitted'] }}</td>
+                <td>{{ ($charges['daysAdmitted'] > 0) ? $charges['daysAdmitted'] : 1 }}</td>
                 <td>{{ $c->charge->cost }}</td>
-                <td>{{ $c->charge->cost * $charges['daysAdmitted'] }}</td>
+                <td>{{ $c->charge->cost * (($charges['daysAdmitted'] > 0) ? $charges['daysAdmitted'] : 1 ) }}</td>
              </tr>
             @endforeach
             @foreach($charges['wards'] as $w)
               <tr>
-                <td>Ward {{ $w->name }} ({{ $w->category }} {{ $w->cost }}/per day)  {{ ($w->discharged_at != null) ? \Carbon\Carbon::parse($w->discharged_at)->diffInDays($w->created_at) : \Carbon\Carbon::now()->diffInDays($w->created_at) }} days</td>
-                <td>{{ ($w->discharged_at != null) ? \Carbon\Carbon::parse($w->discharged_at)->diffInDays($w->created_at) : \Carbon\Carbon::now()->diffInDays($w->created_at) }}</td>
+                <td>Ward {{ $w->name }} ({{ $w->category }} {{ $w->price }}/per day)  {{ ($w->discharged_at != null) ? \Carbon\Carbon::parse($w->discharged_at)->diffInDays($w->created_at) : (\Carbon\Carbon::now()->diffInDays($w->created_at) > 0) ? Carbon\Carbon::now()->diffInDays($w->created_at) : 1  }} days</td>
+                <td>{{ ($w->discharged_at != null) ? \Carbon\Carbon::parse($w->discharged_at)->diffInDays($w->created_at) : (\Carbon\Carbon::now()->diffInDays($w->created_at) > 0) ? Carbon\Carbon::now()->diffInDays($w->created_at) : 1 }}</td>
                 <td>{{ $w->price }}</td>
                 <td>{{ $w->price * (($w->discharged_at != null) ? \Carbon\Carbon::parse($w->discharged_at)->diffInDays($w->created_at) : (\Carbon\Carbon::now()->diffInDays($w->created_at) > 0) ? Carbon\Carbon::now()->diffInDays($w->created_at) : 1 ) }}</td>
               </tr>
@@ -59,6 +59,7 @@
         </tfoot>
        </table>
 
+       @if(count($charges['procedures']) > 0)
         <table class="table table-hover table-bordered">
           <thead>
              <tr>
@@ -92,7 +93,9 @@
             </tr>
         </tfoot>
        </table>
+       @endif
 
+      @if(count($charges['investigations']) > 0)
        <table class="table table-hover table-bordered">
           <thead>
              <tr>
@@ -128,6 +131,7 @@
             </tr>
         </tfoot>
        </table>
+      @endif
 
        @if($charges['consumables']->count() > 0)
            <table class="table table-bordered">
@@ -165,67 +169,69 @@
            </table>
         @endif
 
-       <table class="table table-hover table-bordered">
-        <thead>
-             <tr>
-                <th colspan="6" class="text-center">PHARMACY</th>
-             </tr>
-            <tr>
-                <th>DATE</th>
-                <th>DRUG NAME</th>
-                <th>UNITS GIVEN</th>
-                <th>UNIT COST</th>
-                <th>TOTAL COST</th>
-                <th>PAID</th>
-            </tr>
-        </thead>
-        <tbody>
-          @foreach($charges['dispensed_drugs'] as $d)
-            <tr>
-                <td>{{ $d->created_at->format('d/m/Y H:i a') }}</td>
-                <td>{{ $d->drugs->name }}</td>
-                <td>{{ \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() }}</td>
-                <td>{{ $admission->visit->payment_mode == 'cash' ?  $d->drugs->prices[0]->cash_price : $d->drugs->prices[0]->credit_price }}</td>
-                <td>{{ $admission->visit->payment_mode == 'cash' ?  $d->drugs->prices[0]->cash_price * \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() : $d->drugs->prices[0]->credit_price * \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() }}</td>
-                <td>
-                  @if(\Ignite\Evaluation\Entities\Dispensing::where('prescription', $d->id)->first() != null )
-                    {{ (\Ignite\Evaluation\Entities\Dispensing::where('prescription', $d->id)->first()->payment_status == 0) ? 'No' : 'Yes' }}
-                  @else
-                    No
-                  @endif
+        @if($charges['dispensed_drugs']->count() > 0 or $charges['discharge_drugs']->count() > 0)
+         <table class="table table-hover table-bordered">
+          <thead>
+               <tr>
+                  <th colspan="6" class="text-center">PHARMACY</th>
+               </tr>
+              <tr>
+                  <th>DATE</th>
+                  <th>DRUG NAME</th>
+                  <th>UNITS GIVEN</th>
+                  <th>UNIT COST</th>
+                  <th>TOTAL COST</th>
+                  <th>PAID</th>
+              </tr>
+          </thead>
+          <tbody>
+            @foreach($charges['dispensed_drugs'] as $d)
+              <tr>
+                  <td>{{ $d->created_at->format('d/m/Y H:i a') }}</td>
+                  <td>{{ $d->drugs->name }}</td>
+                  <td>{{ \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() }}</td>
+                  <td>{{ $admission->visit->payment_mode == 'cash' ?  $d->drugs->prices[0]->cash_price : $d->drugs->prices[0]->credit_price }}</td>
+                  <td>{{ $admission->visit->payment_mode == 'cash' ?  $d->drugs->prices[0]->cash_price * \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() : $d->drugs->prices[0]->credit_price * \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() }}</td>
+                  <td>
+                    @if(\Ignite\Evaluation\Entities\Dispensing::where('prescription', $d->id)->first() != null )
+                      {{ (\Ignite\Evaluation\Entities\Dispensing::where('prescription', $d->id)->first()->payment_status == 0) ? 'No' : 'Yes' }}
+                    @else
+                      No
+                    @endif
+                    </td>
+              </tr>
+            @endforeach
+            @foreach($charges['discharge_drugs'] as $d)
+              <tr>
+                  <td>{{ $d->created_at->format('d/m/Y H:i a') }}</td>
+                  <td>{{ $d->drugs->name }}</td>
+                  <td>{{ \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() }}</td>
+                  <td>{{ $admission->visit->payment_mode == 'cash' ?  $d->drugs->prices[0]->cash_price : $d->drugs->prices[0]->credit_price }}</td>
+                  <td>{{ $admission->visit->payment_mode == 'cash' ?  $d->drugs->prices[0]->cash_price * \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() : $d->drugs->prices[0]->credit_price * \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() }}</td>
+                  <td>
+                    @if(\Ignite\Evaluation\Entities\Dispensing::where('prescription', $d->id)->first() != null )
+                      {{ (\Ignite\Evaluation\Entities\Dispensing::where('prescription', $d->id)->first()->payment_status == 0) ? 'No' : 'Yes' }}
+                    @else
+                      No
+                    @endif
                   </td>
-            </tr>
-          @endforeach
-          @foreach($charges['discharge_drugs'] as $d)
-            <tr>
-                <td>{{ $d->created_at->format('d/m/Y H:i a') }}</td>
-                <td>{{ $d->drugs->name }}</td>
-                <td>{{ \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() }}</td>
-                <td>{{ $admission->visit->payment_mode == 'cash' ?  $d->drugs->prices[0]->cash_price : $d->drugs->prices[0]->credit_price }}</td>
-                <td>{{ $admission->visit->payment_mode == 'cash' ?  $d->drugs->prices[0]->cash_price * \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() : $d->drugs->prices[0]->credit_price * \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() }}</td>
-                <td>
-                  @if(\Ignite\Evaluation\Entities\Dispensing::where('prescription', $d->id)->first() != null )
-                    {{ (\Ignite\Evaluation\Entities\Dispensing::where('prescription', $d->id)->first()->payment_status == 0) ? 'No' : 'Yes' }}
-                  @else
-                    No
-                  @endif
-                </td>
-            </tr>
-          @endforeach
-        </tbody>
-        <tfoot>
-            <tr>
-                <th colspan = "4"><h5>TOTAL</h5></th>
-                <td colspan = "2" id = "total_prescription_charge">Ksh. {{ number_format($charges['totalPrescriptionCharges'], 2) }}</td>
-            </tr>
-            <tr>
-                <th colspan="2">TOTAL BILL: Ksh. {{ $charges['totalBill'] }}</th>
-                <th colspan="2">Max Allowed By Insurance: Ksh. 0</th>
-                <th>PAID AMOUNT: Ksh. {{ number_format($charges['admission']->patient->account->balance, 2) }}</th>
-                <th>BALANCE: Ksh. {{ number_format($charges['totalBill'] - $charges['admission']->patient->account->balance, 2) }}</th>
-            </tr>
-        </tfoot>
-       </table>
+              </tr>
+            @endforeach
+          </tbody>
+          <tfoot>
+              <tr>
+                  <th colspan = "4"><h5>TOTAL</h5></th>
+                  <td colspan = "2" id = "total_prescription_charge">Ksh. {{ number_format($charges['totalPrescriptionCharges'], 2) }}</td>
+              </tr>
+              <tr>
+                  <th colspan="2">TOTAL BILL: Ksh. {{ $charges['totalBill'] }}</th>
+                  <th colspan="2">Max Allowed By Insurance: Ksh. 0</th>
+                  <th>PAID AMOUNT: Ksh. {{ number_format($charges['admission']->patient->account->balance, 2) }}</th>
+                  <th>BALANCE: Ksh. {{ number_format($charges['totalBill'] - $charges['admission']->patient->account->balance, 2) }}</th>
+              </tr>
+          </tfoot>
+         </table>
+        @endif
 
        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
           <a class="btn btn-lg btn-default" target="_blank" id = "print-summary"><i class="fa fa-print"></i> Print</a>
