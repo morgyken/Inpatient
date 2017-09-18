@@ -5,6 +5,7 @@ namespace Ignite\Inpatient\Entities;
 use Ignite\Users\Entities\User;
 use Ignite\Reception\Entities\Patients;
 use Ignite\Inpatient\Entities\Vitals;
+use Ignite\Inpatient\Entities\RequestDischarge;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -63,6 +64,10 @@ class Admission extends Model
 
     public function getDischargedAttribute(){
         return ($this->is_discharged == 0) ? false : true ;
+    }
+
+    public function getHasDischargeRequestAttribute(){
+        return (RequestDischarge::where('visit_id',$this->visit_id)->count() > 0) ? true : false;
     }
 
     public function patient()

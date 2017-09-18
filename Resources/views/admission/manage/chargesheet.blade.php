@@ -54,7 +54,7 @@
           <tfoot>
             <tr>
                 <th colspan = "3"><h5>TOTAL</h5></th>
-                <td id = "total_recurrent_charge"><h5>Ksh. {{ $charges['totalNursingAndWardCharges'] }}</h5></td>
+                <td id = "total_recurrent_charge"><h5>Ksh. {{ number_format($charges['totalNursingAndWardCharges'], 2) }}</h5></td>
             </tr>
         </tfoot>
        </table>
@@ -88,7 +88,7 @@
           <tfoot>
             <tr>
                 <th colspan = "4"><h5>TOTAL</h5></th>
-                <td colspan= "2" id = "total_procedures_charge">Ksh. {{ $charges['procedures']->sum('amount') }}</td>
+                <td colspan= "2" id = "total_procedures_charge">Ksh. {{ number_format($charges['procedures']->sum('amount'), 2) }}</td>
             </tr>
         </tfoot>
        </table>
@@ -124,7 +124,7 @@
            <tfoot>
             <tr>
                 <th colspan = "4"><h5>TOTAL</h5></th>
-                <td colspan = "3" id = "total_investigations_charge">Ksh. {{ $charges['investigations']->sum('amount') }}</td>
+                <td colspan = "3" id = "total_investigations_charge">Ksh. {{ number_format($charges['investigations']->sum('amount'), 2) }}</td>
             </tr>
         </tfoot>
        </table>
@@ -159,7 +159,7 @@
                <tfoot>
                 <tr>
                     <th colspan = "4"><h5>TOTAL</h5></th>
-                    <td colspan = "2" id = "total_consumables_charge">Ksh. {{ $charges['consumables']->sum('amount') }}</td>
+                    <td colspan = "2" id = "total_consumables_charge">Ksh. {{ number_format($charges['consumables']->sum('amount'), 2) }}</td>
                 </tr>
             </tfoot>
            </table>
@@ -216,13 +216,13 @@
         <tfoot>
             <tr>
                 <th colspan = "4"><h5>TOTAL</h5></th>
-                <td colspan = "2" id = "total_prescription_charge">Ksh. {{ $charges['totalPrescriptionCharges'] }}</td>
+                <td colspan = "2" id = "total_prescription_charge">Ksh. {{ number_format($charges['totalPrescriptionCharges'], 2) }}</td>
             </tr>
             <tr>
                 <th colspan="2">TOTAL BILL: Ksh. {{ $charges['totalBill'] }}</th>
                 <th colspan="2">Max Allowed By Insurance: Ksh. 0</th>
-                <th>PAID AMOUNT: Ksh. {{ $charges['admission']->patient->account->balance }}</th>
-                <th>BALANCE: Ksh. {{ $charges['totalBill'] - $charges['admission']->patient->account->balance }}</th>
+                <th>PAID AMOUNT: Ksh. {{ number_format($charges['admission']->patient->account->balance, 2) }}</th>
+                <th>BALANCE: Ksh. {{ number_format($charges['totalBill'] - $charges['admission']->patient->account->balance, 2) }}</th>
             </tr>
         </tfoot>
        </table>

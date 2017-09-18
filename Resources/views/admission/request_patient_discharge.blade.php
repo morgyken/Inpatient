@@ -16,9 +16,6 @@
 
 @section('content')
 
-
-
-
 <div class="box box-info">
     <div class="box-header with-border">
         <h3 class="box-title">Confirm Patient Discharge</h3>

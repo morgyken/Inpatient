@@ -659,7 +659,7 @@ class InpatientController extends AdminBaseController
     public function requested_discharge(Request $request)
     {
         $discharges = RequestDischarge::all();
-        return view('Evaluation::inpatient.discharges', compact('discharges'));
+        return view('Inpatient::admission.discharges', compact('discharges'));
     }
 
     public function confirm_discharge($request_id)

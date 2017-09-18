@@ -29,6 +29,7 @@ use Ignite\Inpatient\Entities\Notes;
 use Ignite\Inpatient\Entities\NursingCarePlan;
 use Ignite\Inpatient\Entities\Prescription;
 use Ignite\Inpatient\Entities\RequestAdmission;
+use Ignite\Inpatient\Entities\RequestDischarge;
 use Ignite\Inpatient\Entities\Temperature;
 use Ignite\Inpatient\Entities\Visit;
 use Ignite\Inpatient\Entities\Vitals;
@@ -1499,17 +1500,16 @@ class InpatientApiController extends Controller
         \DB::beginTransaction();
         try {
             $request = $request->json()->all();
+
             //add a record to request discharge table
-            $r = RequestDischarge::create(
-                [
-                    'doctor_id'     => $request['user_id'],
-                    'admission_id'  => $request['admission_id'],
-                    'visit_id'      => $request['visit_id'],
-                    'reason'        => $request['reason'],
-                    'status'        => 'unconfirmed'
-                ]
-            );
-            
+            $r = new RequestDischarge;
+            $r->doctor_id     = $request['doctor_id'];
+            $r->admission_id  = $request['admission_id'];
+            $r->visit_id      = $request['visit_id'];
+            $r->reason        = $request['reason'];
+            $r->status        = 'unconfirmed';
+            $r->save();
+
             \DB::commit();
             if($r){
                 return Response::json(['type' => 'success', 'message' => 'Discharge requested successfully']);
@@ -1587,7 +1587,8 @@ class InpatientApiController extends Controller
                 'discharge_medications'     => serialize($request['discharge_medications']),
                 'dateofdeath'               => $request['dateofdeath'],
                 'timeofdeath'               => $request['timeofdeath'],
-                'type'                      => $request['type']
+                'type'                      => $request['type'],
+                'to_come_again'             => $request['to_come_again']
             ]);
 
             //release the bed for reassignment.

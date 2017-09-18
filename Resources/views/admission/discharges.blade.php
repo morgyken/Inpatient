@@ -46,21 +46,22 @@
                 @if(!$discharges->isEmpty())
                 <table class="table table-responsive table-striped">
                     <tbody>
-                        @foreach($discharges as $charge)
+                        @foreach($discharges as $d)
                             <tr>
                                 <td>
-                                 {{\Ignite\Reception\Entities\Patients::find($charge->visit_id)->full_name}}</td>
+                                 {{ $d->admission->patient->fullname}}</td>
                                 <td>
-                                @if(\Ignite\Evaluation\Entities\Visit::find($charge->visit_id)->external_doctor)
-                                {{\Ignite\Evaluation\Entities\Visit::find($charge->visit_id)->external_doctor}}
-                                @else
-                                {{\Ignite\Users\Entities\User::find($charge->doctor_id)->profile->full_name}}
-                                @endif</td>
-                                <td>{{$charge->status}}</td>
-                                <td>{{(new Date($charge->created_at))->format('d/m/y h:i a')}}</td>
+                                    @if($d->admission->external_doctor != null)
+                                        {{ $d->admission->external_doctor }}
+                                    @else
+                                        {{ $d->admission->doctor->profile->fullName }}
+                                    @endif
+                                </td>
+                                <td>{{ $d->status }}</td>
+                                <td>{{ $d->created_at->format('d/m/y h:i a') }}</td>
                                 <td>
-                                    <a href="{{url('evaluation/inpatient/discharge/'.$charge->id)}}" class="btn btn-primary btn-xs">Discharge</a>
-                                     <a href="{{url('evaluation/inpatient/Cancel_discharge/'.$charge->id)}}" class="btn btn-danger btn-xs">Cancel Request</a>
+                                    <a href="{{url('inpatient/discharge/'.$d->id)}}" class="btn btn-primary btn-xs">Discharge</a>
+                                     <a href="{{url('inpatient/Cancel_discharge/'.$d->id)}}" class="btn btn-danger btn-xs">Cancel Request</a>
                                 </td>
                             </tr>
                         @endforeach()
