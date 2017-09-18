@@ -15,9 +15,10 @@ use Ignite\Inpatient\Entities\Discharge;
 use Ignite\Inpatient\Entities\WardAssigned;
 use Ignite\Inpatient\Entities\DischargeNote;
 use Ignite\Inpatient\Entities\Deposit;
-use Ignite\Evaluation\Entities\FinancePatientAccounts;
+//use Ignite\Evaluation\Entities\FinancePatientAccounts;
+use Ignite\Finance\Entities\PatientAccount;
 use Ignite\Evaluation\Entities\Vitals;
-use Ignite\Inpatient\Entities\PatientAccount;
+//use Ignite\Inpatient\Entities\PatientAccount;
 
 class AccountsController extends Controller
 {
@@ -38,8 +39,8 @@ class AccountsController extends Controller
     }
 
     public function topUpAmount(Request $request) {
-        if (count(PatientAccount::where('patient_id', $request->patient_id)->get())) {
-            $patient = PatientAccount::where('patient_id', $request->patient_id)->first();
+        if (count(PatientAccount::where('patient', $request->patient_id)->get())) {
+            $patient = PatientAccount::where('patient', $request->patient_id)->first();
             $patient->update(['balance' => $patient->balance + $request->amount]);
         } else {
             $request['balance'] = $request->amount;
@@ -66,7 +67,6 @@ class AccountsController extends Controller
         $pdf->setPaper('a4', 'Landscape');
         return $pdf->stream('Deposit_slip' . str_random(4) . '.pdf');
 
-
         return view('Inpatient::admission.deposit_slip', compact('patient', 'depo', 'balance'));
     }
 
@@ -79,8 +79,8 @@ class AccountsController extends Controller
 
     public function WithdrawAmount(Request $request) {
         //search for the account..
-        if (count(PatientAccount::where('patient_id', $request->patient_id)->get())) {
-            $patient_acc = PatientAccount::where('patient_id', $request->patient_id)->first();
+        if (count(PatientAccount::where('patient', $request->patient_id)->get())) {
+            $patient_acc = PatientAccount::where('patient', $request->patient_id)->first();
             $account_balance = $patient_acc->balance;
         } else {
             $account_balance = 0;

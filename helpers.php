@@ -51,3 +51,14 @@ if (!function_exists('get_inventory_consumables')) {
         return InventoryProducts::whereConsumable(true)->get();
     }
 }
+
+
+if (!function_exists('save_patient_transaction')) {
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
+    function save_patient_transaction()
+    {
+        return InventoryProducts::whereConsumable(true)->get();
+    }
+}
