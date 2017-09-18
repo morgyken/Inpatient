@@ -17,6 +17,7 @@ use Carbon\Carbon;
 use Ignite\Evaluation\Entities\Investigations;
 use Ignite\Evaluation\Entities\Procedures;
 use Ignite\Evaluation\Entities\VisitDestinations;
+use Ignite\Evaluation\Entities\RecurrentCharge;
 use Ignite\Inpatient\Entities\Administration;
 use Ignite\Inpatient\Entities\Admission;
 use Ignite\Inpatient\Entities\BloodPressure;
@@ -27,12 +28,14 @@ use Ignite\Inpatient\Entities\HeadInjury;
 use Ignite\Inpatient\Entities\InpatientConsumable;
 use Ignite\Inpatient\Entities\Notes;
 use Ignite\Inpatient\Entities\NursingCarePlan;
+use Ignite\Inpatient\Entities\NursingCharge;
 use Ignite\Inpatient\Entities\Prescription;
 use Ignite\Inpatient\Entities\RequestAdmission;
 use Ignite\Inpatient\Entities\RequestDischarge;
 use Ignite\Inpatient\Entities\Temperature;
 use Ignite\Inpatient\Entities\Visit;
 use Ignite\Inpatient\Entities\Vitals;
+use Ignite\Inpatient\Entities\WardAssigned;
 use Ignite\Inpatient\Helpers\InpatientHelpers;
 use Ignite\Inventory\Entities\InventoryBatchPurchases;
 use Ignite\Inventory\Entities\InventoryProductPrice;
@@ -1536,27 +1539,39 @@ class InpatientApiController extends Controller
 
             // Check the pending reccurrent charges.
             // the ward's charges
-            $wardCharges = 0;
+            $wardCharges = 0; $recuCharges = 0;
             $wards = WardAssigned::where('visit_id', $request['visit_id'])->get();
 
             foreach ($wards as $ward) {
-                $wardCharges += $ward->price * date_diff($ward->discharged_at,$ward->created_at) ;
+                $wardCharges += $ward->price * $this->carbon->now()->diffInDays($ward->created_at);
+
+                //subscribed reccurrent charges
+                $rcnt = RecurrentCharge::where('visit_id', $request['visit_id'])->where('status', 'unpaid')->get();
+
+                $recuCharges = $rcnt->sum(function($recurrent){
+                    return $sum += NursingCharge::find($recurrent->recurrent_charge_id)->cost * $this->carbon->now()->diffInDays($ward->created_at);
+                });
             }
 
-            $recuCharges = 0;
-            //subscribed reccurrent charges
-            $rcnt = RecurrentCharge::where('visit_id', $request['visit_id'])->where('status', 'unpaid')->get();
-
-            foreach ($rcnt as $recurrent) {
-                //nursing charges times no. of days..
-                $recuCharges += NursingCharge::find($recurrent->recurrent_charge_id)->cost * date_diff($ward->discharged_at,$ward->created_at);
+             foreach ($wards as $ward) {
+                $wardCharges += ($this->carbon->now() != null) ? ($ward->price * ($this->carbon->parse($this->carbon->now())->diffInDays($ward->created_at) )) : $ward->price * $this->carbon->now()->diffInDays($ward->created_at);
+                //subscribed reccurrent charges
+                foreach ($rcnt as $recurrent) {
+                    //nursing charges times no. of days..
+                    $recuCharges +=  ($this->carbon->now() != null) ? NursingCharge::find($recurrent->recurrent_charge_id)->cost * $this->carbon->parse($this->carbon->now())->diffInDays($ward->created_at) : NursingCharge::find($recurrent->recurrent_charge_id)->cost;
+                }
             }
+
+            // foreach ($rcnt as $recurrent) {
+            //     //nursing charges times no. of days..
+            //     $recuCharges += NursingCharge::find($recurrent->recurrent_charge_id)->first()->cost * date_diff($this->carbon->now(),$ward->created_at);
+            // }
 
             $totalCharges = $wardCharges + $recuCharges;
 
             //check patient account balance..
-            $visit = Visit::find($request['visit_id']);
-            $acc = PatientAccount::find($visit->patient);
+            $visit = Visit::find($request['visit_id'])->first();
+            $acc = PatientAccount::where("patient_id", $visit->patient)->first();
             $acc_balance = 0;
 
             if ($acc) { $acc_balance = $acc->balance; }
@@ -1572,7 +1587,8 @@ class InpatientApiController extends Controller
             }
 
             //charge the recurrent charges from the patient acc.
-            $acc->update(['balance' => ($acc->balance - $totalCharges)]);
+            $acc->balance = $acc->balance - $totalCharges;
+            $acc->save();
 
             Discharge::create([
                 'visit_id'                  => $request['visit_id'],
@@ -1581,10 +1597,9 @@ class InpatientApiController extends Controller
                 'case_notes'                => $request['case_notes'],
                 'principal_diagnosis'       => $request['principal_diagnosis'],
                 'other_diagnosis'           => $request['other_diagnosis'],
-                'admission_complaints'      => $request['admission_complaints'],
+                'admission_complaints'      => $request['complaints'],
                 'investigations_courses'    => $request['investigations_courses'],
-                'discharge_condition'       => $request['discharge_medications'],
-                'discharge_medications'     => serialize($request['discharge_medications']),
+                'discharge_condition'       => $request['discharge_condition'],
                 'dateofdeath'               => $request['dateofdeath'],
                 'timeofdeath'               => $request['timeofdeath'],
                 'type'                      => $request['type'],
@@ -1592,15 +1607,30 @@ class InpatientApiController extends Controller
             ]);
 
             //release the bed for reassignment.
-            $admission = Admission::orderBy('created_at', 'desc')->where('visit_id', $request['visit_id'])->first();
-            $bed = Bed::find($admission->visit_id);
-            $bed->update(['status' => 'available']);
+            $admission = Admission::where('visit_id', $request['visit_id'])->first();
+            $bed = Bed::where("visit_id", $admission->bed_id)->first();
+            $bed->status = 'available';
+            $bed->save();
+
             //record these charges to the patient
             //remove the discharge request.
-            $request_dis = RequestDischarge::orderBy('created_at', 'desc')->where('visit_id', $request['visit_id'])->first();
-            if ($request_dis) {
-                $request_dis->delete();
-            }
+
+          
+            // Change admission status
+            $admission->is_discharged = 1;
+            $admission->save();
+
+            // Change ward status
+             foreach ($wards as $ward) {
+                $ward->discharged_at = $this->carbon->now();
+                $ward->status = 'unoccupied';
+                $ward->save();
+            }  
+
+            // Remove Discharge request
+            $request_disharge = RequestDischarge::where('visit_id', $request['visit_id'])->first();
+            $request_disharge->delete();
+
             \DB::commit();
             return Response::json(['type' => 'success', 'message' => 'Patient has been discharged!']);
         }catch (\Exception $e) {
@@ -1608,7 +1638,5 @@ class InpatientApiController extends Controller
             return Response::json(['type' => 'error', 'message' => 'An error occured. The discharge could not be completed. ' . $e->getMessage()]);
         }
     }
-
-
 
 }

@@ -66,7 +66,7 @@
                         </div>
                         <div class="form-group col-md-6">
                             <label>Discharge Conditions</label>
-                            <textarea name="discharge_conditions" id="discharge_conditions" class="form-control summernote" rows="3" cols = "10" required></textarea>
+                            <textarea name="discharge_condition" id="discharge_condition" class="form-control summernote" rows="3" cols = "10" required></textarea>
                         </div>
                     </div>
                 </div>
@@ -187,7 +187,7 @@
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <br/><br/>
                 <div class="pull-right">
-                    <button type="button" class="btn btn-lg btn-primary" id = "discharge"><i class="fa fa-save"></i> Discharge</button>&nbsp;<button type="button" class="btn btn-default" id = "print_summary" style="display: none !important;"><i class="fa fa-print"></i> Print</button>
+                    <button type="button" class="btn btn-lg btn-primary" id = "btnDischarge"><i class="fa fa-save"></i> Discharge</button>&nbsp;<button type="button" class="btn btn-default" id = "print_summary" style="display: none !important;"><i class="fa fa-print"></i> Print</button>
                 </div>
             </div>
           
@@ -250,31 +250,26 @@
                     check_type();
                 });
 
-                $('#discharge').click(function(e){
+                $('#btnDischarge').click(function(e){
                     e.preventDefault();
-                    var v = $("#discharge_type").val();
-                    if(v == 'case'){
-                        let data = JSON.stringify({
-                            visit_id : VISIT_ID,
-                            admission_id: ADMISSION_ID,
-                            user_id: USER_ID,
-                            timeofdeath: $("#timeofdeath").val(),
-                            dateofdeath: $("#dateofdeath").val(),
-                            caseNote: $("#caseNote").val()
-                        });
-                    }else{
-                         let data = JSON.stringify({
-                            visit_id : VISIT_ID,
-                            admission_id: ADMISSION_ID,
-                            user_id: USER_ID,
-                            to_come_again : $("#to_come_again").val(),
-                            principal_diagnosis: $("#principal_diagnosis").val(),
-                            other_diagnosis: $("#other_diagnosis").val(),
-                            complaints: $("#complaints").val(),
-                            discharge_conditions: $("#discharge_conditions").val(),
-                            investigations_courses: $("#investigations_courses").val(),
-                        });
-                    }
+
+                    var type = $("#discharge_type").val();
+
+                    let data = JSON.stringify({
+                        visit_id : VISIT_ID,
+                        admission_id: ADMISSION_ID,
+                        doctor_id: USER_ID,
+                        to_come_again : $("#to_come_again").val(),
+                        principal_diagnosis: $("#principal_diagnosis").val(),
+                        other_diagnosis: $("#other_diagnosis").val(),
+                        complaints: $("#complaints").val(),
+                        discharge_condition: $("#discharge_condition").val(),
+                        investigations_courses: $("#investigations_courses").val(),
+                        timeofdeath: $("#timeofdeath").val(),
+                        dateofdeath: $("#dateofdeath").val(),
+                        case_note: $("#caseNote").val(),
+                        type: type
+                    });
 
                  $.ajax({
                     type: "POST",
@@ -283,11 +278,14 @@
                     success: function (resp) {
                         if(resp.type === "success"){
                             alertify.success(resp.message);
+                            $("#print_summary").css("display","block");
                         }else{
+                            console.log(data);
                             alertify.error(resp.message);
                         }
                     },
                     error: function (resp) {
+                        console.log(data);
                         alertify.error(resp.message);
                     }
                 });
@@ -418,7 +416,8 @@
       </script>
     @else
         <div class="alert alert-info">
-            <strong><i class="fa fa-exclamation-circle"></strong> This patient has already been discharged
+            <strong><i class="fa fa-exclamation-circle"></strong> This patient has already been discharged <br/>
+            <button type="button" class="btn btn-default" id = "print_summary" style="display: block !important;"><i class="fa fa-print"></i> Print Discharge Summary</button>
         </div>
 
     @endif
