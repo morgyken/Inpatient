@@ -227,7 +227,9 @@
 
         <script type="text/javascript">
             $(document).ready(function(){
-             
+                
+                // $("#discharge-prescriptions-table").dataTable();
+
                 $("#timeofdeath").timepicker({ 'scrollDefault': 'now' });
 
                 var check_type = function () {
