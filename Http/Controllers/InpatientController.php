@@ -622,41 +622,16 @@ class InpatientController extends AdminBaseController
 
     public function request_discharge($id, $visit_id)
     {
-        //THE Doctor should be able to write a note
-        $v = Visit::findorfail($visit_id);
-        $patient = Patients::findorfail($v->patient);
-        $account = PatientAccount::where('patient_id', $patient->id)->first();
+        $c = RequestDischarge::where('visit_id',$visit_id)->count();
 
-        $wardCharges = 0;
-        $wards = WardAssigned::where('visit_id', $visit_id)->get();
-        foreach ($wards as $ward) {
-            $wardCharges += ($ward->price/** date_diff($ward->discharged_at,$ward->created_at) */);
-        }
-        $recuCharges = 0;
-        //subscribed reccurrent charges
-        $rcnt = RecurrentCharge::where('visit_id', $visit_id)->where('status', 'unpaid')->get();
-        foreach ($rcnt as $recurrent) {
-            //nursing charges times no. of days..
-            $recuCharges += NursingCharge::find($recurrent->recurrent_charge_id)->cost/** date_diff($ward->discharged_at,$ward->created_at) */
-            ;
-        }
+        if($c > 0){ return back()->with('error', 'Request has already been submitted!'); }
 
-        $totalCharges = $wardCharges + $recuCharges;
-
-        return view('Inpatient::admission.request_patient_discharge', compact('account', 'patient', 'visit_id', 'v', 'totalCharges'));
-
-        //add a record to request discharge table
-        $user_id = (\Auth::user()->id);
-
-        RequestDischarge::create([
-            'doctor_id' => $user_id,
-            'visit_id' => $visit_id,
-            'status' => 'unconfirmed'
-        ]);
-        return redirect()->back()->with('success', 'Successfully requested for discharge');
+        $admission = Admission::where("visit_id",$visit_id)->first();
+       
+        return view('Inpatient::admission.request_patient_discharge', compact('admission'));
     }
 
-    public function requested_discharge(Request $request)
+    public function requested_discharge()
     {
         $discharges = RequestDischarge::all();
         return view('Inpatient::admission.discharges', compact('discharges'));

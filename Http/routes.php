@@ -120,7 +120,7 @@ Route::group(['as' => 'inpatient.'], function() {
     //cancel request admissin
     Route::get('/cancel_request/{visit}',['uses'=>'InpatientController@cancel_request']);
     //request discharge
-    // Route::get('/manage/{id}/requestDischarge/{visit_id}',['uses'=>'InpatientController@request_discharge']);
+    Route::get('/manage/{id}/requestDischarge/{visit_id}',['uses'=>'InpatientController@request_discharge']);
     Route::get('/request_discharge',['uses'=>'InpatientController@requested_discharge']);
     //discharge the patient..
     Route::get('/discharge/{visit}',['uses'=>'InpatientController@confirm_discharge']);
