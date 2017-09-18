@@ -48,4 +48,10 @@ class Ward extends Model
     public function assigned(){
         return $this->hasMany(WardAssigned::class);
     }
+
+    public function bedposition()
+    {
+        return $this->hasMany(BedPosition::class, 'id','ward_id');
+    }
+
 }

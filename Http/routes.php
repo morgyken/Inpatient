@@ -67,6 +67,7 @@ Route::group(['as' => 'inpatient.'], function() {
     */
 
     Route::group(['prefix' => 'beds'], function(){
+        Route::post('/change_bed','BedsController@change_bed');
         Route::get('/bedList',['uses'=>'BedsController@index']);
         Route::get('/bedPosition',['uses'=>'BedsController@bedPosition']);
         Route::post('/bedPosition',['uses'=>'BedsController@postbedPosition']);
@@ -115,7 +116,7 @@ Route::group(['as' => 'inpatient.'], function() {
 
 
     Route::get('/getAvailableBedPosition/{ward}',['uses'=>'InpatientController@getAvailableBedPosition']);
-    Route::post('/change_bed',['uses'=>'InpatientController@change_bed']);
+   
     //cancel request admissin
     Route::get('/cancel_request/{visit}',['uses'=>'InpatientController@cancel_request']);
     //request discharge

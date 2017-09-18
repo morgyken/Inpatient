@@ -2,16 +2,20 @@
 
 namespace Ignite\Inpatient\Http\Controllers;
 
+use Ignite\Core\Http\Controllers\AdminBaseController;
+
 use Dompdf\Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Ignite\Inpatient\Entities\Ward;
+use Ignite\Inpatient\Entities\WardAssigned;
 use Ignite\Inpatient\Entities\Bed;
 use Ignite\Inpatient\Entities\BedPosition;
+use Ignite\Inpatient\Entities\Admission;
 use Session;
 
-class BedsController extends Controller
+class BedsController extends AdminBaseController
 {
     protected $ward;
     protected $bed;
@@ -19,6 +23,7 @@ class BedsController extends Controller
 
     public function __construct(Ward $ward, Bed $bed, BedPosition $bedPosition)
     {
+        parent::__construct();
         $this->ward = $ward;
         $this->bed = $bed;
         $this->bedPosition = $bedPosition;
@@ -75,14 +80,16 @@ class BedsController extends Controller
             //ward change to be indicated here..
             $ward_assigned = WardAssigned::where('visit_id', $admission->visit_id)->orderBy('created_at', 'desc')->first();
             if (count($ward_assigned)) {
-                $ward_assigned->update(['discharged_at' => date("Y-m-d G:i:s")]);
+                $ward_assigned->update(['discharged_at' => date("Y-m-d G:i:s"), 'status' => 'unoccupied']);
             }
             //assign another ward
             $ward = Ward::find($request->ward_id);
             WardAssigned::create([
+                'admission_id' => $request->admission_id,
                 'visit_id' => $admission->visit_id,
                 'ward_id' => $request->ward_id,
-                'price' => $ward->cost
+                'price' => $ward->cost,
+                'admitted_at'   => $admission->created_at
             ]);
         }
         $admission->update([

@@ -590,7 +590,7 @@ class InpatientController extends AdminBaseController
         $ward = Ward::find($admission->ward_id);
         $bed = Bed::find($admission->bed_id)->number;
         $beds = Bed::where('status', 'available')->get();
-        $wards = Ward::all();
+        $wards = Ward::all()->except($admission->ward_id);
         return view('Inpatient::admission.movePatient', compact('v', 'wards', 'bed', 'beds', 'ward', 'balance', 'patient', 'admission'));
     }
 
@@ -780,11 +780,11 @@ class InpatientController extends AdminBaseController
         $rcnt = RecurrentCharge::where('visit_id', $visit_id)->get();
 
         foreach ($wards as $ward) {
-            $wardCharges += ($ward->discharged_at != null) ? ($ward->price * ($ward->discharged_at->diffInDays($ward->created_at) )) : $ward->price * $this->carbon->now()->diffInDays($ward->created_at);
+            $wardCharges += ($ward->discharged_at != null) ? ($ward->price * ($this->carbon->parse($ward->discharged_at)->diffInDays($ward->created_at) )) : $ward->price * $this->carbon->now()->diffInDays($ward->created_at);
             //subscribed reccurrent charges
             foreach ($rcnt as $recurrent) {
                 //nursing charges times no. of days..
-                $recuCharges +=  ($ward->discharged_at != null) ? NursingCharge::find($recurrent->recurrent_charge_id)->cost * $ward->discharged_at->diffInDays($ward->created_at) : NursingCharge::find($recurrent->recurrent_charge_id)->cost;
+                $recuCharges +=  ($ward->discharged_at != null) ? NursingCharge::find($recurrent->recurrent_charge_id)->cost * $this->carbon->parse($ward->discharged_at)->diffInDays($ward->created_at) : NursingCharge::find($recurrent->recurrent_charge_id)->cost;
             }
         }
 

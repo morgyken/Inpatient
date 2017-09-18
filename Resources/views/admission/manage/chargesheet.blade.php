@@ -14,9 +14,9 @@
             </tr>
             <tr>
                <th>DATE OF ADMISSION</th>
-               <td>{{ $admission->created_at->format('jS M, Y H:i A ')}}</td>
+               <td>{{ $admission->created_at->format('jS M, Y H:i A ') }}</td>
                <th>DATE OF DISCHARGE</th>
-               <td></td>
+               <td>{{ ($charges['admission']->ward->discharged_at != null) ? \Carbon\Carbon::parse($charges['admission']->ward->discharged_at)->format('jS M, Y H:i A ') : 'Not Discharged' }}</td>
             </tr>
          </tbody>
       </table>
@@ -44,10 +44,10 @@
             @endforeach
             @foreach($charges['wards'] as $w)
               <tr>
-                <td>Ward {{ $w->name }} ({{ $w->category }} {{ $w->cost }}/per day)  {{ ($w->discharged_at != null) ? $w->discharged_at->diffInDays($w->created_at) : \Carbon\Carbon::now()->diffInDays($w->created_at) }} days</td>
-                <td>{{ ($w->discharged_at != null) ? $w->discharged_at->diffInDays($w->created_at) : \Carbon\Carbon::now()->diffInDays($w->created_at) }}</td>
-                <td>{{ $w->cost }}</td>
-                <td>{{ $w->cost * (($w->discharged_at != null) ? $w->discharged_at->diffInDays($w->created_at) : \Carbon\Carbon::now()->diffInDays($w->created_at)) }}</td>
+                <td>Ward {{ $w->name }} ({{ $w->category }} {{ $w->cost }}/per day)  {{ ($w->discharged_at != null) ? \Carbon\Carbon::parse($w->discharged_at)->diffInDays($w->created_at) : \Carbon\Carbon::now()->diffInDays($w->created_at) }} days</td>
+                <td>{{ ($w->discharged_at != null) ? \Carbon\Carbon::parse($w->discharged_at)->diffInDays($w->created_at) : \Carbon\Carbon::now()->diffInDays($w->created_at) }}</td>
+                <td>{{ $w->price }}</td>
+                <td>{{ $w->price * (($w->discharged_at != null) ? \Carbon\Carbon::parse($w->discharged_at)->diffInDays($w->created_at) : (\Carbon\Carbon::now()->diffInDays($w->created_at) > 0) ? Carbon\Carbon::now()->diffInDays($w->created_at) : 1 ) }}</td>
               </tr>
             @endforeach
           </tbody>
