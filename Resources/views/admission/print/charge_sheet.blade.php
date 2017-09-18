@@ -122,7 +122,7 @@
                <th>DATE OF ADMISSION</th>
                <td>{{ $charges['admission']->created_at->format('jS M, Y H:i A ')}}</td>
                <th>DATE OF DISCHARGE</th>
-               <td></td>
+               <td>{{ ($charges['admission']->ward->discharged_at != null) ? \Carbon\Carbon::parse($charges['admission']->ward->discharged_at)->format('jS M, Y H:i A ') : 'Not Discharged' }}</td>
             </tr>
          </tbody>
       </table>
@@ -150,10 +150,10 @@
             @endforeach
             @foreach($charges['wards'] as $w)
               <tr>
-                <td>Ward {{ $w->name }} ({{ $w->category }} {{ $w->cost }}/per day)  {{ ($w->discharged_at != null) ? $w->discharged_at->diffInDays($w->created_at) : \Carbon\Carbon::now()->diffInDays($w->created_at) }} days</td>
-                <td>{{ ($w->discharged_at != null) ? $w->discharged_at->diffInDays($w->created_at) : \Carbon\Carbon::now()->diffInDays($w->created_at) }}</td>
-                <td>{{ $w->cost }}</td>
-                <td>{{ $w->cost * (($w->discharged_at != null) ? $w->discharged_at->diffInDays($w->created_at) : \Carbon\Carbon::now()->diffInDays($w->created_at)) }}</td>
+                <td>Ward {{ $w->name }} ({{ $w->category }} {{ $w->cost }}/per day)  {{ ($w->discharged_at != null) ? \Carbon\Carbon::parse($w->discharged_at)->diffInDays($w->created_at) : \Carbon\Carbon::now()->diffInDays($w->created_at) }} days</td>
+                <td>{{ ($w->discharged_at != null) ? \Carbon\Carbon::parse($w->discharged_at)->diffInDays($w->created_at) : \Carbon\Carbon::now()->diffInDays($w->created_at) }}</td>
+                <td>{{ $w->price }}</td>
+                <td>{{ $w->price * (($w->discharged_at != null) ? \Carbon\Carbon::parse($w->discharged_at)->diffInDays($w->created_at) : (\Carbon\Carbon::now()->diffInDays($w->created_at) > 0) ? Carbon\Carbon::now()->diffInDays($w->created_at) : 1 ) }}</td>
               </tr>
             @endforeach
           </tbody>
@@ -319,16 +319,16 @@
             </tr>
           @endforeach
         </tbody>
-        <tfoot>
+         <tfoot>
             <tr>
                 <th colspan = "4"><h5>TOTAL</h5></th>
-                <td colspan = "2" id = "total_prescription_charge">Ksh. </td>
+                <td colspan = "2" id = "total_prescription_charge">Ksh. {{ $charges['totalPrescriptionCharges'] }}</td>
             </tr>
             <tr>
-                <th colspan="2">TOTAL BILL: Ksh. </th>
+                <th colspan="2">TOTAL BILL: Ksh. {{ $charges['totalBill'] }}</th>
                 <th colspan="2">Max Allowed By Insurance: Ksh. 0</th>
-                <th>PAID AMOUNT: Ksh. </th>
-                <th>BALANCE: Ksh. {{ $charges['admission']->patient->account->balance }}</th>
+                <th>PAID AMOUNT: Ksh. {{ $charges['admission']->patient->account->balance }}</th>
+                <th>BALANCE: Ksh. {{ $charges['totalBill'] - $charges['admission']->patient->account->balance }}</th>
             </tr>
         </tfoot>
        </table>

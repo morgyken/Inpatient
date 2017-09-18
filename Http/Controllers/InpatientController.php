@@ -10,6 +10,7 @@ use Ignite\Evaluation\Entities\RecurrentCharge;
 use Ignite\Evaluation\Entities\VisitDestinations;
 use Ignite\Evaluation\Repositories\EvaluationRepository;
 use Ignite\Inpatient\Entities\Admission;
+use Ignite\Inpatient\Entities\Administration;
 use Ignite\Inpatient\Entities\Bed;
 use Ignite\Inpatient\Entities\BedPosition;
 use Ignite\Inpatient\Entities\BloodPressure;
@@ -772,6 +773,12 @@ class InpatientController extends AdminBaseController
         $wardCharges = 0; 
         $recuCharges = 0;
         $totalNursingAndWardCharges = 0;
+        $totalInvestigationsCharges = 0;
+        $totalProceduresCharges = 0;
+        $totalConsumablesCharges = 0;
+        $totalDispensedDrugs = 0;
+        $totalDischargeDrugs = 0;
+        $totalBill = 0;
 
         $admission = Admission::where('visit_id', $visit_id)->first();
         // Check total days based on discharge and admission date
@@ -779,6 +786,14 @@ class InpatientController extends AdminBaseController
         $wards = WardAssigned::where('visit_id', $visit_id)->get(); 
         $rcnt = RecurrentCharge::where('visit_id', $visit_id)->get();
 
+        $done_investigations = get_inpatient_investigations($visit_id);
+        $consumption_list = InpatientConsumable::whereVisit($visit_id)->get();
+        $done_procedures = get_inpatient_investigations($visit_id, 'procedure');
+        $dispensed_drugs = Prescriptions::where("visit", $visit_id)->where("status", 1)->get();
+        $discharge_drugs = Prescriptions::where("visit", $visit_id)->where("for_discharge", 1)->get();
+        $admission = Admission::where("visit_id", $visit_id)->first();
+
+        // Calculate Totals 
         foreach ($wards as $ward) {
             $wardCharges += ($ward->discharged_at != null) ? ($ward->price * ($this->carbon->parse($ward->discharged_at)->diffInDays($ward->created_at) )) : $ward->price * $this->carbon->now()->diffInDays($ward->created_at);
             //subscribed reccurrent charges
@@ -788,16 +803,25 @@ class InpatientController extends AdminBaseController
             }
         }
 
+        foreach($dispensed_drugs as $d){
+            $totalDispensedDrugs += $admission->visit->payment_mode == 'cash' ?  $d->drugs->prices[0]->cash_price * Administration::where("prescription_id", $d->id)->count() : $d->drugs->prices[0]->credit_price * Administration::where("prescription_id", $d->id)->count();
+        }
+
+        foreach($discharge_drugs as $d){
+            $totalDischargeDrugs += $admission->visit->payment_mode == 'cash' ?  $d->drugs->prices[0]->cash_price * Administration::where("prescription_id", $d->id)->count() : $d->drugs->prices[0]->credit_price * Administration::where("prescription_id", $d->id)->count();
+        }
+
+
+
         $totalNursingAndWardCharges = $wardCharges + $recuCharges;
+        $totalInvestigationsCharges = $done_investigations->sum('amount'); 
+        $totalConsumablesCharges = $consumption_list->sum('amount');
+        $totalProceduresCharges = $done_procedures->sum('amount');
+        $totalPrescriptionCharges = $totalDispensedDrugs + $totalDischargeDrugs;
 
-        $done_investigations = get_inpatient_investigations($visit_id);
-        $consumption_list = InpatientConsumable::whereVisit($visit_id)->get();
-        $done_procedures = get_inpatient_investigations($visit_id, 'procedure');
-        $dispensed_drugs = Prescriptions::where("visit", $visit_id)->where("status", 1)->get();
-        $discharge_drugs = Prescriptions::where("visit", $visit_id)->where("for_discharge", 1)->get();
-        $admission = Admission::where("visit_id", $visit_id)->first();
+        $totalBill = $totalNursingAndWardCharges + $totalInvestigationsCharges + $totalConsumablesCharges + $totalProceduresCharges + $totalPrescriptionCharges;
 
-        $charges = ['admission' => $admission,'recurrent_charges' => $rcnt, 'wards' => $wards, 'investigations' => $done_investigations, 'consumables' => $consumption_list, 'procedures' => $done_procedures, 'dispensed_drugs' => $dispensed_drugs, 'discharge_drugs' => $discharge_drugs, 'totalNursingAndWardCharges' => $totalNursingAndWardCharges, 'daysAdmitted' => $daysAdmitted];
+        $charges = ['admission' => $admission,'recurrent_charges' => $rcnt, 'wards' => $wards, 'investigations' => $done_investigations, 'consumables' => $consumption_list, 'procedures' => $done_procedures, 'dispensed_drugs' => $dispensed_drugs, 'discharge_drugs' => $discharge_drugs, 'totalNursingAndWardCharges' => $totalNursingAndWardCharges, 'daysAdmitted' => $daysAdmitted, 'totalPrescriptionCharges' => $totalPrescriptionCharges, 'totalBill' => $totalBill];
 
         if($type == 1){
             return $charges;

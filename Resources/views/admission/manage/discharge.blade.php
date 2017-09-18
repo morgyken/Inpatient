@@ -32,7 +32,7 @@
             <div class=" case form-group"><br/>
                 <label class="control-label col-md-4" style="padding: 0 !important;">Case Note</label>
                 <div class="col-md-8" style="padding-top:5px !important;">
-                    <textarea  name="caseNote" id = "caseNote" class="form-control summernote" required></textarea>
+                    <textarea name="caseNote" id = "caseNote" class="form-control summernote" required></textarea>
                 </div>
             </div>
         
@@ -40,6 +40,12 @@
 
         <div class="summary-type" style="display:none !important;">
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0 !important;">
+                 <div class="form-group">
+                    <label class="control-label col-xs-12 col-sm-12 col-md-4" style="padding: 0 !important;">To Come Again</label>
+                    <div class="col-xs-12 col-sm-12 col-md-8">
+                       <input type="date" name="to_come_again" id = "to_come_again" class="form-control" value = "{{ \Carbon\Carbon::now('Africa/Nairobi')->toDateString() }}">
+                    </div>
+                </div>
                 <div class="row col-md-12">
                      <div class="form-group col-md-6" style="padding: 0 !important;">
                         <label>Principal Diagnosis</label>
@@ -193,6 +199,7 @@
             var USER_ID = "{{ Auth::user()->id }}";
             var PRESCRIPTIONS_URL = "{{ url('/api/inpatient/v1/prescriptions/discharge') }}";
             var PRESCRIPTIONS_DELETE_URL = "{{ url('/api/inpatient/v1/prescriptions/delete') }}";
+            var DISCHARGE_POST_URL = "{{ url('/api/inpatient/v1/discharge') }}";
         </script>
 
         <script src="{!! m_asset('evaluation:js/prescription.js') !!}"></script>
@@ -200,7 +207,7 @@
         <script type="text/javascript">
             $(document).ready(function(){
              
-                $("#time").timepicker({ 'scrollDefault': 'now' });
+                $("#timeofdeath").timepicker({ 'scrollDefault': 'now' });
 
                 var check_type = function () {
 
@@ -239,6 +246,7 @@
                             visit_id : VISIT_ID,
                             admission_id: ADMISSION_ID,
                             user_id: USER_ID,
+                            to_come_again : $("#to_come_again").val(),
                             principal_diagnosis: $("#principal_diagnosis").val(),
                             other_diagnosis: $("#other_diagnosis").val(),
                             complaints: $("#complaints").val(),
@@ -249,7 +257,7 @@
 
                  $.ajax({
                     type: "POST",
-                    url: "{{ url('/api/inpatient/v1/discharge') }}",
+                    url: DISCHARGE_POST_URL,
                     data: data,
                     success: function (resp) {
                         if(resp.type === "success"){
@@ -263,7 +271,6 @@
                     }
                 });
             });
-
 
 
             $('#savePrescriptionForDischarge').click(function(e){

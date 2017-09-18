@@ -216,13 +216,13 @@
         <tfoot>
             <tr>
                 <th colspan = "4"><h5>TOTAL</h5></th>
-                <td colspan = "2" id = "total_prescription_charge">Ksh. </td>
+                <td colspan = "2" id = "total_prescription_charge">Ksh. {{ $charges['totalPrescriptionCharges'] }}</td>
             </tr>
             <tr>
-                <th colspan="2">TOTAL BILL: Ksh. </th>
+                <th colspan="2">TOTAL BILL: Ksh. {{ $charges['totalBill'] }}</th>
                 <th colspan="2">Max Allowed By Insurance: Ksh. 0</th>
-                <th>PAID AMOUNT: Ksh. </th>
-                <th>BALANCE: Ksh. {{ $charges['admission']->patient->account->balance }}</th>
+                <th>PAID AMOUNT: Ksh. {{ $charges['admission']->patient->account->balance }}</th>
+                <th>BALANCE: Ksh. {{ $charges['totalBill'] - $charges['admission']->patient->account->balance }}</th>
             </tr>
         </tfoot>
        </table>
