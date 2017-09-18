@@ -809,6 +809,7 @@ class InpatientController extends AdminBaseController
     }
 
     public function buildDischargeSummary($visit_id){
+        
          $admission = Admission::where("visit_id", $visit_id)->first();
         return view('inpatient::admission.print.discharge_summary', compact('admission'));
     }
