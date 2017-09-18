@@ -21,7 +21,8 @@ use Ignite\Inpatient\Entities\FluidBalance;
 use Ignite\Inpatient\Entities\Notes;
 use Ignite\Inpatient\Entities\NursingCarePlan;
 use Ignite\Inpatient\Entities\NursingCharge;
-use Ignite\Inpatient\Entities\PatientAccount;
+//use Ignite\Inpatient\Entities\PatientAccount;
+use Ignite\Finance\Entities\PatientAccount;
 use Ignite\Inpatient\Entities\RequestAdmission;
 use Ignite\Inpatient\Entities\RequestDischarge;
 use Ignite\Inpatient\Entities\Temperature;
@@ -225,21 +226,12 @@ class InpatientController extends AdminBaseController
                 $request['external_doctor'] = null;
                 $request['doctor_id'] = $request->admission_doctor;
             }
-
-
             /*********************************** Apply charges  *************************************/ 
             
             // Find or create the patient account
-            $account = PatientAccount::where('patient_id', $request->patient_id)->first();
-
-            if (count($account)) {
-                $account_balance = $account->balance;
-            } else {
-                $p = new PatientAccount;
-                $p->patient_id = $request->patient_id;
-                $p->balance = 0;
-                $p->save();
-            }
+           // $account = PatientAccount::where('patient', $request->patient_id)->first();
+            $account = PatientAccount::firstOrNew(['patient'=>$request->patient_id]);
+            $account_balance = $account->balance;
 
             // Get Intial admission cost from ward and deposit charges
             $ward_cost = Ward::find($request->ward_id)->first()->cost;
@@ -247,8 +239,8 @@ class InpatientController extends AdminBaseController
             $deposit_amount = $deposit->cost;
             $cost = $ward_cost + $deposit_amount;
            
-            // Update patient balance 
-            $acc = PatientAccount::where('patient_id', $request->patient_id)->first();
+            // Update patient balance
+            $acc = PatientAccount::firstOrNew(['patient'=>$request->patient_id]);
             $balance = $acc->balance - $cost;
             $acc->balance = $balance;
             $acc->save();
@@ -295,7 +287,7 @@ class InpatientController extends AdminBaseController
 
             //the bed should change status to occupied
             if (count(Bed::find($request->bed_id)) > 0) {
-                $bed = Bed::find($request->bed_id)->first();
+                $bed = Bed::find($request->bed_id);//->first();
                 if($bed->status == 'occupied'){
                     return back()->with('error', 'That bed is already occupied!');
                 }else{
@@ -420,18 +412,9 @@ class InpatientController extends AdminBaseController
 
     public function admit_check(Request $request)
     {
-        $account_balance = PatientAccount::where('patient_id', $request->patient_id)->first();
-
-        if (count($account_balance)) {
-            $account_balance = $account_balance->balance;
-        } else {
-            $p = new PatientAccount;
-            $p->patient_id = $request->patient_id;
-            $p->balance = 0;
-            $p->save();
-            $account_balance = 0;
-        }
-
+        //$account_balance = PatientAccount::where('patient_id', $request->patient_id)->first();
+        $account = PatientAccount::firstOrNew(['patient'=>$request->patient_id]);
+        $account_balance = $account->balance;
         /* get the cost of the ward.. */
         // $ward_cost = Ward::find($request->ward_id)->cost;
         $deposit_amount = Deposit::find($request->depositTypeId)->cost;
@@ -582,12 +565,8 @@ class InpatientController extends AdminBaseController
         $admission = Admission::where("visit_id", $visit_id)->first();
         $v = Visit::find($visit_id)->first();
         $patient = Patients::find($id)->first();
-        $acc = PatientAccount::where('patient_id', $id)->first();
-        if (count($acc)) {
-            $balance = $acc->balance;
-        } else {
-            $balance = 0;
-        }
+        $acc = PatientAccount::firstOrNew(['patient'=>$patient->id]);
+        $balance = $acc->balance;
         $ward = Ward::find($admission->ward_id);
         $bed = Bed::find($admission->bed_id)->number;
         $beds = Bed::where('status', 'available')->get();
@@ -623,6 +602,24 @@ class InpatientController extends AdminBaseController
     public function request_discharge($id, $visit_id)
     {
         $c = RequestDischarge::where('visit_id',$visit_id)->count();
+        //THE Doctor should be able to write a note
+        $v = Visit::findorfail($visit_id);
+        $patient = Patients::findorfail($v->patient);
+        $account = PatientAccount::firstOrNew(['patient'=>$patient->id]);
+        $wardCharges = 0;
+        $wards = WardAssigned::where('visit_id', $visit_id)->get();
+        foreach ($wards as $ward) {
+            $wardCharges += ($ward->price/** date_diff($ward->discharged_at,$ward->created_at) */);
+        }
+        $recuCharges = 0;
+        //subscribed reccurrent charges
+        $rcnt = RecurrentCharge::where('visit_id', $visit_id)->where('status', 'unpaid')->get();
+        foreach ($rcnt as $recurrent) {
+            //nursing charges times no. of days..
+            $recuCharges += NursingCharge::find($recurrent->recurrent_charge_id)->cost/** date_diff($ward->discharged_at,$ward->created_at) */
+            ;
+        }
+        $totalCharges = $wardCharges + $recuCharges;
 
         if($c > 0){ return back()->with('error', 'Request has already been submitted!'); }
 
@@ -679,11 +676,8 @@ class InpatientController extends AdminBaseController
 
         //check patient account balance..
         $visit = Visit::find($r->visit_id);
-        $acc = PatientAccount::find($visit->patient);
-        $acc_balance = 0;
-        if ($acc) {
-            $acc_balance = $acc->balance;
-        }
+        $acc = PatientAccount::firstOrNew(['patient'=>$visit->patient]);
+        $acc_balance = $acc->balance;
         if ($totalCharges > $acc_balance) {
             return redirect()->back()->with('error', 'You have a pending charges of Kshs.'
                 . number_format($totalCharges) . '. Your account balance is Kshs. '

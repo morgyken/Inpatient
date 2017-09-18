@@ -14,6 +14,7 @@
 namespace Ignite\Inpatient\Http\Controllers;
 
 use Carbon\Carbon;
+use Ignite\Finance\Entities\PatientAccount;
 use Ignite\Evaluation\Entities\Investigations;
 use Ignite\Evaluation\Entities\Procedures;
 use Ignite\Evaluation\Entities\VisitDestinations;
@@ -1579,13 +1580,15 @@ class InpatientApiController extends Controller
             $acc_balance = 0;
 
             if ($acc) { $acc_balance = $acc->balance; }
+            $visit = Visit::find($request['visit_id']);
+            $acc = PatientAccount::firstOrNew(['patient'=>$visit->patient]);
+            $acc_balance = $acc->balance;
 
             if ($totalCharges > $acc_balance) {
                 $message = 'You have a pending charges of Kshs.'
                     . number_format($totalCharges) . '. Your account balance is Kshs. '
                     . number_format($acc_balance) . '. Please deposit Kshs.'
                     . number_format(($totalCharges - $acc_balance)) . ' to complete the discharge process.';
-
                $message2 = 'You have pending reccurrent charges. Please make the payment to proceed with the discharge';
                 return Response::json(['type' => 'error', 'message' => $message.'\n'.$message2]);
             }
