@@ -210,6 +210,14 @@
             </form>
 
         @endif
+     @else
+        <div class="alert alert-info">
+            <strong><i class="fa fa-exclamation-circle"></strong> This patient has already been discharged 
+            <button type="button" class="btn btn-default" id = "print_summary" style="display: block !important;"><i class="fa fa-print"></i> Print Discharge Summary</button>
+        </div>
+
+    @endif
+
       <script>
             var INSURANCE = false;
             var STOCK_URL = "{{route('api.inventory.getstock')}}";
@@ -421,11 +429,5 @@
 
         });
       </script>
-    @else
-        <div class="alert alert-info">
-            <strong><i class="fa fa-exclamation-circle"></strong> This patient has already been discharged <br/>
-            <button type="button" class="btn btn-default" id = "print_summary" style="display: block !important;"><i class="fa fa-print"></i> Print Discharge Summary</button>
-        </div>
-
-    @endif
+   
 </div>

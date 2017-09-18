@@ -20,6 +20,10 @@
         padding-bottom: 1px;
         color: #333;
     }
+    h4{
+        font-weight: bold !important;
+        color: #000 !important;
+    }
     .left{
         width: 60%;
         float: left;
@@ -117,13 +121,13 @@
     			</tr>
     			<tr>
     				<th>DATE OF ADMISSION</th>
-    				<td>{{ $admission->created_at->format('jS M, Y H:i A ')}}</td>
+    				<td>{{ $admission->created_at->format('jS M, Y H:i A ') }}</td>
     				<th>AGE</th>
     				<td>{{ $admission->patient->age }}</td>
     			</tr>
     			<tr>
     				<th>DATE OF DISCHARGE</th>
-    				<td></td>
+    				<td>{{ $discharge->created_at->format('jS M, Y H:i A ') }}</td>
     				<th>SEX</th>
     				<td>{{ $admission->patient->sex }}</td>
     			</tr>
@@ -136,27 +140,27 @@
 
     	<div class = "sections"><br/>
     		<h4>PRINCIPAL DIAGNOSIS</h4>
-    		<p>{{ $discharge->notes->pricipal_diagnosis}}</p>
+    		{{ ($discharge->notes->pricipal_diagnosis != null) ? $discharge->notes->pricipal_diagnosis : 'None recorded' }}
     	</div>
 
     	<div class = "sections"><br/>
     		<h4>OTHER DIAGNOSIS</h4>
-    		<p>{{ $discharge->notes->other_diagnosis }}</p>
+    		{{ ($discharge->notes->other_diagnosis != null) ? $discharge->notes->other_diagnosis : 'None recorded' }}
     	</div>
 
     	<div class = "sections"><br/>
     		<h4>COMPLAINTS DIAGNOSIS</h4>
-    		<p>{{ $discharge->notes->admission_complaints }}</p>
+    		{{ ($discharge->notes->admission_complaints != null) ? $discharge->notes->admission_complaints : 'None recorded' }}
     	</div>
 
     	<div class = "sections"><br/>
     		<h4>INVESTIGATIONS AND HOSPITAL COURSES</h4>
-    		<p>{{ $discharge->notes->investigations_courses }}</p>
+    		{{ ($discharge->notes->investigations_courses != null) ? $discharge->notes->investigations_courses : 'None recorded' }}
     	</div>
 
     	<div class = "sections"><br/>
     		<h4>DISCHARGE CONDITIONS</h4>
-    		<p>{{ $discharge->notes->discharge_condition }}</p>
+    		{{ ($discharge->notes->discharge_condition != null) ? $discharge->notes->discharge_condition : 'None recorded' }}
     	</div>
 
     	<div class = "sections">
