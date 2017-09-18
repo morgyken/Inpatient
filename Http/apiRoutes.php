@@ -60,6 +60,9 @@ Route::group(['prefix' => 'v1'], function () {
         // Add Prescription
         Route::post('', 'InpatientApiController@addPrescription');
 
+        // Add dicharge prescriptions
+        Route::post('/discharge', 'InpatientApiController@addDischargePrescription');
+
         // Update Prescription
         Route::post('/cancel', 'InpatientApiController@deletePrescription');
 

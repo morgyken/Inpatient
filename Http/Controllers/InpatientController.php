@@ -499,7 +499,7 @@ class InpatientController extends AdminBaseController
                     "intake_alimentary"                     => unserialize($item->intake_alimentary),
                     "output"                                => unserialize($item->output),
                     "recorded_by"                           => $item->user->profile->fullName,
-                    "recorded_on"                           => $item->time_recorded . " " . $item->date_recorded
+                    "recorded_on"                           => $item->time_recorded . " " . $this->carbon->parse($item->date_recorded)->format('d/m/Y')
                 ];
             });
 

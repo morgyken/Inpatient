@@ -32,7 +32,7 @@
             <div class=" case form-group"><br/>
                 <label class="control-label col-md-4" style="padding: 0 !important;">Case Note</label>
                 <div class="col-md-8" style="padding-top:5px !important;">
-                    <textarea  name="caseNote" class="form-control summernote" required></textarea>
+                    <textarea  name="caseNote" id = "caseNote" class="form-control summernote" required></textarea>
                 </div>
             </div>
         
@@ -82,13 +82,13 @@
                         <td>
                           <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0 !important;">
                             <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" style="padding: 0 !important;">
-                              <input type="text" name="take" id="take" class="form-control" required />
+                              <input type="text" name="take" id="pre_take" class="form-control" required />
                             </div>
                               <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" style="padding: 0 !important;">
-                                {!! Form::select('whereto',mconfig('evaluation.options.prescription_whereto'),null,['class'=>'form-control', 'id' => 'whereto'])!!}
+                                {!! Form::select('whereto',mconfig('evaluation.options.prescription_whereto'),null,['class'=>'form-control', 'id' => 'pre_whereto'])!!}
                               </div>
                               <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4" style="padding: 0 !important;">
-                                {!! Form::select('method',mconfig('evaluation.options.prescription_method'),null,['class'=>'form-control', 'id' => 'method'])!!}
+                                {!! Form::select('method',mconfig('evaluation.options.prescription_method'),null,['class'=>'form-control', 'id' => 'pre_method'])!!}
                               </div>
                             </div>
                         </td>
@@ -98,10 +98,10 @@
                         <td>
                           <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0 !important;">
                             <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="padding: 0 !important;">
-                               <input type="text" name="duration" id = "duration" placeholder="E.g 3" class='form-control' required />
+                               <input type="text" name="duration" id = "pre_duration" placeholder="E.g 3" class='form-control' required />
                             </div>
                             <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="padding: 0 !important;">
-                              {!! Form::select('time_measure',mconfig('evaluation.options.prescription_duration'),null,['class'=>'form-control', 'id' => 'time_measure'])!!}
+                              {!! Form::select('time_measure',mconfig('evaluation.options.prescription_duration'),null,['class'=>'form-control', 'id' => 'pre_time_measure'])!!}
                             </div>
                           </div>
                         </td>
@@ -109,20 +109,20 @@
                     <tr>
                         <th>Substitution Allowed? (Check if yes) </th>
                         <td>
-                            <input type="checkbox" name="allow_substitution" class = "checkbox" id = "allow_substitution" style="width: 20px !important; height: 20px !important;" required />
+                            <input type="checkbox" name="allow_substitution" class = "checkbox" id = "pre_allow_substitution" style="width: 20px !important; height: 20px !important;" required />
                         </td>
                     </tr>
 
                     <tr>
                         <th>Regular prescription? (Check if yes) </th>
                         <td>
-                            <input type="checkbox" name="type" class = "checkbox" id = "type" style="width: 20px !important; height: 20px !important;" required />
+                            <input type="checkbox" name="type" class = "checkbox" id = "pre_type" style="width: 20px !important; height: 20px !important;" required />
                         </td>
                     </tr>
                     <tr>
                         <th></th>
                         <td>
-                            <button type="submit" class="btn btn-info " id="savePrescriptionAtDischarge">
+                            <button type="submit" class="btn btn-info " id="savePrescriptionForDischarge">
                                 <i class="fa fa-save"></i> Prescribe
                             </button>
                         </td>
@@ -130,7 +130,7 @@
                 </table>
 
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0 !important';">
-                    <table class="table table-stripped table-hover" id = "single-prescriptions-table">
+                    <table class="table table-stripped table-hover" id = "discharge-prescriptions-table">
                         <thead>
                             <tr>
                                 <th>Drug</th>
@@ -157,13 +157,13 @@
                     </table>
                 </div>
 
-                <div class="modal fade" id="modal-stop-prescription">
+                <div class="modal fade" id="modal-cancel-discharge-prescription">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-body">
                                 <h3>Are you sure you want to cancel this prescription?</h3>
                                 <label>If yes, you must provide a reason below</label>
-                                <textarea name="stop_reasons" id="stop_reasons" class="form-control" rows="3" cols = "10" required></textarea>
+                                <textarea name="cancel_discharge_prescription_reasons" id="cancel_discharge_prescription_reasons" class="form-control" rows="3" cols = "10" required></textarea>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-danger yes-cancel-discharge-prescription">Yes</button>
@@ -172,6 +172,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
       	
@@ -190,7 +191,7 @@
             var VISIT_ID = "{{ $admission->visit_id }}";
             var ADMISSION_ID = "{{ $admission->id }}";
             var USER_ID = "{{ Auth::user()->id }}";
-            var PRESCRIPTIONS_URL = "{{ url('/api/inpatient/v1/prescriptions') }}";
+            var PRESCRIPTIONS_URL = "{{ url('/api/inpatient/v1/prescriptions/discharge') }}";
             var PRESCRIPTIONS_DELETE_URL = "{{ url('/api/inpatient/v1/prescriptions/delete') }}";
         </script>
 
@@ -223,39 +224,142 @@
 
                 $('#dishcarge').click(function(e){
                     e.preventDefault();
-                    let data = JSON.stringify({
-                        visit_id : {{ $admission->visit_id }},
-                        admission_id: {{ $admission->id }},
-                        user_id: {{ Auth::user()->id }},
-                        
-
-                    });
+                    var v = $("#discharge_type").val();
+                    if(v == 'case'){
+                        let data = JSON.stringify({
+                            visit_id : VISIT_ID,
+                            admission_id: ADMISSION_ID,
+                            user_id: USER_ID,
+                            timeofdeath: $("#timeofdeath").val(),
+                            dateofdeath: $("#dateofdeath").val(),
+                            caseNote: $("#caseNote").val()
+                        });
+                    }else{
+                         let data = JSON.stringify({
+                            visit_id : VISIT_ID,
+                            admission_id: ADMISSION_ID,
+                            user_id: USER_ID,
+                            principal_diagnosis: $("#principal_diagnosis").val(),
+                            other_diagnosis: $("#other_diagnosis").val(),
+                            complaints: $("#complaints").val(),
+                            discharge_conditions: $("#discharge_conditions").val(),
+                            investigations_courses: $("#investigations_courses").val(),
+                        });
+                    }
 
                  $.ajax({
                     type: "POST",
                     url: "{{ url('/api/inpatient/v1/discharge') }}",
                     data: data,
                     success: function (resp) {
-                        
+                        if(resp.type === "success"){
+                            alertify.success(resp.message);
+                        }else{
+                            alertify.error(resp.message);
+                        }
+                    },
+                    error: function (resp) {
+                        alertify.error(resp.message);
+                    }
+                });
+            });
+
+
+
+            $('#savePrescriptionForDischarge').click(function(e){
+                e.preventDefault();
+                let pre_type = ($("#pre_type").is(":checked")) ? 1 : 0;
+                let data = JSON.stringify({
+                            visit : VISIT_ID,
+                            admission_id: ADMISSION_ID,
+                            user: USER_ID,
+                            drug: $("#item_1").val(),
+                            take: parseInt($("#pre_take").val()),
+                            whereto: parseInt($("#pre_whereto").val()),
+                            method: parseInt($("#pre_method").val()),
+                            duration: parseInt($("#pre_duration").val()),
+                            time_measure: parseInt($("#pre_time_measure").val()),
+                            allow_substitution: $("#pre_allow_substitution").is(":checked"),
+                            type: pre_type,
+                            for_discharge: 1
+                        });
+
+                 $.ajax({
+                    type: "POST",
+                    url: PRESCRIPTIONS_URL,
+                    data: data,
+                    success: function (resp) {
+                        // add table rows
                          if(resp.type === "success"){
                             alertify.success(resp.message);
-                            let data = JSON.parse(resp.data);
-                            // append new prescriptions if any to table
-                            // data.map( (item, index) => {
-                            //     return(
-                                   
-                            //     );
-                            // });
+                            // Append to Respective row
+                                let data = resp.data;
+                                // Append to Regular prescription table
+                                data.map( (item, index) => {
+                                    return(
+                                        $("#discharge-prescriptions-table > tbody").append("<tr id = 'discharge_row_"+ item.id +"'>\
+                                            <td>"+ item.drug +"</td>\
+                                            <td>" + item.dose + "</td>\
+                                            <td>"+ item.prescribed_by +"</td>\
+                                            <td>"+ item.prescribed_on +"</td>\
+                                            <td><div class='btn-group'>\
+                                            <button type='button' class='btn btn-info'><i class = 'fa fa-exclamation-circle'></i> Dispensing</button>\
+                                            <button type='button' class='btn btn-danger cancel-discharge-prescription' id = '"+ item.id +"'><i class = 'fa fa-times' ></i> Cancel</button>\
+                                        </div></td></tr>")
+                                    );
+                                });
                         }else{
                              alertify.error(resp.message);
                         }
                     },
                     error: function (resp) {
-                        console.log(resp);
-                         alertify.error(resp.message);
+                        alertify.error(resp.message);
                     }
                 });
             });
+
+            $('body').on('click', '.cancel-discharge-prescription',function(e){
+                e.preventDefault();
+                let id =  $(this).attr('id');
+                $(".yes-cancel-discharge-prescription").attr('id', id); 
+                $("#modal-cancel-discharge-prescription").modal();
+            });
+
+            $('.yes-cancel-discharge-prescription').click(function(e){
+                var id = $(this).attr('id');
+                var reason = $.trim($("#cancel_discharge_prescription_reasons").val());
+                if(reason.length > 0){
+                    $.ajax({
+                        type: "POST",
+                        url: PRESCRIPTIONS_DELETE_URL,
+                        data: JSON.stringify({  
+                            visit_id : VISIT_ID,
+                            admission_id: ADMISSION_ID,
+                            user_id: USER_ID,
+                            id : id, 
+                            reason: reason 
+                        }),
+                        success: function (resp) {
+                             if(resp.type === "success"){
+                                alertify.success(resp.message);
+                                $("#discharge_row_"+id+"").remove();
+                                $("#modal-cancel-discharge-prescription").modal('toggle');
+                            }else{
+                                 alertify.error(resp.message);
+                            }
+                        },
+                        error: function (resp) {
+                            alertify.error(resp.message);
+                        }
+                    });
+                }else{
+                    alertify.error("You must first provide a reason for cancellation!");
+                }
+            });                 
+
+
+
+
         });
       </script>
     @else

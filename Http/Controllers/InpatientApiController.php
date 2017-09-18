@@ -586,15 +586,39 @@ class InpatientApiController extends Controller
     public function getFluidBalances($admission_id)
     {
         try {
-            $data = FluidBalance::where("admission_id", $admission_id)->orderBy("updated_at", "DESC")->get()->map(function ($item) {
+            $fluidbalances = FluidBalance::where("admission_id", $admission_id)->orderBy("updated_at", "DESC")->get()->map(function ($item) {
                 return
                     [
                         "id" => $item->id,
-                        "admission_id" => $item->admission_id,
+                        "intravenous_infusion_instructions"     => $item->intravenous_infusion,
+                        "intake_intravenous"                    => unserialize($item->intake_intravenous),
+                        "intake_alimentary"                     => unserialize($item->intake_alimentary),
+                        "output"                                => unserialize($item->output),
+                        "recorded_by"                           => $item->user->profile->fullName,
+                        "recorded_on"                           => $item->time_recorded . " " . $this->carbon->parse($item->date_recorded)->format('d/m/Y')
                     ];
             })->toArray();
 
-            return json_encode(['type' => 'success', 'data' => $data]);
+            $data = [];
+            foreach($fluidbalances as $key => $fb){
+                $data[] =
+                    [
+                        $fb['recorded_on'],
+                        $fb['intake_intravenous']['type'],
+                        $fb['intake_intravenous']['bottle'],
+                        $fb['intake_intravenous']['infused'],
+                        $fb['intake_alimentary']['type'],
+                        $fb['intake_alimentary']['amount'],
+                        $fb['output']['vomit'],
+                        $fb['output']['stool'],
+                        $fb['output']['ngast'],
+                        $fb['output']['others'],
+                        $fb['output']['urine_amount'],
+                        $fb['output']['specific_gravidity']
+                    ];
+            }
+
+            return  response()->json(['data' => $data]);
 
         } catch (\Exception $e) {
             return Response::json(['type' => 'error', 'message' => 'An error occured during fetching. ' . $e->getMessage()]);
@@ -635,32 +659,33 @@ class InpatientApiController extends Controller
             $fb->date_recorded        = $request['date_recorded'];
             $fb->save();
             \DB::commit();
-            return ($fb) ? Response::json(['type' => 'success', 'message' => 'Fluid Balance saved!', 'data' => $this->getFluidBalanceData($request['admission_id'])]) : Response::json(['type' => 'error', 'message' => 'The fluid balance could not be saved']);
+            return ($fb) ? Response::json(['type' => 'success', 'message' => 'Fluid Balance saved!']) : Response::json(['type' => 'error', 'message' => 'The fluid balance could not be saved']);
         }catch(\Exception $e){
             \DB::rollback();
             return Response::json(['type' => 'error', 'message' => 'Your fluid balance could not be saved. '. $e->getMessage()]);
         }
     }
 
-    public function getFluidBalanceData($admission_id){
-        try{
-            $data =  FluidBalance::where("admission_id", $admission_id)->get()->map(function($item){
-                return 
-                [
-                    "id"                                    => $item->id,
-                    "intravenous_infusion_instructions"     => $item->intravenous_infusion,
-                    "intake_intravenous"                    => unserialize($item->intake_intravenous),
-                    "intake_alimentary"                     => unserialize($item->intake_alimentary),
-                    "output"                                => unserialize($item->output),
-                    "recorded_by"                           => $item->user->profile->fullName,
-                    "recorded_on"                           => $item->time_recorded . " " . $item->date_recorded
-                ];
-            })->toArray();
-            return json_encode($data);
-        }catch(\Exception $e){
-            return $e->getMessage();
-        }
-    }
+    // public function getFluidBalanceData($admission_id){
+    //     try{
+    //         $data =  FluidBalance::where("admission_id", $admission_id)->get()->map(function($item){
+    //             return 
+    //             [
+    //                 "id"                                    => $item->id,
+    //                 "intravenous_infusion_instructions"     => $item->intravenous_infusion,
+    //                 "intake_intravenous"                    => unserialize($item->intake_intravenous),
+    //                 "intake_alimentary"                     => unserialize($item->intake_alimentary),
+    //                 "output"                                => unserialize($item->output),
+    //                 "recorded_by"                           => $item->user->profile->fullName,
+    //                 "recorded_on"                           => $item->time_recorded . " " . $item->date_recorded
+    //             ];
+    //         })->toArray();
+     
+    //         return json_encode($data);
+    //     }catch(\Exception $e){
+    //         return $e->getMessage();
+    //     }
+    // }
 
     public function addNote(Request $request)
     {
@@ -730,7 +755,7 @@ class InpatientApiController extends Controller
             $fb->date_recorded        = $request['date_recorded'];
             $fb->save();
             \DB::commit();
-            return ($fb->id > 0) ? Response::json(['type' => 'success', 'message' => 'Fluid Balance updated!', 'data' => $this->getFluidBalanceData($fb->admission_id)]) : Response::json(['type' => 'error', 'message' => 'Fluid Balance could not be updated']);
+            return ($fb->id > 0) ? Response::json(['type' => 'success', 'message' => 'Fluid Balance updated!']) : Response::json(['type' => 'error', 'message' => 'Fluid Balance could not be updated']);
         }catch(\Exception $e){
             \DB::rollback();
             return Response::json(['type' => 'error', 'message' => 'The fluid balance could not be updated. '. $e->getMessage()]);
@@ -989,6 +1014,26 @@ class InpatientApiController extends Controller
     }
 
     public function addPrescription(Request $request)
+    {
+        \DB::beginTransaction();
+        try {
+            $request = $request->json()->all();
+            $p = Prescription::create($request);
+            // Add to Prescription Queue
+            $this->checkInAt($request['visit'], 'pharmacy');
+            \DB::commit();
+            if ($p) {
+                return Response::json(['type' => 'success', 'message' => 'The prescription has been added. The Pharmacy has been notified to dispense it for it to be administered', 'data' => $this->getPrescriptionData($request['visit'])]);
+            } else {
+                \DB::rollback();
+                return Response::json(['type' => 'error', 'message' => 'An error occured while saving. Please try again!']);
+            }
+        } catch (\Exception $e) {
+            return Response::json(['type' => 'error', 'message' => 'An error occured. The prescription could not be added. ' . $e->getMessage()]);
+        }
+    }
+
+    public function addDischargePrescription(Request $request)
     {
         \DB::beginTransaction();
         try {

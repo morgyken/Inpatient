@@ -210,7 +210,8 @@
         $(document).ready(function(){
             
             $("#fb-table").dataTable({
-                // ajax: FB_TABLE_GET_URL
+                ajax: FB_TABLE_GET_URL,
+                responsive: true
             });
 
             $('.summernote').summernote();
@@ -247,7 +248,7 @@
                         
                          if(resp.type === "success"){
                             alertify.success(resp.message);
-                            $("#fb-table").api().ajax.reload();
+                            $("#fb-table").dataTable().api().ajax.reload();
                         }else{
                             alertify.error(resp.message);
                         }
@@ -280,6 +281,7 @@
                     success: function (resp) {
                          if(resp.type === "success"){
                             alertify.success(resp.message);
+                            $("#fb-table").dataTable().api().ajax.reload();
                             $("#fb_row_"+id+"").remove();
                             $("#modal-delete-fb").modal('toggle');
                         }else{
