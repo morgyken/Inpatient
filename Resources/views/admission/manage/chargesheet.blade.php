@@ -16,7 +16,7 @@
                <th>DATE OF ADMISSION</th>
                <td>{{ $admission->created_at->format('jS M, Y H:i A ') }}</td>
                <th>DATE OF DISCHARGE</th>
-               <td>{{ ($charges['admission']->ward->discharged_at != null) ? \Carbon\Carbon::parse($charges['admission']->ward->discharged_at)->format('jS M, Y H:i A ') : 'Not Discharged' }}</td>
+               <td>{{ ($charges['admission']->Discharged) ? \Carbon\Carbon::parse($charges['admission']->ward->discharged_at)->format('jS M, Y H:i A ') : 'Not Discharged' }}</td>
             </tr>
          </tbody>
       </table>

@@ -60,11 +60,11 @@
                                 <td>{{ $d->status }}</td>
                                 <td>{{ $d->created_at->format('d/m/y h:i a') }}</td>
                                 <td>
-                                    <a href="{{url('inpatient/discharge/'.$d->id)}}" class="btn btn-primary btn-xs">Discharge</a>
-                                     <a href="{{url('inpatient/Cancel_discharge/'.$d->id)}}" class="btn btn-danger btn-xs">Cancel Request</a>
+                                    <a href="{{ url('inpatient/discharge/'.$d->admission->visit_id) }}" class="btn btn-primary btn-xs">Discharge</a>
+                                     <a href="{{ url('inpatient/Cancel_discharge/'.$d->admission->visit_id) }}" class="btn btn-danger btn-xs">Cancel Request</a>
                                 </td>
                             </tr>
-                        @endforeach()
+                        @endforeach
                     </tbody>
                     <thead>
                         <tr>

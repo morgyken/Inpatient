@@ -5,6 +5,7 @@ namespace Ignite\Inpatient\Entities;
 use Ignite\Users\Entities\User;
 use Ignite\Reception\Entities\Patients;
 use Ignite\Inpatient\Entities\Vitals;
+use Ignite\Inpatient\Entities\WardAssigned;
 use Ignite\Inpatient\Entities\RequestDischarge;
 
 use Illuminate\Database\Eloquent\Model;
@@ -83,6 +84,11 @@ class Admission extends Model
     public function ward()
     {
         return $this->belongsTo(Ward::class, "ward_id");
+    }
+
+     public function wardAssigned()
+    {
+        return $this->belongsTo(WardAssigned::class, "id", 'admission_id');
     }
 
     public function bed()

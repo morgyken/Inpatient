@@ -211,7 +211,7 @@ class InpatientController extends AdminBaseController
     {
         \DB::beginTransaction();
         try {
-            $admitted = Admission::where("patient_id", $request->patient_id)->get();
+            $admitted = Admission::where("visit_id", $request->visit_id)->where("is_discharged",1)->get();
 
             if (count($admitted) > 0) {
                 return redirect("/inpatient/admit")->with('error', "Patient already admitted");
@@ -404,6 +404,12 @@ class InpatientController extends AdminBaseController
     {
         $admissions = Admission::where("is_discharged",0)->get();
         return view('Inpatient::admission.admissionList', compact('admissions'));
+    }
+
+    public function admissionLogs()
+    {
+        $admissions = Admission::where("is_discharged",1)->get();
+        return view('Inpatient::admission.admission_logs', compact('admissions'));
     }
 
     public function admitAwaiting()
@@ -637,12 +643,11 @@ class InpatientController extends AdminBaseController
         return view('Inpatient::admission.discharges', compact('discharges'));
     }
 
-    public function confirm_discharge($request_id)
+    public function confirm_discharge($visit_id)
     {
-        $r = RequestDischarge::find($request_id);
-        $v = Visit::find($r->visit_id);
-        $patient = Patients::find($v->patient);
-        return view('Evaluation::inpatient.discharge_patient', compact('v', 'patient'));
+        $admission = Admission::where("visit_id", $visit_id)->first();
+        $discharge_prescriptions = Prescriptions::where('visit', $visit_id)->where("for_discharge", 1)->orderBy("updated_at", "DESC")->get();
+        return view('Inpatient::admission.discharge_patient', compact('admission', 'discharge_prescriptions'));
     }
 
     public function Cancel_discharge($visit_id)

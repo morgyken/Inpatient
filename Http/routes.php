@@ -40,6 +40,7 @@ Route::group(['as' => 'inpatient.'], function() {
     Route::post('/admit_patient', 'InpatientController@admit');
     Route::get('/admit_check', 'InpatientController@admit_check');
     Route::get('/admissions', 'InpatientController@admissionList');
+    Route::get('/admissions/logs', 'InpatientController@admissionLogs');
     Route::get('/admission/cancel/{id}', 'InpatientController@cancel');
     //manage patient
     Route::get('/manage/{id}/visit/{visit_id}', 'InpatientController@managePatient');
@@ -89,8 +90,6 @@ Route::group(['as' => 'inpatient.'], function() {
     |--------------------------------------------------------------------------
     */
 
-
-
     /*nursing charges*/
     Route::get('/Nursing_services',['uses'=>'InpatientController@Nursing_services']);
     //add recurrent charge
@@ -124,7 +123,7 @@ Route::group(['as' => 'inpatient.'], function() {
     Route::get('/manage/{id}/requestDischarge/{visit_id}',['uses'=>'InpatientController@request_discharge']);
     Route::get('/request_discharge',['uses'=>'InpatientController@requested_discharge']);
     //discharge the patient..
-    Route::get('/discharge/{visit}',['uses'=>'InpatientController@confirm_discharge']);
+    Route::get('/discharge/{visit_id}',['uses'=>'InpatientController@confirm_discharge']);
     //cancel discharge
     Route::get('/Cancel_discharge/{visit}',['uses'=>'InpatientController@Cancel_discharge']);
     /*discharge the patient*/
