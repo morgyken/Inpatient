@@ -21,9 +21,12 @@ use Ignite\Evaluation\Entities\VisitDestinations;
 use Ignite\Evaluation\Entities\RecurrentCharge;
 use Ignite\Inpatient\Entities\Administration;
 use Ignite\Inpatient\Entities\Admission;
+use Ignite\Inpatient\Entities\BedPosition;
 use Ignite\Inpatient\Entities\BloodPressure;
 use Ignite\Inpatient\Entities\BloodTransfusion;
 use Ignite\Inpatient\Entities\CanceledPrescriptions;
+use Ignite\Inpatient\Entities\Discharge;
+use Ignite\Inpatient\Entities\DischargeNote;
 use Ignite\Inpatient\Entities\FluidBalance;
 use Ignite\Inpatient\Entities\HeadInjury;
 use Ignite\Inpatient\Entities\InpatientConsumable;
@@ -31,7 +34,7 @@ use Ignite\Inpatient\Entities\Notes;
 use Ignite\Inpatient\Entities\NursingCarePlan;
 use Ignite\Inpatient\Entities\NursingCharge;
 use Ignite\Inpatient\Entities\Prescription;
-use Ignite\Inpatient\Entities\PatientAccount;
+// use Ignite\Inpatient\Entities\PatientAccount;
 use Ignite\Inpatient\Entities\RequestAdmission;
 use Ignite\Inpatient\Entities\RequestDischarge;
 use Ignite\Inpatient\Entities\Temperature;
@@ -78,19 +81,6 @@ class InpatientApiController extends Controller
         $this->visit = $visit;
     }
 
-    // public function getAllPatients(){
-    // 	return $this->patients->latest()->get()->map(function ($item){
-    // 		return
-    // 		[
-    // 			"id"			=> $item->id,
-    // 			"id_number" 	=> $item->id_no,
-    // 			"profile"		=> $item->image,
-    // 			"fullname" 		=> $item->fullName,
-    // 			"registered" 	=> $item->registered
-    // 		];
-    // 	})->toJson();
-    // }
-
     public function getPatientDetails($id)
     {
         try {
@@ -121,21 +111,6 @@ class InpatientApiController extends Controller
         }
 
     }
-
-    // public function getPatientsAwaitingAdmission(){
-    // 	return $this->request_admission->latest()->get()->map(function ($item){
-    // 		return
-    // 		[
-    // 			"id"			=> $item->id,
-    // 			"visit_id"		=> $item->visit_id,
-    // 			"id_number" 	=> $item->patient->id_no,
-    // 			"profile"		=> $item->patient->image,
-    // 			"fullname" 		=> $item->patient->fullName,
-    // 			"requested" 	=> $this->carbon->parse($item->created_at)->format('d/m/y')
-    // 		];
-    // 	})->toJson();
-
-    // }
 
     public function getPatientsAdmitted()
     {
@@ -1576,13 +1551,12 @@ class InpatientApiController extends Controller
 
             //check patient account balance..
             $visit = Visit::find($request['visit_id'])->first();
-            $acc = PatientAccount::where("patient_id", $visit->patient)->first();
-            $acc_balance = 0;
+            $acc = PatientAccount::firstOrNew(['patient'=>$visit->patient]);
+            $acc_balance = $acc->balance;
 
             if ($acc) { $acc_balance = $acc->balance; }
             $visit = Visit::find($request['visit_id']);
-            $acc = PatientAccount::firstOrNew(['patient'=>$visit->patient]);
-            $acc_balance = $acc->balance;
+           
 
             if ($totalCharges > $acc_balance) {
                 $message = 'You have a pending charges of Kshs.'
@@ -1597,27 +1571,34 @@ class InpatientApiController extends Controller
             $acc->balance = $acc->balance - $totalCharges;
             $acc->save();
 
-            Discharge::create([
-                'visit_id'                  => $request['visit_id'],
-                'admission_id'              => $request['admission_id'],
-                'doctor_id'                 => $request['doctor_id'],
-                'case_notes'                => $request['case_notes'],
-                'principal_diagnosis'       => $request['principal_diagnosis'],
-                'other_diagnosis'           => $request['other_diagnosis'],
-                'admission_complaints'      => $request['complaints'],
-                'investigations_courses'    => $request['investigations_courses'],
-                'discharge_condition'       => $request['discharge_condition'],
-                'dateofdeath'               => $request['dateofdeath'],
-                'timeofdeath'               => $request['timeofdeath'],
-                'type'                      => $request['type'],
-                'to_come_again'             => $request['to_come_again']
-            ]);
+            $d = new DischargeNote;
+            $d->visit_id                 = $request['visit_id'];
+            $d->admission_id             = $request['admission_id'];
+            $d->doctor_id                = $request['doctor_id'];
+            $d->case_note                = $request['case_note'];
+            $d->principal_diagnosis      = $request['principal_diagnosis'];
+            $d->other_diagnosis          = $request['other_diagnosis'];
+            $d->admission_complaints     = $request['complaints'];
+            $d->investigations_courses   = $request['investigations_courses'];
+            $d->discharge_condition      = $request['discharge_condition'];
+            $d->dateofdeath              = $request['dateofdeath'];
+            $d->timeofdeath              = $request['timeofdeath'];
+            $d->type                     = $request['type'];
+            $d->to_come_again            = $request['to_come_again'];
+            $d->save();
+
+            $discharge                      = new Discharge;
+            $discharge->visit_id            = $request['visit_id'];
+            $discharge->admission_id        = $request['admission_id'];
+            $discharge->doctor_id           = $request['doctor_id'];
+            $discharge->discharge_notes_id  = $d->id;
+            $discharge->save();
 
             //release the bed for reassignment.
             $admission = Admission::where('visit_id', $request['visit_id'])->first();
-            $bed = Bed::where("visit_id", $admission->bed_id)->first();
-            $bed->status = 'available';
-            $bed->save();
+            $bedposition = BedPosition::where("id", $admission->bedposition_id)->first();
+            $bedposition->status = 'available';
+            $bedposition->save();
 
             //record these charges to the patient
             //remove the discharge request.

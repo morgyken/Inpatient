@@ -66,11 +66,11 @@ class SidebarExtender implements Panda
                     $item->weight(4);
                 });
 
-                $item->item('All Admission Logs', function(Item $item){
-                    $item->icon('fa fa fa-cogs');
-                    $item->url('/inpatient/logs');
-                    $item->weight(4);
-                });
+                // $item->item('All Admission Logs', function(Item $item){
+                //     $item->icon('fa fa fa-cogs');
+                //     $item->url('/inpatient/logs');
+                //     $item->weight(4);
+                // });
 
             });
 

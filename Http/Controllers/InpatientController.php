@@ -16,6 +16,7 @@ use Ignite\Inpatient\Entities\BedPosition;
 use Ignite\Inpatient\Entities\BloodPressure;
 use Ignite\Inpatient\Entities\BloodTransfusion;
 use Ignite\Inpatient\Entities\Deposit;
+use Ignite\Inpatient\Entities\Discharge;
 use Ignite\Inpatient\Entities\DischargeNote;
 use Ignite\Inpatient\Entities\FluidBalance;
 use Ignite\Inpatient\Entities\Notes;
@@ -234,7 +235,8 @@ class InpatientController extends AdminBaseController
             $account_balance = $account->balance;
 
             // Get Intial admission cost from ward and deposit charges
-            $ward_cost = Ward::find($request->ward_id)->first()->cost;
+            $ward = Ward::find($request->ward_id)->first();
+            $ward_cost = $ward->cost;
             $deposit = Deposit::find($request->deposit)->first();
             $deposit_amount = $deposit->cost;
             $cost = $ward_cost + $deposit_amount;
@@ -278,16 +280,16 @@ class InpatientController extends AdminBaseController
             $a->doctor_id       = $request->doctor_id;
             $a->ward_id         = $request->ward_id;
             $a->bed_id          = $request->bed_id;
+            $a->bedposition_id  = $request->bedposition_id;
             $a->cost            = $cost;
             $a->reason          = $request->reason;
             $a->external_doctor = $request->external_doctor;
             $a->visit_id        = $request->visit_id;
-            $a->bedposition_id  = $request->bedposition_id;
             $a->save();
 
             //the bed should change status to occupied
-            if (count(Bed::find($request->bed_id)) > 0) {
-                $bed = Bed::find($request->bed_id);//->first();
+            if (count(BedPosition::find($request->bedposition_id)) > 0) {
+                $bed = BedPosition::find($request->bedposition_id)->first();
                 if($bed->status == 'occupied'){
                     return back()->with('error', 'That bed is already occupied!');
                 }else{
@@ -415,6 +417,7 @@ class InpatientController extends AdminBaseController
         //$account_balance = PatientAccount::where('patient_id', $request->patient_id)->first();
         $account = PatientAccount::firstOrNew(['patient'=>$request->patient_id]);
         $account_balance = $account->balance;
+        return $account_balance;
         /* get the cost of the ward.. */
         // $ward_cost = Ward::find($request->ward_id)->cost;
         $deposit_amount = Deposit::find($request->depositTypeId)->cost;
@@ -780,8 +783,6 @@ class InpatientController extends AdminBaseController
             $totalDischargeDrugs += $admission->visit->payment_mode == 'cash' ?  $d->drugs->prices[0]->cash_price * Administration::where("prescription_id", $d->id)->count() : $d->drugs->prices[0]->credit_price * Administration::where("prescription_id", $d->id)->count();
         }
 
-
-
         $totalNursingAndWardCharges = $wardCharges + $recuCharges;
         $totalInvestigationsCharges = $done_investigations->sum('amount'); 
         $totalConsumablesCharges = $consumption_list->sum('amount');
@@ -802,9 +803,13 @@ class InpatientController extends AdminBaseController
         // $pdf->setPaper('a4', 'portrait');
         // // dd($pdf);
         // return $pdf->download('charge_sheet_'.mt_rand(0,100).'.pdf');
-
     }
 
-
+    public function buildDischargeSummary($visit_id){
+        $discharge = Discharge::where("visit_id", $visit_id)->first();
+        $admission = Admission::where("visit_id", $visit_id)->first();
+        $prescriptions =  Prescriptions::where("visit", $visit_id)->where("for_discharge", 1)->get();
+        return view('inpatient::admission.print.discharge_summary', compact('admission', 'discharge', 'prescriptions'));
+    }
 
 }

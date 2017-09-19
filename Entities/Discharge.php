@@ -5,7 +5,7 @@ namespace Ignite\Inpatient\Entities;
 use Illuminate\Database\Eloquent\Model;
 
 use Ignite\Inpatient\Entities\Visit;
-use Ignite\Inpatient\DischargeNote;
+use Ignite\Inpatient\Entities\DischargeNote;
 use Ignite\Users\Entities\User;
 
 /**

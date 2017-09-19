@@ -20,6 +20,10 @@
         padding-bottom: 1px;
         color: #333;
     }
+    h4{
+        font-weight: bold !important;
+        color: #000 !important;
+    }
     .left{
         width: 60%;
         float: left;
@@ -117,64 +121,82 @@
     			</tr>
     			<tr>
     				<th>DATE OF ADMISSION</th>
-    				<td>{{ $admission->created_at->format('jS M, Y H:i A ')}}</td>
+    				<td>{{ $admission->created_at->format('jS M, Y H:i A ') }}</td>
     				<th>AGE</th>
     				<td>{{ $admission->patient->age }}</td>
     			</tr>
     			<tr>
     				<th>DATE OF DISCHARGE</th>
-    				<td></td>
+    				<td>{{ $discharge->created_at->format('jS M, Y H:i A ') }}</td>
     				<th>SEX</th>
     				<td>{{ $admission->patient->sex }}</td>
     			</tr>
     			<tr>
     				<th>TO COME AGAIN</th>
-    				<td colspan="2"></td>
+    				<td colspan="2">{{ $discharge->notes->to_come_again }}</td>
     			</tr>
     		</tbody>
     	</table>
 
-    	<div class = "sections">
+    	<div class = "sections"><br/>
     		<h4>PRINCIPAL DIAGNOSIS</h4>
-    		<p></p>
+    		{{ ($discharge->notes->pricipal_diagnosis != null) ? $discharge->notes->pricipal_diagnosis : 'None recorded' }}
     	</div>
 
-    	<div class = "sections">
+    	<div class = "sections"><br/>
     		<h4>OTHER DIAGNOSIS</h4>
-    		<p></p>
+    		{{ ($discharge->notes->other_diagnosis != null) ? $discharge->notes->other_diagnosis : 'None recorded' }}
     	</div>
 
-    	<div class = "sections">
+    	<div class = "sections"><br/>
     		<h4>COMPLAINTS DIAGNOSIS</h4>
-    		<p></p>
+    		{{ ($discharge->notes->admission_complaints != null) ? $discharge->notes->admission_complaints : 'None recorded' }}
     	</div>
 
-    	<div class = "sections">
+    	<div class = "sections"><br/>
     		<h4>INVESTIGATIONS AND HOSPITAL COURSES</h4>
-    		<p></p>
+    		{{ ($discharge->notes->investigations_courses != null) ? $discharge->notes->investigations_courses : 'None recorded' }}
     	</div>
 
-    	<div class = "sections">
+    	<div class = "sections"><br/>
     		<h4>DISCHARGE CONDITIONS</h4>
-    		<p></p>
+    		{{ ($discharge->notes->discharge_condition != null) ? $discharge->notes->discharge_condition : 'None recorded' }}
     	</div>
 
     	<div class = "sections">
     		<h4>MEDICATION AT DISCHARGE</h4>
-    		<p></p>
+    		<table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Drug</th>
+                        <th>Dosage & Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($prescriptions as $p)
+                        <tr>
+                            <td>#{{ $p->id }}</td>
+                            <td>{{ $p->drugs->name }}</td>
+                            <td>{{ $p->dose }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
     	</div>
-
-
-    	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0 !important;">
-    		<div class="col-md-8">
-    			<u>{{$admission->full_name}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u><br/>
-    			<strong>DOCTOR'S NAME AND SIGNATURE</strong>
-    		</div>
-    		<div class=" col-offset-2 col-md-2"  style="padding: 0 !important;">
-    			<u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u><br/>
-    			<strong>DATE</strong>
-    		</div>
-    	</div>
+        <br/><br/><br/>
+        <table class="table table-hover" style="border: none !important;">
+             <tbody style="border: none !important;">
+               <tr style="border: none !important;">
+                  <td style="border: none !important;" colspan="2"><u>{{ $discharge->doctor->profile->fullName}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                  <td style="border: none !important; padding-left: 25% !important;" colspan="2"><u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u></td>
+               </tr>
+               <tr style="border: none !important;">
+                  <td style="border: none !important;" colspan="2"><strong>DOCTOR'S NAME AND SIGNATURE</strong></td>
+                  <td style="border: none !important; padding-left: 25% !important;" colspan="2"><strong>DATE</strong></td>
+               </tr>
+             </tbody>
+        </table>
 
       
 </div>

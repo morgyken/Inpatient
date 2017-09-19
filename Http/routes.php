@@ -24,6 +24,7 @@ Route::group(['as' => 'inpatient.'], function() {
     */
 
     Route::get('/chargesheet/{visit_id}', 'InpatientController@buildChargeSheet');
+    Route::get('/summary/{visit_id}','InpatientController@buildDischargeSummary');
 
 	/*
     |--------------------------------------------------------------------------
