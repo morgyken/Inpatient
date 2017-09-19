@@ -14,7 +14,11 @@ class AddInpatientToEvaluationVisitsTable extends Migration
     public function up()
     {
         Schema::table('evaluation_visits', function (Blueprint $table) {
-            $table->boolean('inpatient')->default(0)->after('status');
+            try{
+                $table->boolean('inpatient')->default(0)->after('status');
+            }catch (\Exception $e){
+
+            }
         });
     }
 
