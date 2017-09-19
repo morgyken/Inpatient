@@ -3,7 +3,8 @@
 namespace Ignite\Inpatient\Entities;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Ignite\Inpatient\Entities\Ward;
+ 
 /**
  * Ignite\Inpatient\Entities\WardAssigned
  *
@@ -48,10 +49,14 @@ class WardAssigned extends Model
     // }
 
     public function ward(){
-    	$this->belongsTo(Ward::class, "ward_id", "id");
+    	return $this->belongsTo(Ward::class, "ward_id");
     }
 
     public function visit(){
-    	$this->belongsTo(Visit::class, "visit_id", "id");
+    	return $this->belongsTo(Visit::class, "visit_id");
+    }
+
+     public function removed_bills() {
+        return $this->hasOne(\Ignite\Finance\Entities\RemovedBills::class, 'ward');
     }
 }

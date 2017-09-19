@@ -79,25 +79,26 @@
         </div>
     </div>
 
-</div>
-<style>
-    .investigation_item {
-        height: 400px;
-        overflow-y: scroll;
-    }
-</style>
-<script>
-    var USER_ID = parseInt("{{ Auth::user()->id }}");
-    var VISIT_ID = parseInt("{{ $admission->id }}");
-    var DIAGNOSIS_URL = "{{route('api.evaluation.save_diagnosis')}}";
-    var THE_TABLE_URL = "{{url('/api/inpatient/v1/get/inpatient-investigations/'.$admission->visit_id)}}";
-    $(document).ready(function () {
-        $('.accordion').accordion({heightStyle: "content"});
-        $('#investigationTab input').iCheck({
-            checkboxClass: 'icheckbox_flat-green',
-            radioClass: 'iradio_square-blue',
-            increaseArea: '20%' // optional
+    <style>
+        .investigation_item {
+            height: 400px;
+            overflow-y: scroll;
+        }
+    </style>
+    <script>
+        var USER_ID = parseInt("{{ Auth::user()->id }}");
+        var VISIT_ID = parseInt("{{ $admission->id }}");
+        var DIAGNOSIS_URL = "{{ route('api.evaluation.save_diagnosis') }}";
+        var THE_TABLE_URL = "{{ url('/api/inpatient/v1/get/inpatient-investigations/'.$admission->visit_id) }}";
+
+        $(document).ready(function () {
+            $('.accordion').accordion({heightStyle: "content"});
+            $('#investigationTab input').iCheck({
+                checkboxClass: 'icheckbox_flat-green',
+                radioClass: 'iradio_square-blue',
+                increaseArea: '20%' // optional
+            });
         });
-    })
-    ;
-</script>
+    </script>
+
+</div>

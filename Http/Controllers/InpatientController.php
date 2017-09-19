@@ -268,7 +268,7 @@ class InpatientController extends AdminBaseController
             //     if($acc != null){
             //         $acc->update(['balance' => $acc->balance - $cost]);
             //     }
-            // }else{}
+            // }
 
             $adm_request = (isset($request->visit_id)) ? RequestAdmission::whereRaw("patient_id = '" . $request->patient_id . "' AND visit_id = '" . $request->visit_id . "'")->first() : RequestAdmission::where("patient_id", $request->patient_id)->first();
 
@@ -420,17 +420,26 @@ class InpatientController extends AdminBaseController
 
     public function admit_check(Request $request)
     {
-        //$account_balance = PatientAccount::where('patient_id', $request->patient_id)->first();
-        $account = PatientAccount::firstOrNew(['patient'=>$request->patient_id]);
-        $account_balance = $account->balance;
-        return $account_balance;
-        /* get the cost of the ward.. */
-        // $ward_cost = Ward::find($request->ward_id)->cost;
-        $deposit_amount = Deposit::find($request->depositTypeId)->cost;
-        if ($account_balance < ($deposit_amount)) {
-            return array('status' => 'insufficient', 'description' => 'Your account balance is Kshs. ' . (number_format($account_balance, 2)) . '. Please deposit kshs. ' . number_format(($deposit_amount - $account_balance), 2) . ' for the selected deposit type.');
+        try{
+            $account = PatientAccount::latestBalance($request->patient_id);
+            if($account == null){
+                $account = new PatientAccount;
+                $account->patient = $request->patient_id;
+                $account->save();
+            }
+            $account_balance = $account->balance;
+            /* get the cost of the ward.. */
+            // $ward_cost = Ward::find($request->ward_id)->cost;
+            $deposit_amount = Deposit::find($request->depositTypeId)->cost;
+            if ($account_balance < ($deposit_amount)) {
+                return array('status' => 'insufficient', 'description' => 'Your account balance is Kshs. ' . (number_format($account_balance, 2)) . '. Please deposit kshs. ' . number_format(($deposit_amount - $account_balance), 2) . ' for the selected deposit type.');
+            }
+
+            return array('status' => 'sufficient', 'description' => 'Your account balance is sufficient');
+        
+        }catch(\Exception $e){
+            return  array('status' => 'insufficient', 'description' => $e->getMessage());
         }
-        return array('status' => 'sufficient', 'description' => 'Your account balance is sufficient');
     }
 
     public function managePatient($id, $visit_id)

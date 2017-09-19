@@ -19,12 +19,12 @@
                     <dt>ID number:</dt><dd>{{ $patient->id_no }}</dd>
                     <dt>Email:</dt><dd>{{ $patient->email }}</dd>
                     <dt>Telephone:</dt><dd>{{ $patient->telephone }}</dd>
-                    <dt>Admission Time:</dt><dd id="time">{{ new Date() }}</dd>
+                    <dt>Admission Time:</dt><dd id="admission_time">{{ new Date() }}</dd>
                      <strong><dt>Account Balance:</dt><dd style="font-size: bold">Kshs.
             @if($patient->account)
-            {{ number_format($patient->account->balance) }}
+                {{ number_format($patient->account->getLatestBalance($patient->id)) }}
             @else
-            {{ number_format(0.00) }}
+                {{ number_format(0.00) }}
             @endif
             </dd></strong>
 
@@ -229,7 +229,7 @@
                     (s<10 == 1) ? (s ='0'+s):(s=s);
 
                     var time = (h > 12) ? (h-12 + ':' + m +':' + s +' pm') : (h + ':' + m +':' + s +' am');
-                    $("#time").text(time)
+                    $("#admission_time").text(time)
                 }
 
                 var loadBeds = function(){
