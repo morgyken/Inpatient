@@ -194,7 +194,7 @@
           </form>
         @else
             {{-- Request Discharge Form --}}
-             <form role="form">  
+             <form>  
                 <div class="form-group">
                     <label class="control-label col-md-4" style="padding: 0 !important;">Reason</label>
                     <div class="col-md-8">
@@ -210,7 +210,7 @@
             </form>
 
         @endif
-     @else
+    @else
         <div class="alert alert-info">
             <strong><i class="fa fa-exclamation-circle"></strong> This patient has already been discharged 
             <button type="button" class="btn btn-default" id = "print_summary" style="display: block !important;"><i class="fa fa-print"></i> Print Discharge Summary</button>
@@ -229,6 +229,7 @@
             var PRESCRIPTIONS_DELETE_URL = "{{ url('/api/inpatient/v1/prescriptions/delete') }}";
             var DISCHARGE_POST_URL = "{{ url('/api/inpatient/v1/discharge') }}";
             var REQUEST_DISCHARGE_POST_URL = "{{ url('/api/inpatient/v1/discharge/request') }}";
+            var SUMMARY_URL = "{{ url('/inpatient/summary/'.$admission->visit_id.'') }}";
         </script>
 
         <script src="{!! m_asset('evaluation:js/prescription.js') !!}"></script>
@@ -238,7 +239,7 @@
 
                $("#print_summary").click(function(e){
                     e.preventDefault();
-                    window.open("{{ url('/inpatient/summary/'.$admission->visit_id.'') }}","","top=50,left=400,  right=400,menubar=no,toolbar=no,scrollbars=yes,resizable=no,status=no");
+                    window.open(SUMMARY_URL,"","top=50,left=400,  right=400,menubar=no,toolbar=no,scrollbars=yes,resizable=no,status=no");
                });
                 
                 // $("#discharge-prescriptions-table").dataTable();
@@ -246,7 +247,6 @@
                 $("#timeofdeath").timepicker({ 'scrollDefault': 'now' });
 
                 var check_type = function () {
-
                     var v = $("#discharge_type").val();
                     if(v == 'case'){
                         $(".case-type").css("display","block");

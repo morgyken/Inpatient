@@ -81,19 +81,6 @@ class InpatientApiController extends Controller
         $this->visit = $visit;
     }
 
-    // public function getAllPatients(){
-    // 	return $this->patients->latest()->get()->map(function ($item){
-    // 		return
-    // 		[
-    // 			"id"			=> $item->id,
-    // 			"id_number" 	=> $item->id_no,
-    // 			"profile"		=> $item->image,
-    // 			"fullname" 		=> $item->fullName,
-    // 			"registered" 	=> $item->registered
-    // 		];
-    // 	})->toJson();
-    // }
-
     public function getPatientDetails($id)
     {
         try {
@@ -124,21 +111,6 @@ class InpatientApiController extends Controller
         }
 
     }
-
-    // public function getPatientsAwaitingAdmission(){
-    // 	return $this->request_admission->latest()->get()->map(function ($item){
-    // 		return
-    // 		[
-    // 			"id"			=> $item->id,
-    // 			"visit_id"		=> $item->visit_id,
-    // 			"id_number" 	=> $item->patient->id_no,
-    // 			"profile"		=> $item->patient->image,
-    // 			"fullname" 		=> $item->patient->fullName,
-    // 			"requested" 	=> $this->carbon->parse($item->created_at)->format('d/m/y')
-    // 		];
-    // 	})->toJson();
-
-    // }
 
     public function getPatientsAdmitted()
     {
