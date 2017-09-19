@@ -172,9 +172,12 @@ $(document).ready(function(){
                      if(resp.type === "success"){
                         alertify.success(resp.message);
                         if(type == 1){
-                            $("#reg_row_"+id+"").remove();
+                            $("button.stop-reg-prescription").html("Stopped");
+                            $("button.stop-reg-prescription").attr("class", "btn btn-info stopped-reg-prescription");
+
                         }else if(type == 0){
-                            $("#once_row_"+id+"").remove();
+                            $("button.stop-o-prescription").html("Stopped");
+                            $("button.stop-o-prescription").attr("class", "btn btn-info stopped-o-prescription");
                         }
                         $("#modal-stop-prescription").modal('toggle');
                     }else{

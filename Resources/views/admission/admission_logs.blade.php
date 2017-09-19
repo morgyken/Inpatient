@@ -46,7 +46,8 @@
                                     <td>{{ $admission->created_at->format('H:i a d/m/Y') }}</td>
                                     <td>{{ \Carbon\Carbon::parse($admission->wardAssigned->discharged_at)->format('H:i a d/m/Y') }}</td>
                                     <td>
-                                       <button type="button" class="btn btn-default print_summary" id="{{ $admission->visit_id }}" style="display: block !important;"><i class="fa fa-print"></i> Print Discharge Summary</button>
+                                       <button type="button" class="btn btn-default print_summary" id="{{ $admission->visit_id }}"><i class="fa fa-print"></i> Print Discharge Summary</button>&nbsp;
+                                       <button  type="button" class="btn btn-default print_chargesheet" target="_blank" id = "{{ $admission->visit_id }}"><i class="fa fa-print"></i> Print Charge Sheet</button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -63,11 +64,21 @@
            
 
             $(document).ready(function(){
-               $(".print_summary").click(function(e){ 
+                $(".print_summary").click(function(e){ 
                     e.preventDefault();
                     var id = $(this).attr('id'); 
                     var SUMMARY_URL = "{{ url('/inpatient/summary/') }}/"+id;
-                    window.open(SUMMARY_URL,"","top=50,left=400,  right=400,menubar=no,toolbar=no,scrollbars=yes,resizable=no,status=no");
+                    var mywindow = window.open(SUMMARY_URL,"","top=50,left=400,  right=400,menubar=no,toolbar=no,scrollbars=yes,resizable=no,status=no");
+                    mywindow.print();
+                    // mywindow.close();
+                });
+
+                $(".print_chargesheet").click(function(e){
+                    e.preventDefault();
+                    var id = $(this).attr('id'); 
+                    var mywindow = window.open("{{ url('/inpatient/chargesheet/') }}/"+id,"","top=50,left=400, right=400,menubar=no,toolbar=no,scrollbars=yes,resizable=no,status=no");
+                    mywindow.print();
+                    // mywindow.close();
                });
            });
                 

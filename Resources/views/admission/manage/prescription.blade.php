@@ -87,7 +87,11 @@
 			    							<button class='btn btn-primary administer-once' id = '{{ $p->id }}'><i class = 'fa fa-plus'></i> Administer</button>
 			    						@endif
 			    						<button type='button' class='btn btn-success view-logs' id = '{{ $p->id }}'><i class = 'fa fa-eye'></i> View</button>
-			    						<button type='button' class='btn btn-info stop-o-prescription' id = '{{ $p->id }}'><i class = 'fa fa-times' ></i> Stop</button>
+			    						@if($p->stopped == 0)
+			    							<button type='button' class='btn btn-info stop-o-prescription' id = '{{ $p->id }}'><i class = 'fa fa-times' ></i> Stop</button>
+			    						@else
+			    							<button type='button' class='btn btn-info stopped-o-prescription' id = '{{ $p->id }}'><i class = 'fa fa-exclamation-circle' ></i> Stopped</button>
+			    						@endif
 				    					<button type='button' class='btn btn-danger cancel-o-prescription' id = '{{ $p->id }}'><i class = 'fa fa-times' ></i> Cancel</button>
 				    				</div>
 				    			@else
@@ -129,7 +133,11 @@
 			    					<div class='btn-group'>
 				    					<button class='btn btn-primary administer' id = '{{ $p->id }}'><i class = 'fa fa-plus'></i> Administer</button>
 				    					<button type='button' class='btn btn-success view-logs' id = '{{ $p->id }}'><i class = 'fa fa-eye'></i> View</button>
-				    					<button type='button' class='btn btn-info stop-reg-prescription' id = '{{ $p->id }}'><i class = 'fa fa-times' ></i> Stop</button>
+				    					@if($p->stopped == 0)
+			    							<button type='button' class='btn btn-info stop-reg-prescription' id = '{{ $p->id }}'><i class = 'fa fa-times' ></i> Stop</button>
+			    						@else
+			    							<button type='button' class='btn btn-info stopped-reg-prescription' id = '{{ $p->id }}'><i class = 'fa fa-exclamation-circle' ></i> Stopped</button>
+			    						@endif
 				    					<button type='button' class='btn btn-danger cancel-reg-prescription' id = '{{ $p->id }}'><i class = 'fa fa-times' ></i> Cancel</button>
 				    				</div>
 				    			@else

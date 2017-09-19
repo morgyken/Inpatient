@@ -189,9 +189,9 @@
               <tr>
                   <td>{{ $d->created_at->format('d/m/Y H:i a') }}</td>
                   <td>{{ $d->drugs->name }}</td>
-                  <td>{{ \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() }}</td>
+                  <td>{{ (\Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() > 0) ?  \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() : 1 }}</td>
                   <td>{{ $admission->visit->payment_mode == 'cash' ?  $d->drugs->prices[0]->cash_price : $d->drugs->prices[0]->credit_price }}</td>
-                  <td>{{ $admission->visit->payment_mode == 'cash' ?  $d->drugs->prices[0]->cash_price * \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() : $d->drugs->prices[0]->credit_price * \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() }}</td>
+                  <td>{{ $admission->visit->payment_mode == 'cash' ?  $d->drugs->prices[0]->cash_price * ((\Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() > 0) ?  \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() : 1) : $d->drugs->prices[0]->credit_price *((\Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() > 0) ?  \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() : 1) }}</td>
                   <td>
                     @if(\Ignite\Evaluation\Entities\Dispensing::where('prescription', $d->id)->first() != null )
                       {{ (\Ignite\Evaluation\Entities\Dispensing::where('prescription', $d->id)->first()->payment_status == 0) ? 'No' : 'Yes' }}
@@ -205,9 +205,9 @@
               <tr>
                   <td>{{ $d->created_at->format('d/m/Y H:i a') }}</td>
                   <td>{{ $d->drugs->name }}</td>
-                  <td>{{ \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() }}</td>
+                  <td>{{ (\Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() > 0) ?  \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() : 1 }}</td>
                   <td>{{ $admission->visit->payment_mode == 'cash' ?  $d->drugs->prices[0]->cash_price : $d->drugs->prices[0]->credit_price }}</td>
-                  <td>{{ $admission->visit->payment_mode == 'cash' ?  $d->drugs->prices[0]->cash_price * \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() : $d->drugs->prices[0]->credit_price * \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() }}</td>
+                  <td>{{ $admission->visit->payment_mode == 'cash' ?  $d->drugs->prices[0]->cash_price * ((\Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() > 0) ?  \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() : 1) : $d->drugs->prices[0]->credit_price * ((\Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() > 0) ?  \Ignite\Inpatient\Entities\Administration::where("prescription_id", $d->id)->count() : 1) }}</td>
                   <td>
                     @if(\Ignite\Evaluation\Entities\Dispensing::where('prescription', $d->id)->first() != null )
                       {{ (\Ignite\Evaluation\Entities\Dispensing::where('prescription', $d->id)->first()->payment_status == 0) ? 'No' : 'Yes' }}
@@ -234,13 +234,15 @@
         @endif
 
        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-          <a class="btn btn-lg btn-default" target="_blank" id = "print-summary"><i class="fa fa-print"></i> Print</a>
+          <a class="btn btn-lg btn-default" target="_blank" id = "print-chargesheet"><i class="fa fa-print"></i> Print</a>
        </div>
 
        <script type="text/javascript">
-           $("#print-summary").click(function(e){
+           $("#print-chargesheet").click(function(e){
                 e.preventDefault();
-                window.open("{{ url('/inpatient/chargesheet/'.$admission->visit_id.'') }}","","top=50,left=400,  right=400,menubar=no,toolbar=no,scrollbars=yes,resizable=no,status=no");
+                var mywindow = window.open("{{ url('/inpatient/chargesheet/'.$admission->visit_id.'') }}","","top=50,left=400, right=400,menubar=no,toolbar=no,scrollbars=yes,resizable=no,status=no");
+                mywindow.print();
+                // mywindow.close();
            });
        </script>
 </div>

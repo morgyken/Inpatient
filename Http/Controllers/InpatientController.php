@@ -474,8 +474,8 @@ class InpatientController extends AdminBaseController
                 ];
             });
 
-            $once_only_prescriptions = Prescriptions::where('visit', $visit_id)->where("type", 0)->orderBy("updated_at", "DESC")->get();
-            $regular_prescriptions = Prescriptions::where('visit', $visit_id)->where("type", 1)->orderBy("updated_at", "DESC")->get();
+            $once_only_prescriptions = Prescriptions::where('visit', $visit_id)->where("type", 0)->where("for_discharge", 0)->orderBy("updated_at", "DESC")->get();
+            $regular_prescriptions = Prescriptions::where('visit', $visit_id)->where("type", 1)->where("for_discharge", 0)->orderBy("updated_at", "DESC")->get();
 
             $discharge_prescriptions = Prescriptions::where('visit', $visit_id)->where("for_discharge", 1)->orderBy("updated_at", "DESC")->get();
 
@@ -806,8 +806,7 @@ class InpatientController extends AdminBaseController
 
         // $pdf =\PDF::loadView('Inpatient::admission.print.charge_sheet', ['charges' => $charges]);        
         // $pdf->setPaper('a4', 'portrait');
-        // // dd($pdf);
-        // return $pdf->download('charge_sheet_'.mt_rand(0,100).'.pdf');
+        // return $pdf->download('charge_sheet_'.str_random(10).'.pdf');
     }
 
     public function buildDischargeSummary($visit_id){
@@ -815,6 +814,10 @@ class InpatientController extends AdminBaseController
         $admission = Admission::where("visit_id", $visit_id)->first();
         $prescriptions =  Prescriptions::where("visit", $visit_id)->where("for_discharge", 1)->get();
         return view('inpatient::admission.print.discharge_summary', compact('admission', 'discharge', 'prescriptions'));
+
+        // $pdf =\PDF::loadView('inpatient::admission.print.discharge_summary', compact('admission', 'discharge', 'prescriptions'));        
+        // $pdf->setPaper('a4', 'portrait');
+        // return $pdf->download('discharge_summary_'.str_random(10).'.pdf');
     }
 
 }

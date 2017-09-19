@@ -1268,10 +1268,15 @@ class InpatientApiController extends Controller
         \DB::beginTransaction();
         try {
             $request = $request->json()->all();
-            $p = Prescription::where("id", $request['id']);
+            $p = Prescription::where("id", $request['id'])->first();
             $p->stop_reason = $request['reason'];
             $p->stopped = 1;
             $p->save();
+
+            // Update Inventory
+            // $products = InventoryProducts::where("id", $p->drugs->id)->first();
+            // $products->units += $p->   
+
             if ($p) {
                 \DB::commit();
                 return Response::json(['type' => 'success', 'message' => 'Prescription stopped successfully']);

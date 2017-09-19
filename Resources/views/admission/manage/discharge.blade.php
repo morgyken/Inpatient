@@ -238,7 +238,9 @@
 
                $("#print_summary").click(function(e){
                     e.preventDefault();
-                    window.open(SUMMARY_URL,"","top=50,left=400,  right=400,menubar=no,toolbar=no,scrollbars=yes,resizable=no,status=no");
+                    var mywindow = window.open(SUMMARY_URL,"","top=50,left=400,  right=400,menubar=no,toolbar=no,scrollbars=yes,resizable=no,status=no");
+                    mywindow.print();
+                    // mywindow.close();
                });
                 
                 // $("#discharge-prescriptions-table").dataTable();
