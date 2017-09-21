@@ -53,10 +53,10 @@
         </div>
         <br><br>
 
-<div class="row">
+<div class="row col-md-12">
 
      @if($admission->Discharged == false)
-        @if($admission->has_discharge_request == true)
+        @if($admission->has_discharge_request == false)
             <form role="form">  
                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                     <div class="form-group">
@@ -72,13 +72,13 @@
                 </div>
             </form>
         @else
-            <div class="alert alert-info">
-                <strong><i class="fa fa-exclamation-circle"></strong> This patient already has a discharge request
+            <div class="alert alert-info col-xs-12 colsm-12 col-md-6">
+                <strong><i class="fa fa-exclamation-circle"></i></strong> This patient already has a discharge request
             </div>
         @endif
     @else
-        <div class="alert alert-info">
-            <strong><i class="fa fa-exclamation-circle"></strong> This patient has already been discharged
+        <div class="alert alert-info col-xs-12 colsm-12 col-md-6">
+            <strong><i class="fa fa-exclamation-circle"></i></strong> This patient has already been discharged
         </div>
     @endif
 

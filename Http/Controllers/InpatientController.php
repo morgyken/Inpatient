@@ -781,11 +781,13 @@ class InpatientController extends AdminBaseController
 
         // Calculate Totals 
         foreach ($wards as $ward) {
-            $wardCharges += ($ward->discharged_at != null) ? ($ward->price * ($this->carbon->parse($ward->discharged_at)->diffInDays($ward->created_at) )) : $ward->price * $this->carbon->now()->diffInDays($ward->created_at);
+            $days_if_discharged = ((($this->carbon->parse($ward->discharged_at)->diffInDays($ward->created_at)) > 0) ? ($this->carbon->parse($ward->discharged_at)->diffInDays($ward->created_at)) : 1 );
+            $days_not_discharged = (($this->carbon->now()->diffInDays($ward->created_at) > 0) ? $this->carbon->now()->diffInDays($ward->created_at) : 1);
+            $wardCharges += $ward->price * ( ($ward->discharged_at != null) ? $this->carbon->parse($ward->discharged_at)->diffInDays($ward->created_at) : ($this->carbon->now()->diffInDays($ward->created_at) > 0) ? $this->carbon->now()->diffInDays($ward->created_at) : 1 );
             //subscribed reccurrent charges
             foreach ($rcnt as $recurrent) {
                 //nursing charges times no. of days..
-                $recuCharges +=  ($ward->discharged_at != null) ? NursingCharge::find($recurrent->recurrent_charge_id)->cost * $this->carbon->parse($ward->discharged_at)->diffInDays($ward->created_at) : NursingCharge::find($recurrent->recurrent_charge_id)->cost;
+                $recuCharges +=  ($ward->discharged_at != null) ? NursingCharge::find($recurrent->recurrent_charge_id)->cost * $days_if_discharged : NursingCharge::find($recurrent->recurrent_charge_id)->cost * $days_not_discharged;
             }
         }
 
