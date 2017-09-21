@@ -288,8 +288,8 @@ class InpatientController extends AdminBaseController
             $a->save();
 
             //the bed should change status to occupied
-            if (count(BedPosition::find($request->bedposition_id)) > 0) {
-                $bed = BedPosition::find($request->bedposition_id)->first();
+            if (count(BedPosition::where("id",$request->bedposition_id)->where("ward_id",$request->ward_id)->first()) > 0) {
+                $bed = BedPosition::where("id",$request->bedposition_id)->where("ward_id",$request->ward_id)->first();
                 if($bed->status == 'occupied'){
                     return back()->with('error', 'That bed is already occupied!');
                 }else{
