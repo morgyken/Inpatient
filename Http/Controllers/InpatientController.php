@@ -159,7 +159,7 @@ class InpatientController extends AdminBaseController
         if (RequestAdmission::find($request->patient_id) == null) {
             RequestAdmission::create($request->toArray());
             \Session::flash('success', 'Admission request successful');
-            return redirect('/inpatient/admit')->with('success', 'Admission request successful');
+            return back()->with('success', 'Admission request successful');
         } else {
             return back()->with('error', 'The patient has already requested admission');
         }
@@ -169,7 +169,7 @@ class InpatientController extends AdminBaseController
     {
         $admit_r = RequestAdmission::find($id);
         $admit_r->delete();
-        return redirect()->back()->with('success', 'Successfully canceled admission request');
+        return back()->with('success', 'Successfully canceled admission request');
     }
 
     public function admitWalkInPatient($id)

@@ -37,7 +37,7 @@
                                 {{(new Date($patient->created_at))->format('m/d/y')}}
                             </td>
                             <td>
-                                <a class="btn btn-primary btn-xs" href="{{url('inpatient/admit/'.$patient->patient_id).'/'.$patient->visit_id}}">Admit</a>
+                                <a class="btn btn-primary btn-xs" href="{{url('inpatient/admit/'.$patient->patient_id).'/visit/'.$patient->visit_id}}">Admit</a>
 
                                 <a class="btn btn-danger btn-xs" href="{{url('inpatient/admission/cancel/'.$patient->id)}}">Cancel Request</a>
                             </td>
