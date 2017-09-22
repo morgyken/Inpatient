@@ -26,7 +26,7 @@
 
 		<div class="row">
 		    <div class="form-horizontal">
-		        {!! Form::open(['url'=>'/inpatient/AddReccurentCharge', 'method' => 'POST']) !!}
+		        {!! Form::open(['url'=>'/inpatient/accounts/addReccurentCharge', 'method' => 'POST']) !!}
 		        <div class="col-md-12">
 		            <div class="col-md-6">
 		                <div class="form-group {{  $errors->has('name') ? ' has-error' : ''  }} req">
@@ -58,7 +58,7 @@
 		                 <div class="ward form-group {{  $errors->has('ward_id') ? ' has-error' : ''  }}">
 		                    <label class="control-label col-md-4">Ward Number</label>
 		                    <div class="col-md-8">
-		                    <select name="ward_id" class="ward form-control" multiple="multiple">
+		                    <select name="ward_id[]" class="ward form-control" multiple="multiple">
 		                            
 		                           @foreach($wards as $ward)
 		                            <option value="{{ $ward->id }}">{{ $ward->name }} Ward No.: {{ $ward->number }}</option>
@@ -93,12 +93,12 @@
 		                    <tbody>
 		                        @foreach($charges as $charge)
 		                            <tr>
-		                                <td>{{ $charge->name }}</td>
+		                                <td>{{ $charge->name }} @ {{ $charge->ward->name }} Ward</td>
 		                                <td>{{ $charge->cost }}</td>
 		                                <td>{{ $charge->type }}</td>
 		                                <td>{{ $charge->created_at }}</td>
 		                                <td>
-		                                <button class="btn btn-primary btn-xs"> <i class="fa fa-pencil"></i> Edit</button>
+		                                	<button class="btn btn-primary btn-xs"> <i class="fa fa-pencil"></i> Edit</button>
 		                                    <a href="{{ url('/inpatient/delete_service/'.$charge->id) }}" class="btn btn-danger btn-xs"> <i class="fa fa-trash"></i> Delete</a>
 		                                </td>
 		                            </tr>

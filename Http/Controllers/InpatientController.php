@@ -174,37 +174,47 @@ class InpatientController extends AdminBaseController
 
     public function admitWalkInPatient($id)
     {
-        $doctor_rule = Roles::where('name', 'Doctor')->first();
-        $doctor_ids = UserRoles::where('role_id', $doctor_rule->id)
-            ->get(['user_id'])
-            ->toArray();
+        try{
+            $doctor_rule = Roles::where('name', 'Doctor')->first();
+            $doctor_ids = UserRoles::where('role_id', $doctor_rule->id)
+                ->get(['user_id'])
+                ->toArray();
 
-        $doctors = User::findMany($doctor_ids);
+            $doctors = User::findMany($doctor_ids);
 
-        $patient = Patients::find($id);
-        $wards = Ward::all();
-        $beds = Bed::all();
-        $bedpositions = BedPosition::all();
-        $deposits = Deposit::all();
-        $admissions = NursingCharge::all();
-        return view('inpatient::admission.admit_form', compact('doctors', 'patient', 'wards', 'deposits', 'beds', 'bedpositions', 'admissions'));
+            $patient = Patients::find($id);
+            $wards = Ward::all();
+            $beds = Bed::all();
+            $bedpositions = BedPosition::all();
+            $deposits = Deposit::all();
+            $admissions = NursingCharge::all();
+            return view('inpatient::admission.admit_form', compact('doctors', 'patient', 'wards', 'deposits', 'beds', 'bedpositions', 'admissions'));
+        }catch(\Exception $e){
+            \Log::error($e->getMessage());
+            return back()->with('error','An error occured!');
+        }
     }
 
     public function admitPatientForm($id, $visit_id)
     {
-        $doctor_rule = Roles::where('name', 'Doctor')->first();
-        $doctor_ids = UserRoles::where('role_id', $doctor_rule->id)->get(['user_id'])->toArray();
-        $doctors = User::findMany($doctor_ids);
+        try{
+            $doctor_rule = Roles::where('name', 'Doctor')->first();
+            $doctor_ids = UserRoles::where('role_id', $doctor_rule->id)->get(['user_id'])->toArray();
+            $doctors = User::findMany($doctor_ids);
 
-        $patient = Patients::find($id);
-        $visit = Visit::find($visit_id);
-        $wards = Ward::all();
-        $beds = Bed::all();
-        $bedpositions = BedPosition::all();
-        $deposits = Deposit::all();
-        $request_id = RequestAdmission::where('visit_id', $visit_id)->first()->id;
-        $admissions = NursingCharge::all();
-        return view('inpatient::admission.admit_form', compact('doctors', 'patient', 'wards', 'deposits', 'visit', 'beds', 'bedpositions', 'request_id', 'admissions'));
+            $patient = Patients::find($id);
+            $visit = Visit::find($visit_id);
+            $wards = Ward::all();
+            $beds = Bed::all();
+            $bedpositions = BedPosition::all();
+            $deposits = Deposit::all();
+            $request_id = RequestAdmission::where('visit_id', $visit_id)->first()->id;
+            $admissions = NursingCharge::all();
+            return view('inpatient::admission.admit_form', compact('doctors', 'patient', 'wards', 'deposits', 'visit', 'beds', 'bedpositions', 'request_id', 'admissions'));
+        }catch(\Exception $e){
+            \Log::error($e->getMessage());
+            return back()->with('error','An error occured!');
+        }
     }
 
     public function admit(Request $request)
@@ -428,8 +438,8 @@ class InpatientController extends AdminBaseController
                 $account->save();
             }
             $account_balance = $account->balance;
-            /* get the cost of the ward.. */
-            // $ward_cost = Ward::find($request->ward_id)->cost;
+           
+           if(Deposit::all()->count() <=0) { return  array('status' => 'insufficient', 'description' => 'There are no deposits'); }
             $deposit_amount = Deposit::find($request->depositTypeId)->cost;
             if ($account_balance < ($deposit_amount)) {
                 return array('status' => 'insufficient', 'description' => 'Your account balance is Kshs. ' . (number_format($account_balance, 2)) . '. Please deposit kshs. ' . number_format(($deposit_amount - $account_balance), 2) . ' for the selected deposit type.');
@@ -438,6 +448,7 @@ class InpatientController extends AdminBaseController
             return array('status' => 'sufficient', 'description' => 'Your account balance is sufficient');
         
         }catch(\Exception $e){
+            \Log::error($e->getMessage());
             return  array('status' => 'insufficient', 'description' => $e->getMessage());
         }
     }
@@ -728,15 +739,6 @@ class InpatientController extends AdminBaseController
             $request_dis->delete();
         }
         return redirect('/evaluation/inpatient/admit')->with('success', 'Successfully discharged patient');
-    }
-
-    public function delete_service($id)
-    {
-        $service = NursingCharge::find($id);
-        if ($service) {
-            $service->delete();
-        }
-        return redirect()->back()->with('success', 'Successfully deleted a recurrent charge.');
     }
 
     /**

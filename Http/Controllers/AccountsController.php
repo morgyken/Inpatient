@@ -2,40 +2,140 @@
 
 namespace Ignite\Inpatient\Http\Controllers;
 
+use Ignite\Core\Http\Controllers\AdminBaseController;
+
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Validator;
 
+use Ignite\Inpatient\Entities\Admission;
 use Ignite\Reception\Entities\Patients;
 use Ignite\Inpatient\Entities\NursingCharge;
-use Ignite\Evaluation\Entities\RecurrentCharge;
+use Ignite\Inpatient\Entities\RecurrentCharge;
 use Ignite\Inpatient\Entities\RequestDischarge;
 use Ignite\Inpatient\Entities\Discharge;
 use Ignite\Inpatient\Entities\WardAssigned;
 use Ignite\Inpatient\Entities\DischargeNote;
 use Ignite\Inpatient\Entities\Deposit;
-//use Ignite\Evaluation\Entities\FinancePatientAccounts;
 use Ignite\Finance\Entities\PatientAccount;
-use Ignite\Evaluation\Entities\Vitals;
-//use Ignite\Inpatient\Entities\PatientAccount;
+use Ignite\Inpatient\Entities\Vitals;
+use Ignite\Inpatient\Entities\Ward;
 
-class AccountsController extends Controller
+class AccountsController extends AdminBaseController
 {
+    public function __construct(){
+         parent::__construct();
+    }
 
-    public function Nursing_services(Request $request) {
+    public function getNursingServices(Request $request) {
         $charges = NursingCharge::all();
         $wards = Ward::all();
         return view('Inpatient::admission.nursing_services', compact('charges', 'wards'));
     }
 
-    public function AddReccurentCharge(Request $request) {
-        $req = request()->all();
-        if ($req['type'] != 'nursing') {
-            $req['ward_id'] = null;
+    
+    public function delete_service($id)
+    {
+        $service = NursingCharge::find($id);
+        if ($service) {
+            $service->delete();
         }
-        NursingCharge::create($req);
-        return redirect()->back()->with('success', 'Successfully added a new recurrent charge');
+        return redirect()->back()->with('success', 'Successfully deleted a recurrent charge.');
+    }
+
+    public function addReccurentCharge(Request $request) {
+        \DB::beginTransaction();
+        try{
+            $req = request()->all();
+            if ($req['type'] == 'admission') {
+                $req['ward_id'] = null;
+            }else{
+                foreach ($req['ward_id'] as $w) {
+                    $n = new NursingCharge;
+                    $n->name = $request->name;
+                    $n->cost = $request->cost;
+                    $n->ward_id = $w;
+                    $n->type = $request->type;
+                    $n->save();
+                }
+            }
+
+            \DB::commit();
+
+            return redirect()->back()->with('success', 'Successfully added a new recurrent charge');
+        }catch(\Exception $e){
+            \DB::rollback();
+            return redirect()->back()->with('error', 'An error occured.Could not add new recurrent charges');
+        }
+    }
+
+     public function deposit() {
+        
+        return view('Inpatient::account.deposit');
+    }
+
+    public function getAllDeposits(){
+        $deposits = Deposit::get()->map(function($d){
+            return [
+                'id'            => $d->id,
+                'name'          => $d->name,
+                'cost'          => 'Ksh. '. $d->cost,
+                'created_at'    => $d->created_at->format('d/m/Y H:i a')
+            ];
+        })->toArray();
+
+        $data = [];
+        foreach($deposits as $key => $d){
+            $data[] = [
+                $d['name'], 
+                $d['cost'],
+                $d['created_at'],
+                '<button class="btn btn-primary btn-xs delete" value="'.$d["id"].'">Edit</button>
+                <a class="btn btn-danger btn-xs" href="'.url("/inpatient/accounts/delete_deposit/".$d["id"]."").'><i class="fa fa-trash"></i> Delete</a>'
+            ];
+        }
+
+        return response()->json(['data' => $data]);
+
+    }
+
+    public function edit_deposit($id) {
+        return Deposit::find($id);
+    }
+
+    public function addDepositType(Request $request) {
+        Deposit::create($request->all());
+        return redirect()->back()->with('success', 'successfully added a new deposit type');
+    }
+
+
+    public function editDeposit(Request $request) {
+        \DB::beginTransaction();
+        try{
+            $dep = Deposit::find($request->deposit_id)->first();
+            if($dep){
+                $request['name'] = $request->deposit;
+                $dep->update($request->all());
+                \DB::commit();
+                return redirect()->back()->with('success', 'updated deposit type successfully');
+            }else{
+                redirect()->back()->with('error', 'Deposit Type does not exist');
+            }
+           
+        }catch(\Exception $e){
+            \DB::rollback();
+            redirect()->back()->with('error', 'An error occured. Could not add a new deposit type');
+        }
+    }
+
+    public function delete_deposit($deposit_id) {
+        $d = Deposit::find($deposit_id)->first();
+        $d->delete();
+        if (Admission::where('cost', $d->cost)->count()) {
+            return redirect()->back()->with('error', 'Could not delete the deposit.');
+        }
+        return redirect()->back()->with('success', 'Successfully deleted');
     }
 
     public function topUpAmount(Request $request) {
@@ -74,7 +174,7 @@ class AccountsController extends Controller
         $patients = Patients::all();
         $deposits = FinancePatientAccounts::where('debit', '>', 0)->get();
 
-        return view('Evaluation::inpatient.withdraw', compact('deposits', 'patients'));
+        return view('Inpatient::inpatient.withdraw', compact('deposits', 'patients'));
     }
 
     public function WithdrawAmount(Request $request) {

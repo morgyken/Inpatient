@@ -83,47 +83,46 @@ class SidebarExtender implements Panda
                     /* add recurrent services */
                     $item->item('Nursing & Admission Fees', function(Item $item) {
                         $item->icon('fa fa-paypal');
-                        $item->url('/evaluation/inpatient/Nursing_services');
+                        $item->url('/inpatient/nursing/services');
                         $item->weight(4);
                     });
                     //wards
                     $item->item('Wards', function(Item $item) {
                         $item->icon('fa fa-home');
-                        $item->url('/evaluation/inpatient/list');
+                        $item->url('/inpatient/ward/list');
                         //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
                         $item->weight(4);
                     });
                     $item->item('Bed Positions', function(Item $item) {
                         $item->icon('fa fa-bed');
-                        $item->url('/evaluation/inpatient/bedPosition');
+                        $item->url('/inpatient/beds/position');
                         //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
                         $item->weight(4);
                     });
 
-                    //there should be a way of adding beds and listing them
-                    $item->item('Beds', function(Item $item) {
+                    // Beds
+                    $item->item('Add/View Beds', function(Item $item) {
                         $item->icon('fa fa-bed');
-                        $item->url('/evaluation/inpatient/bedList');
+                        $item->url('/inpatient/beds/bedList');
+                        //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
+                        $item->weight(4);
+                    });
+                    
+                    $item->item('Add/View Bed Types', function(Item $item) {
+                        $item->icon('fa fa-bed');
+                        $item->url('/inpatient/beds/bedTypes');
                         //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
                         $item->weight(4);
                     });
 
-                    //list wards
                     //types of deposits
                     $item->item('Deposit', function(Item $item) {
                         $item->icon('fa fa-gear');
-                        $item->url('/evaluation/inpatient/deposit');
+                        $item->url('/inpatient/accounts/deposit');
                         //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
                         $item->weight(4);
                     });
-                    //list wards
-                    //types of deposits
-                    $item->item('Deposit', function(Item $item) {
-                        $item->icon('fa fa-gear');
-                        $item->url('/evaluation/inpatient/deposit');
-                        //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
-                        $item->weight(4);
-                    });
+  
 
 
                 });

@@ -15,10 +15,16 @@ class CreateBedsTable extends Migration
     {
         Schema::create('beds', function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedInteger('type');
             $table->string('number');
-            $table->string('type');
             $table->enum('status',['available','occupied'])->default('available');
             $table->timestamps();
+            
+            $table->foreign('type')
+                    ->references('id')
+                    ->on('inpatient_bed_types')
+                    ->onUpdate('cascade')
+                    ->onDelete('cascade');
         });
     }
 

@@ -4,6 +4,8 @@ namespace Ignite\Inpatient\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 
+use Ignite\Inpatient\Entities\Ward;
+use Ignite\Inpatient\Entities\BedType;
 /**
  * Ignite\Inpatient\Entities\Bed
  *
@@ -36,6 +38,10 @@ class Bed extends Model
 
     public function ward(){
     	return $this->belongsTo(Ward::class, 'ward_id', 'id');
+    }
+
+     public function bedType(){
+        return $this->belongsTo(BedType::class, 'type', 'id');
     }
 
 }

@@ -7,17 +7,8 @@ Route::group(['as' => 'inpatient.'], function() {
     | TESTING
     |--------------------------------------------------------------------------
     */
-    // Route::get('/test/summary', function(){
-    //     $admission = \Ignite\Inpatient\Entities\Admission::where("id", 21)->first();
-    //     return view('inpatient::admission.print.discharge_summary', compact('admission'));
-    // });
 
-    // Route::get('/test/chargesheet', function(){
-    //     $admission = \Ignite\Inpatient\Entities\Admission::where("id", 21)->first();
-    //     return view('inpatient::admission.print.charge_sheet', compact('admission'));
-    // });
-
-     /*
+    /*
     |--------------------------------------------------------------------------
     | PRINTING
     |--------------------------------------------------------------------------
@@ -48,18 +39,20 @@ Route::group(['as' => 'inpatient.'], function() {
     Route::get('/awaitingAdmission', 'InpatientController@admitAwaiting');
     Route::get('/manage/{id}/visit/{visit_id}/move', 'InpatientController@movePatient');
 
-   /*
+    /*
     |--------------------------------------------------------------------------
     | Ward Management
     |--------------------------------------------------------------------------
     */
+    
     Route::group(['prefix' => 'ward'], function(){
-        Route::get('/list','WardController@listWards')->name('inpatient.wards.index');
+        Route::get('/{id}/recurrent_charges','WardController@getWardCharges')->name('inpatient.wards.charges');
+        Route::get('/all','WardController@getAll');
+        Route::get('/list','WardController@index')->name('inpatient.wards.index');
         Route::post('/add',['uses'=>'WardController@store'])->name('inpatient.wards.store');
-        Route::get('/editWard/{ward_id}',['uses'=>'WardController@getRecordWard']);
-        Route::post('/update_ward',['uses'=>'WardController@update']);
-        Route::get('/delete/{ward_id}',['uses'=>'WardController@deleteThisWard']);
-        Route::post('/delete',['uses'=>'WardController@destroy'])->name('inpatient.wards.delete');
+        Route::get('/editWard/{ward_id}','WardController@getRecordWard')->name('inpatient.wards.edit');;
+        Route::post('/{id}/update', 'WardController@update')->name('inpatient.wards.update');;
+        Route::get('/{id}/delete',['uses'=>'WardController@destroy'])->name('inpatient.wards.delete');
     });
 
     /*
@@ -71,9 +64,12 @@ Route::group(['as' => 'inpatient.'], function() {
     Route::group(['prefix' => 'beds'], function(){
         Route::post('/change_bed','BedsController@change_bed');
         Route::get('/bedList',['uses'=>'BedsController@index']);
-        Route::get('/bedPosition',['uses'=>'BedsController@bedPosition']);
-        Route::post('/bedPosition',['uses'=>'BedsController@postbedPosition']);
-        Route::get('/bedPosition/{ward_id}',['uses'=>'BedsController@deletebedPosition']);
+        Route::get('/bedTypes',['uses'=>'BedsController@listBedTypes']);
+        Route::post('/type/add',['uses'=>'BedsController@addBedType']);
+        Route::get('/type/{id}/delete',['uses'=>'BedsController@deleteBedType']);
+        Route::get('/position',['uses'=>'BedsController@bedPosition']);
+        Route::post('/position',['uses'=>'BedsController@postBedPosition']);
+        Route::get('/position/{ward_id}',['uses'=>'BedsController@deleteBedPosition']);
         Route::post('/postaddbed',['uses'=>'BedsController@postaddBed']);
         Route::get('/editBed/{id}',['uses'=>'BedsController@editBed']);
         Route::post('/bedList',['uses'=>'BedsController@update']);
@@ -84,36 +80,51 @@ Route::group(['as' => 'inpatient.'], function() {
         Route::post('/delete_bed',['uses'=>'BedsController@delete_bed']);
     });
 
+     /*
+    |--------------------------------------------------------------------------
+    | Accounts Management
+    |--------------------------------------------------------------------------
+    */
+
+    Route::group(['prefix' => 'accounts'], function(){
+        Route::post('/addReccurentCharge',['uses'=>'AccountsController@addReccurentCharge']);
+        Route::get('/deposit',['uses'=> 'AccountsController@deposit']);
+        Route::get('/deposits/all',['uses'=> 'AccountsController@getAllDeposits']); 
+        Route::post('/deposits/edit',['uses'=>'AccountsController@editDeposit']);
+        Route::post('/addDepositType',['uses'=> 'AccountsController@addDepositType']);
+        Route::get('/delete_deposit/{deposit_id}',['uses'=>'AccountsController@delete_deposit']);
+        Route::get('/edit_deposit/{deposit_id}',['uses'=>'AccountsController@edit_deposit']);
+       
+        Route::post('/topUpAccount',['uses'=>'AccountsController@topUpAccount']);
+        Route::get('/topUp',['uses'=>'AccountsController@topUp']);
+        Route::post('/topUpAmount',['uses'=>'AccountsController@topUpAmount']);
+        Route::get('/withdraw',['uses'=>'AccountsController@withdraw']);
+        Route::post('/WithdrawAmount',['uses'=>'AccountsController@WithdrawAmount']);   
+        Route::get('/account_deposit/{patient}',['uses'=>'InpatientController@account_deposit_amount']);
+        Route::get('/account_withdraw/{patient}',['uses'=>'InpatientController@account_withdraw_amount']);
+        Route::post('/PostWithdrawAccount',['uses'=>'InpatientController@PostWithdrawAccount']);
+    });
+
+
+     /*
+    |--------------------------------------------------------------------------
+    | Nursing Services Management
+    |--------------------------------------------------------------------------
+    */
+
+    Route::group(['prefix' => 'nursing'], function(){
+        /*nursing & admission charges*/
+        Route::get('/services',['uses'=>'AccountsController@getNursingServices']); 
+        Route::get('/delete_service/{service}',['uses'=>'AccountsController@delete_service']);
+    });
+
  	/*
     |--------------------------------------------------------------------------
     | Requests Management
     |--------------------------------------------------------------------------
-    */
-
-    /*nursing charges*/
-    Route::get('/Nursing_services',['uses'=>'InpatientController@Nursing_services']);
-    //add recurrent charge
-    Route::get('/add_recurrent_charge',['uses'=>'InpatientController@add_recurrent_charge']);
-    //save new reccurent charge
-    Route::post('/AddReccurentCharge',['uses'=>'InpatientController@AddReccurentCharge']);
-
-//     //deposit setting
-    Route::get('/deposit',['uses'=>'InpatientController@deposit']);
-    Route::post('/addDepositType',['uses'=>'InpatientController@addDepositType']);
-    //delete deposit type
-    Route::get('/delete_deposit/{deposit_id}',['uses'=>'InpatientController@delete_deposit']);
-    Route::get('/admit_check',['uses'=>'InpatientController@admit_check']);
-    Route::get('/topUp',['uses'=>'InpatientController@topUp']);
-    Route::post('/topUpAmount',['uses'=>'InpatientController@topUpAmount']);
-    Route::get('/withdraw',['uses'=>'InpatientController@withdraw']);
-    Route::post('/WithdrawAmount',['uses'=>'InpatientController@WithdrawAmount']);
-
+    */   
+    
     Route::get('/cancel_checkin',['uses'=>'InpatientController@cancel_checkin']);
-    //edit a deposit
-    Route::get('/edit_deposit/{deposit_id}',['uses'=>'InpatientController@edit_deposit']);
-    Route::post('/deposit_adit',['uses'=>'InpatientController@deposit_adit']);
-    Route::post('/topUpAccount',['uses'=>'InpatientController@topUpAccount']);
-
 
     Route::get('/getAvailableBedPosition/{ward}',['uses'=>'InpatientController@getAvailableBedPosition']);
    
@@ -128,17 +139,9 @@ Route::group(['as' => 'inpatient.'], function() {
     Route::get('/Cancel_discharge/{visit}',['uses'=>'InpatientController@Cancel_discharge']);
     /*discharge the patient*/
     Route::post('/postDischargePatient',['uses'=>'InpatientController@postDischargePatient']);
-    //delete service
-    Route::get('/delete_service/{service}',['uses'=>'InpatientController@delete_service']);
-
-///patient account operations
-    //deposit amount..
-    Route::get('/account_deposit/{patient}',['uses'=>'InpatientController@account_deposit_amount']);
-    Route::post('/topUpAccount',['uses'=>'InpatientController@topUpAccountPost']);
-    //withdraw an amount
-    Route::get('/account_withdraw/{patient}',['uses'=>'InpatientController@account_withdraw_amount']);
-    Route::post('/PostWithdrawAccount',['uses'=>'InpatientController@PostWithdrawAccount']);
-//print deposit slip
+    
+   
+    //print deposit slip
     Route::get('/print',['uses'=>'InpatientController@print']);
     //post discharge note
     Route::post('/postDischargeNote',['uses'=>'InpatientController@postDischargeNote']);

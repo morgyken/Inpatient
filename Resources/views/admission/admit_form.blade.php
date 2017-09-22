@@ -169,10 +169,10 @@
                  @foreach($admissions as $adm)
 
                       <div class="form-group ">
-                        {!! Form::label($adm->name, $adm->name,['class'=>'control-label col-md-4']) !!}
-                        <div class="col-md-8">
-                            <input name="recurrent_charges[]" class="admission" type="checkbox" value="{{ $adm->id }}">
-                            {{ $adm->name }} @ price {{ $adm->cost }}
+                        {{-- {!! Form::label($adm->name, $adm->name,['class'=>'control-label col-md-4']) !!} --}}
+                        <div class="col-md-8 col-md-offset-4" id = "recurrent_charges">
+                           {{--  <input name="recurrent_charges[]" class="admission" type="checkbox" value="{{ $adm->id }}">
+                            {{ $adm->name }} @ price {{ $adm->cost }} --}}
                         </div>
                     </div>
 
@@ -244,12 +244,30 @@
                             // console.info("index=>"+index+'value=>'+value.number);
                             $("#selectPos").append("<option value='"+value.id+"'>"+value.name+"</option>")
                         })
-
                     });
                 };
                 loadBeds();
+
+                var loadRecurrentCharges = function (){
+                    var url = '{{ url('/inpatient/ward') }}';
+                    urlRecurrentCharges = url + '/' + ($("#selectedWard").val()) + '/recurrent_charges';
+                    $.ajax({
+                        url:urlRecurrentCharges,
+                        method:'GET'
+                    }).done(function (data) {
+                        $("#recurrent_charges").html("");
+                        $.each(data, function (index,value) {
+                            console.log(value);
+                            $("#recurrent_charges").append("<input name='recurrent_charges[]' class='admission' type='checkbox' value='"+ value.id +"'> "+ value.name + " @ Ksh. "+ value.cost + "")
+                        })
+
+                    });
+                }
+
+                loadRecurrentCharges();
                 $("#selectedWard").change(function () {
                     loadBeds();
+                    loadRecurrentCharges();
                     checkBalance();
                 })
 
