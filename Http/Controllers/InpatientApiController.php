@@ -1527,18 +1527,7 @@ class InpatientApiController extends Controller
             $wardCharges = 0; $recuCharges = 0;
             $wards = WardAssigned::where('visit_id', $request['visit_id'])->get();
 
-            // foreach ($wards as $ward) {
-            //     $wardCharges += $ward->price * $this->carbon->now()->diffInDays($ward->created_at);
-
-            //     //subscribed reccurrent charges
-            //     $rcnt = RecurrentCharge::where('visit_id', $request['visit_id'])->where('status', 'unpaid')->get();
-
-            //     $recuCharges = $rcnt->sum(function($recurrent){
-            //         return $sum += NursingCharge::find($recurrent->recurrent_charge_id)->cost * $this->carbon->now()->diffInDays($ward->created_at);
-            //     });
-            // }
-
-             foreach ($wards as $ward) {
+            foreach ($wards as $ward) {
                 $wardCharges += ($this->carbon->now() != null) ? ($ward->price * ($this->carbon->parse($this->carbon->now())->diffInDays($ward->created_at) )) : $ward->price * $this->carbon->now()->diffInDays($ward->created_at);
                 //subscribed reccurrent charges
                 foreach (RecurrentCharge::where('visit_id', $request['visit_id'])->where('status', 'unpaid')->get() as $recurrent) {
@@ -1547,22 +1536,16 @@ class InpatientApiController extends Controller
                 }
             }
 
-            // foreach ($rcnt as $recurrent) {
-            //     //nursing charges times no. of days..
-            //     $recuCharges += NursingCharge::find($recurrent->recurrent_charge_id)->first()->cost * date_diff($this->carbon->now(),$ward->created_at);
-            // }
-
             $totalCharges = $wardCharges + $recuCharges;
 
             //check patient account balance..
             $visit = Visit::find($request['visit_id'])->first();
-            $acc = PatientAccount::firstOrNew(['patient'=>$visit->patient]);
+            $acc = PatientAccount::latestBalance($visit->patient);
             $acc_balance = $acc->balance;
 
             if ($acc) { $acc_balance = $acc->balance; }
             $visit = Visit::find($request['visit_id']);
            
-
             if ($totalCharges > $acc_balance) {
                 $message = 'You have a pending charges of Kshs.'
                     . number_format($totalCharges) . '. Your account balance is Kshs. '

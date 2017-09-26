@@ -252,21 +252,14 @@ class InpatientController extends AdminBaseController
             $cost = $ward_cost + $deposit_amount;
            
             // Update patient balance
-            $acc = PatientAccount::firstOrNew(['patient'=>$request->patient_id]);
-            $balance = $acc->balance - $cost;
-            $acc->balance = $balance;
-            $acc->save();
+            // $acc = PatientAccount::firstOrNew(['patient'=>$request->patient_id]);
+            // $balance = $acc->balance - $cost;
+            // $acc->balance = $balance;
+            // $acc->save();
 
             // if ($request->payment_mode == 'cash') {
 
-            //     if ($deposit_amount > $acc->balance) {
-            //         $validator = Validator::make($request->all(), []);
-            //         $validator->errors()->add('deposit', 'Please top up your account');
-            //         Session::flash('error', 'Please top up your account');
-            //         return back()->withErrors($validator);
-            //     }
-
-            //     FinancePatientAccounts::create([
+            //     PatientAccount::create([
             //         'debit' => $deposit_amount,
             //         'credit' => 0.00,
             //         'details' => 'Charged for ' . $deposit->name,
@@ -317,7 +310,7 @@ class InpatientController extends AdminBaseController
             // Add recurrent charges such as admission and nursing charges etc that are recurrent if specified
 
             if($request->has('recurrent_charges')){
-                $newbalance = $acc->balance;
+                // $newbalance = $acc->balance;
 
                 foreach($request->recurrent_charges as $rc){
                     // Find specific charge 
@@ -329,15 +322,15 @@ class InpatientController extends AdminBaseController
                     $r_charges->recurrent_charge_id  = $nc->id;
                     $r_charges->save();
 
-                    $newbalance += $newbalance - $nc->cost;
+                    $newbalance += $nc->cost;
                 }
 
                 // Update our balance to reflect these charges
-                $acc->balance = $newbalance;
-                $acc->save();
+                // $acc->balance = $newbalance;
+                // $acc->save();
 
                 // Update Admission cost info. to reflect these charges
-                $admission->cost = ($newbalance < 0) ? str_replace("-", "", $newbalance) : $newbalance;
+                $admission->cost = $newbalance;
                 $admission->save();
             }
 
@@ -384,7 +377,7 @@ class InpatientController extends AdminBaseController
         $visit->save();
 
         if ($request->has('to_nurse')) { //quick way to forge an entry to nurse section
-            $this->checkin_at($request, $visit->id, 'nurse');
+            $this->checkin_at($request, $visit->id, 'nursing');
         }
 
         return $visit->id;

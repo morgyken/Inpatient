@@ -60,9 +60,7 @@ class AccountsController extends AdminBaseController
                     $n->save();
                 }
             }
-
             \DB::commit();
-
             return redirect()->back()->with('success', 'Successfully added a new recurrent charge');
         }catch(\Exception $e){
             \DB::rollback();
@@ -97,7 +95,6 @@ class AccountsController extends AdminBaseController
         }
 
         return response()->json(['data' => $data]);
-
     }
 
     public function edit_deposit($id) {

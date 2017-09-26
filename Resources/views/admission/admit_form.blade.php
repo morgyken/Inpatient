@@ -196,7 +196,8 @@
                      $('.ins').show();
                      $(".cash").hide();
                  }
-            };
+            }
+            
             var checkOther = function () {
                 if($("#admission_doc").val() == 'other'){
                     $("div.external_doc").show();
