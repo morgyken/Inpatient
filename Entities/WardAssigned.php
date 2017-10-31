@@ -18,11 +18,16 @@ use Ignite\Inpatient\Entities\Ward;
  * @property string $status
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ * @property int $invoiced
+ * @property-read \Ignite\Finance\Entities\RemovedBills $removed_bills
+ * @property-read \Ignite\Inpatient\Entities\Visit|null $visit
+ * @property-read \Ignite\Inpatient\Entities\Ward $ward
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\WardAssigned whereAdmissionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\WardAssigned whereAdmittedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\WardAssigned whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\WardAssigned whereDischargedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\WardAssigned whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\WardAssigned whereInvoiced($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\WardAssigned wherePrice($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\WardAssigned whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\WardAssigned whereUpdatedAt($value)

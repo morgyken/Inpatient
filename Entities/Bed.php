@@ -10,11 +10,12 @@ use Ignite\Inpatient\Entities\BedType;
  * Ignite\Inpatient\Entities\Bed
  *
  * @property int $id
+ * @property int $type
  * @property string $number
- * @property string $type
  * @property string $status
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ * @property-read \Ignite\Inpatient\Entities\BedType $bedType
  * @property-read \Ignite\Inpatient\Entities\Ward $ward
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Bed whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Bed whereId($value)

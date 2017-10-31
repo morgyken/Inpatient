@@ -27,7 +27,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $patient
  * @property int|null $purpose
  * @property int|null $external_doctor
- * @property string|null $inpatient
  * @property int $user
  * @property string $payment_mode
  * @property int|null $scheme
@@ -36,6 +35,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $deleted_at
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ * @property int|null $external_order
  * @property-read \Illuminate\Database\Eloquent\Collection|\Ignite\Inpatient\Entities\Admission[] $admissions
  * @property-read \Ignite\Reception\Entities\Appointments $appointments
  * @property-read \Ignite\Settings\Entities\Clinics $clinics
@@ -70,8 +70,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Visit whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Visit whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Visit whereExternalDoctor($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Visit whereExternalOrder($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Visit whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Visit whereInpatient($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Visit whereNextAppointment($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Visit wherePatient($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Visit wherePaymentMode($value)

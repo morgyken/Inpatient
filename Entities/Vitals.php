@@ -14,20 +14,20 @@ use Ignite\Inpatient\Entities\Admission;
  * @property int $admission_id
  * @property float|null $weight
  * @property float|null $height
- * @property string|null $bp_systolic
- * @property string|null $bp_diastolic
- * @property string|null $pulse
- * @property string|null $respiration
- * @property string|null $temperature
- * @property string|null $temperature_location
- * @property float|null $oxygen
+ * @property string $bp_systolic
+ * @property string $bp_diastolic
+ * @property string $pulse
+ * @property string $respiration
+ * @property string $temperature
+ * @property string $temperature_location
+ * @property float $oxygen
  * @property float|null $waist
  * @property float|null $hip
  * @property string|null $blood_sugar
  * @property string $blood_sugar_units
  * @property string|null $allergies
  * @property string|null $chronic_illnesses
- * @property int|null $user_id
+ * @property int $user_id
  * @property string $date_recorded
  * @property string $time_recorded
  * @property \Carbon\Carbon|null $created_at

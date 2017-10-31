@@ -28,10 +28,13 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \Ignite\Inpatient\Entities\Bed $bed
  * @property-read \Ignite\Users\Entities\User $doctor
+ * @property-read mixed $discharged
+ * @property-read mixed $has_discharge_request
  * @property-read \Ignite\Reception\Entities\Patients $patient
  * @property-read \Ignite\Inpatient\Entities\Visit|null $visit
  * @property-read \Illuminate\Database\Eloquent\Collection|\Ignite\Inpatient\Entities\Vitals[] $vitals
  * @property-read \Ignite\Inpatient\Entities\Ward $ward
+ * @property-read \Ignite\Inpatient\Entities\WardAssigned $wardAssigned
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Admission whereBedId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Admission whereBedpositionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Admission whereCost($value)

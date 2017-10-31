@@ -21,28 +21,41 @@ use Ignite\Users\Entities\User;
  * @property int $whereto
  * @property int $method
  * @property int $duration
+ * @property string|null $stop_reason
+ * @property int $stopped
  * @property int $status
  * @property bool $allow_substitution
  * @property int $time_measure
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property int $type
+ * @property string|null $notes
+ * @property int $canceled
  * @property int|null $admission_id
+ * @property int $for_discharge
+ * @property string|null $invoiced
  * @property-read \Illuminate\Database\Eloquent\Collection|\Ignite\Evaluation\Entities\Dispensing[] $dispensing
  * @property-read \Ignite\Inventory\Entities\InventoryProducts $drugs
  * @property-read string $dose
+ * @property-read mixed $log_count
  * @property-read string $sub
  * @property-read \Illuminate\Database\Eloquent\Collection|\Ignite\Inpatient\Entities\Administration[] $logs
  * @property-read \Ignite\Users\Entities\User $users
  * @property-read \Ignite\Inpatient\Entities\Visit $visits
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereAdmissionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereAllowSubstitution($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereCanceled($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereDrug($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereDuration($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereForDischarge($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereInvoiced($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereMethod($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereNotes($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereStopReason($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereStopped($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereTake($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereTimeMeasure($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Prescription whereType($value)

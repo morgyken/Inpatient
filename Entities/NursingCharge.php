@@ -16,6 +16,7 @@ use Ignite\Inpatient\Entities\Ward;
  * @property string $type
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ * @property-read \Ignite\Inpatient\Entities\Ward|null $ward
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\NursingCharge whereCost($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\NursingCharge whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\NursingCharge whereId($value)

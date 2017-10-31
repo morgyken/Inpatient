@@ -18,6 +18,9 @@ use Ignite\Users\Entities\User;
  * @property string $status
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ * @property-read \Ignite\Inpatient\Entities\Admission $admission
+ * @property-read \Ignite\Users\Entities\User|null $doctor
+ * @property-read \Ignite\Inpatient\Entities\Visit|null $visit
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\RequestDischarge whereAdmissionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\RequestDischarge whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\RequestDischarge whereDoctorId($value)

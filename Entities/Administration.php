@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $visit_id
  * @property int $prescription_id
  * @property string $time
- * @property string $am_pm
  * @property int $user
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
@@ -23,7 +22,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read \Ignite\Inpatient\Entities\Prescription $prescription
  * @property-read \Ignite\Users\Entities\User $users
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Administration whereAdmissionId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Administration whereAmPm($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Administration whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Administration whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Administration wherePrescriptionId($value)

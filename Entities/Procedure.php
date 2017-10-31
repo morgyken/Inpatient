@@ -16,12 +16,15 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $name
  * @property string $code
  * @property int $category
+ * @property string|null $gender
  * @property int|null $template
  * @property float $cash_charge
+ * @property float|null $insurance_charge
  * @property int $charge_insurance
  * @property int $precharge
  * @property string|null $description
  * @property int $status
+ * @property int $sensitivity
  * @property-read \Ignite\Evaluation\Entities\ProcedureCategories $categories
  * @property-read \Illuminate\Database\Eloquent\Collection|\Ignite\Evaluation\Entities\SubProcedures[] $children
  * @property-read int $price
@@ -34,9 +37,12 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Procedure whereChargeInsurance($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Procedure whereCode($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Procedure whereDescription($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Procedure whereGender($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Procedure whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Procedure whereInsuranceCharge($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Procedure whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Procedure wherePrecharge($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Procedure whereSensitivity($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Procedure whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Procedure whereTemplate($value)
  * @mixin \Eloquent

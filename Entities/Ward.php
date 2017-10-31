@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\Ignite\Inpatient\Entities\WardAssigned[] $assigned
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ignite\Inpatient\Entities\BedPosition[] $bedpositions
  * @property-read \Illuminate\Database\Eloquent\Collection|\Ignite\Reception\Entities\Patients[] $patients
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Ward whereAgeGroup($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Ward whereCategory($value)

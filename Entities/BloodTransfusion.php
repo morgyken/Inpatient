@@ -18,9 +18,10 @@ use Ignite\Users\Entities\User;
  * @property int|null $bp_systolic
  * @property int|null $bp_diastolic
  * @property int|null $temperature
- * @property int|null $pulse
  * @property int|null $respiration
  * @property string|null $remarks
+ * @property string $date_recorded
+ * @property string $time_recorded
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \Ignite\Inpatient\Entities\Admission $admission
@@ -30,11 +31,12 @@ use Ignite\Users\Entities\User;
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\BloodTransfusion whereBpDiastolic($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\BloodTransfusion whereBpSystolic($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\BloodTransfusion whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\BloodTransfusion whereDateRecorded($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\BloodTransfusion whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\BloodTransfusion wherePulse($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\BloodTransfusion whereRemarks($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\BloodTransfusion whereRespiration($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\BloodTransfusion whereTemperature($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\BloodTransfusion whereTimeRecorded($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\BloodTransfusion whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\BloodTransfusion whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\BloodTransfusion whereVisitId($value)
