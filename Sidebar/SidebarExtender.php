@@ -80,6 +80,13 @@ class SidebarExtender implements Panda
                     $item->icon('fa fa-bed');
                     $item->weight(4);
 
+                    /* add inpatient admission types */
+                    $item->item('Admission types', function(Item $item) {
+                        $item->icon('fa fa-heartbeat');
+                        $item->url('/inpatient/admission-types');
+                        $item->weight(4);
+                    });
+
                     /* add recurrent services */
                     $item->item('Recurring & One-off Fees', function(Item $item) {
                         $item->icon('fa fa-paypal');

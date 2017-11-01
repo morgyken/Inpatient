@@ -147,7 +147,14 @@ Route::group(['as' => 'inpatient.'], function() {
     Route::post('/postDischargeNote',['uses'=>'InpatientController@postDischargeNote']);
 
 
+    //Admission Types
+    Route::get('/admission-types', ['uses' => 'AdmissionTypeController@index']);
+    Route::post('/admission-types', ['uses' => 'AdmissionTypeController@store']);
+    Route::get('/admission-types/edit/{id}', ['uses' => 'AdmissionTypeController@edit']);
+    Route::post('/admission-types/{id}/update', ['uses' => 'AdmissionTypeController@update']);
 
+    //Admission Types API
+    Route::get('/admission-types/listing', ['uses' => 'AdmissionTypeController@listing']);
 // ********************************************* API ****************************************************************** \\
 
     
