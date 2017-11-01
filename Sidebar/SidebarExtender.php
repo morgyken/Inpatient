@@ -81,7 +81,7 @@ class SidebarExtender implements Panda
                     $item->weight(4);
 
                     /* add recurrent services */
-                    $item->item('Nursing & Admission Fees', function(Item $item) {
+                    $item->item('Recurring & One-off Fees', function(Item $item) {
                         $item->icon('fa fa-paypal');
                         $item->url('/inpatient/nursing/services');
                         $item->weight(4);
@@ -107,13 +107,16 @@ class SidebarExtender implements Panda
                         //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
                         $item->weight(4);
                     });
-                    
-                    $item->item('Add/View Bed Types', function(Item $item) {
-                        $item->icon('fa fa-bed');
-                        $item->url('/inpatient/beds/bedTypes');
-                        //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
-                        $item->weight(4);
-                    });
+                        
+                    /**
+                    * Removed bed types and added standard bed types
+                    */    
+                    // $item->item('Add/View Bed Types', function(Item $item) {
+                    //     $item->icon('fa fa-bed');
+                    //     $item->url('/inpatient/beds/bedTypes');
+                    //     //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
+                    //     $item->weight(4);
+                    // });
 
                     //types of deposits
                     $item->item('Deposit', function(Item $item) {

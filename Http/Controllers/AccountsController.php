@@ -29,9 +29,11 @@ class AccountsController extends AdminBaseController
     }
 
     public function getNursingServices(Request $request) {
+
         $charges = NursingCharge::all();
         $wards = Ward::all();
         return view('Inpatient::admission.nursing_services', compact('charges', 'wards'));
+        
     }
 
     

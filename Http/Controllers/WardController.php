@@ -10,6 +10,8 @@ use Illuminate\Routing\Controller;
 use Ignite\Inpatient\Entities\Ward;
 use Ignite\Inpatient\Entities\NursingCharge;
 
+use Ignite\Inpatient\Http\Requests\WardRequest;
+
 use Validator;
 
 class WardController extends AdminBaseController
@@ -74,23 +76,16 @@ class WardController extends AdminBaseController
      * @param  Request $request
      * @return Response
      */
-    public function store(Request $request)
+    public function store(WardRequest $request)
     {
+        // dd(request()->all());
         try{
 
-            // if ($request->has('number')){
-            //     $item = new Ward;
-            //     $item->number = random_int(4);
-            // }
             $request['category'] = 'inpatients';
             $this->ward->create($request->all());
-            // \Session::flash('message', 'Ward added Sucesfully!');
-
             return redirect()->back()->with('success', 'Ward added Sucesfully!');
 
         }catch (\Exception $e){
-
-            // \Session::flash('message', 'Something Went Wrong');
             return redirect()->back()->with('error', 'Something Went Wrong '.$e->getMessage());
         }
 

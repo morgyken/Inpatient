@@ -29,14 +29,14 @@
                             <div class="form-group {{ $errors->has('number') ? ' has-error' : '' }} req">
                                 <label class="control-label col-md-4">Ward Number</label>
                                 <div class="col-md-8">
-                                    <input type="text" required name="number" class="form-control" />
+                                    <input type="text" required name="number" class="form-control" value="{{ old('number') }}" />
                                     
                                 </div>
                             </div>
                             <div class="form-group {{ $errors->has('name') ? ' has-error' : '' }} req">
                                 <label class="control-label col-md-4">Ward Name</label>
                                 <div class="col-md-8">
-                                     <input required  type="text" name="name" class="form-control" />
+                                     <input required  type="text" name="name" class="form-control" value="{{ old('name')}}" />
                                 </div>
                             </div>
                         </div>
