@@ -49,6 +49,7 @@ $(function () {
         $(this).prop('disabled', false);
         show_selection_investigation();
     });
+
     $('#radiology_form .check,#laboratory_form .check,#diagnosis_form .check').click(function () {
         var elements = $(this).parent().parent().find('input');
         var texts = $(this).parent().parent().find('textarea');

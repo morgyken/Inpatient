@@ -9,8 +9,9 @@ use Ignite\Evaluation\Entities\Prescriptions;
 use Ignite\Evaluation\Entities\RecurrentCharge;
 use Ignite\Evaluation\Entities\VisitDestinations;
 use Ignite\Evaluation\Repositories\EvaluationRepository;
-use Ignite\Inpatient\Entities\Admission;
+use Ignite\Finance\Entities\PatientAccount;
 use Ignite\Inpatient\Entities\Administration;
+use Ignite\Inpatient\Entities\Admission;
 use Ignite\Inpatient\Entities\Bed;
 use Ignite\Inpatient\Entities\BedPosition;
 use Ignite\Inpatient\Entities\BloodPressure;
@@ -19,11 +20,10 @@ use Ignite\Inpatient\Entities\Deposit;
 use Ignite\Inpatient\Entities\Discharge;
 use Ignite\Inpatient\Entities\DischargeNote;
 use Ignite\Inpatient\Entities\FluidBalance;
+use Ignite\Inpatient\Entities\InpatientConsumable;
 use Ignite\Inpatient\Entities\Notes;
 use Ignite\Inpatient\Entities\NursingCarePlan;
 use Ignite\Inpatient\Entities\NursingCharge;
-//use Ignite\Inpatient\Entities\PatientAccount;
-use Ignite\Finance\Entities\PatientAccount;
 use Ignite\Inpatient\Entities\RequestAdmission;
 use Ignite\Inpatient\Entities\RequestDischarge;
 use Ignite\Inpatient\Entities\Temperature;
@@ -32,16 +32,15 @@ use Ignite\Inpatient\Entities\Vitals;
 use Ignite\Inpatient\Entities\Ward;
 use Ignite\Inpatient\Entities\WardAssigned;
 use Ignite\Inpatient\Helpers\InpatientHelpers;
-use Ignite\Inpatient\Entities\InpatientConsumable;
 use Ignite\Reception\Entities\Patients;
 use Ignite\Users\Entities\Roles;
 use Ignite\Users\Entities\User;
 use Ignite\Users\Entities\UserRoles;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-
 use Validator;
-use Dompdf\Dompdf;
+
+//use Ignite\Inpatient\Entities\PatientAccount;
 
 class InpatientController extends AdminBaseController
 {
@@ -456,14 +455,16 @@ class InpatientController extends AdminBaseController
         $ward_assigned = WardAssigned::where("visit_id", $visit_id)->first();
 
         $ward = Ward::find($ward_assigned->ward_id)->first();
-        $admission = Admission::where('patient_id', $id)->where("visit_id", $visit_id)->first();
+        $admission = Admission::where('patient_id', $id)
+            ->where("visit_id", $visit_id)->first();
         ///the vitals taken during visits
         /* all the visits for this patient */
         $vitals = null;
         $doctor_note = null;
 
         if (count(Visit::where('patient', $id)->get()) > 0) {
-            $visit_id = Visit::where('patient', $id)->orderBy('created_at', 'desc')->first()->id;
+//            $visit_id = Visit::where('patient', $id)
+//                ->orderBy('created_at', 'desc')->first()->id;
             $vitals = Vitals::where('visit_id', $visit_id)->orderBy("updated_at", "DESC")->get()->map(function ($item) {
                 return [
                     "id" => $item->id,

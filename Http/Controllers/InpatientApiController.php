@@ -1122,7 +1122,7 @@ class InpatientApiController extends Controller
         $return = [];
         foreach ($data as $key => $item) {
             if ($item->has_result)
-                $link = '<a href="' . route('evaluation . view_result', $item->visit) . '"
+                $link = '<a href="' . route('evaluation.view_result', $item->visit) . '"
                                                class="btn btn-xs btn-success" target="_blank">
                                                 <i class="fa fa-external-link"></i> View Result
             </a>';
