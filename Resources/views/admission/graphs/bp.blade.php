@@ -8,7 +8,8 @@
                     <label class=" control-label">Blood Pressure Recording</label>
                     {{Form::hidden('patient_id',$patient->id)}}
                     {{Form::hidden('admission_id',$admission->id)}}
-                    {{Form::text('value',null,['class'=>'form-control','placeholder'=>'Enter Blood pressure'])}}
+                    {{Form::text('value',null,['class'=>'form-control','placeholder'=>'Blood pressure'])}}
+                    {{Form::text('diastolic',null,['class'=>'form-control','placeholder'=>'Diastolic'])}}
                     <button type="button" class="btn btn-success" id="adder"> Add</button>
                 </div>
                 {{Form::close()}}
@@ -51,8 +52,10 @@
                             var series = my_bp_chart.series[0],
                                 shift = series.data.length > 20;
                             var the_field = parseInt($('input[name=value]').val());
+                            var the_nfield = parseInt($('input[name=diastolic]').val());
                             var date = new Date().toISOString().slice(0, 19).replace('T', ' ');
                             my_bp_chart.series[0].addPoint(the_field, true, shift);
+                            my_bp_chart.series[1].addPoint(the_nfield, true, shift);
                             $('#bpForm').find("input[type=text], textarea").val("");
                         }
                     );

@@ -429,7 +429,7 @@ class InpatientController extends AdminBaseController
                 $account->patient = $request->patient_id;
                 $account->save();
             }
-            $account_balance = $account->balance;
+            $account_balance = $account->getLatestBalance($request->patient_id);
 
             if (Deposit::all()->count() <= 0) {
                 return array('status' => 'insufficient', 'description' => 'There are no deposits');
@@ -572,11 +572,13 @@ class InpatientController extends AdminBaseController
     private function getCharts($patient, $admission)
     {
         $bp = BloodPressure::wherePatientId($patient)->whereAdmissionId($admission)->get();
-        return \Charts::create('line', 'highcharts')
+        return \Charts::multi('line', 'highcharts')
             ->title('Blood Pressure Chart')
-            ->elementLabel('Blood Pressure')
+//            ->elementLabel('Blood Pressure')
             ->labels($bp->pluck('date'))
-            ->values($bp->pluck('value'))
+            ->dataset('Blood Pressure', $bp->pluck('value'))
+            ->dataset('Diastolic', $bp->pluck('diastolic'))
+//            ->values()
             ->template('material')
             ->container('bp_chart')
             ->width(0)
