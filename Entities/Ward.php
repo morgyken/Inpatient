@@ -55,4 +55,10 @@ class Ward extends Model
         return $this->hasMany(BedPosition::class,'ward_id', 'id');
     }
 
+    public function beds()
+    {
+        return $this->hasMany(Bed::class, 'ward_id', 'id');
+    }
+
+
 }

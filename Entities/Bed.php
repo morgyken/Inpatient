@@ -37,6 +37,8 @@ class Bed extends Model
 
     protected $table = 'beds';
 
+    protected $with = ['ward'];
+
     public function ward(){
     	return $this->belongsTo(Ward::class, 'ward_id', 'id');
     }

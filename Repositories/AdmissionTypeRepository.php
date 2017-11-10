@@ -23,6 +23,14 @@ class AdmissionTypeRepository
 	}
 
 	/*
+	* Persist a new admission type into the database
+	*/
+	public function update($id, $fields)
+	{
+		return AdmissionType::where('id', $id)->update($fields);
+	}
+
+	/*
 	* Make the admission types json ready for ajax calls
 	*/
 	public function jsonReady($admissionTypes)
@@ -30,7 +38,8 @@ class AdmissionTypeRepository
 		$jsonReadyData = $admissionTypes->map(function($admission){
 
             return [
-                $admission->name, 
+				$admission->name, 
+				$admission->deposit,
                 $admission->description,
                 Carbon::parse($admission->created_at)->toDateString(),
                 '<a href="'.url("/inpatient/admission-types/".$admission["id"]."/delete").'" class="btn btn-danger btn-xs">Delete</a>

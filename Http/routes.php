@@ -24,7 +24,7 @@ Route::group(['as' => 'inpatient.'], function() {
     */
 
     Route::get('/admit', 'InpatientController@index');
-    Route::get('/awaiting', 'InpatientController@awaiting');
+    Route::get('/admission-requests', 'InpatientController@awaiting');
     Route::post('/requestAdmission', 'InpatientController@requestAdmission');
     Route::get('/admit/{id}', 'InpatientController@admitWalkInPatient');
     Route::get('/admit/{id}/visit/{visit_id}', 'InpatientController@admitPatientForm');
@@ -48,7 +48,8 @@ Route::group(['as' => 'inpatient.'], function() {
     Route::group(['prefix' => 'ward'], function(){
         Route::get('/{id}/recurrent_charges','WardController@getWardCharges')->name('inpatient.wards.charges');
         Route::get('/all','WardController@getAll');
-        Route::get('/list','WardController@index')->name('inpatient.wards.index');
+        Route::get('/','WardController@index')->name('inpatient.wards.index');
+        Route::get('/create','WardController@create')->name('inpatient.wards.create');
         Route::post('/add',['uses'=>'WardController@store'])->name('inpatient.wards.store');
         Route::get('/editWard/{ward_id}','WardController@getRecordWard')->name('inpatient.wards.edit');;
         Route::post('/{id}/update', 'WardController@update')->name('inpatient.wards.update');;
@@ -78,6 +79,9 @@ Route::group(['as' => 'inpatient.'], function() {
         Route::get('/availableBeds/{ward_id}',['uses'=>'BedsController@availableBeds']);
         Route::get('/delete_bed/{id}',['uses'=>'BedsController@postdelete_bed']);
         Route::post('/delete_bed',['uses'=>'BedsController@delete_bed']);
+
+        Route::get('/', ['uses' => 'BedController@index']);
+        Route::post('/', ['uses' => 'BedController@store']);
     });
 
      /*
@@ -146,15 +150,22 @@ Route::group(['as' => 'inpatient.'], function() {
     //post discharge note
     Route::post('/postDischargeNote',['uses'=>'InpatientController@postDischargeNote']);
 
-
-    //Admission Types
     Route::get('/admission-types', ['uses' => 'AdmissionTypeController@index']);
     Route::post('/admission-types', ['uses' => 'AdmissionTypeController@store']);
+
     Route::get('/admission-types/edit/{id}', ['uses' => 'AdmissionTypeController@edit']);
     Route::post('/admission-types/{id}/update', ['uses' => 'AdmissionTypeController@update']);
 
-    //Admission Types API
     Route::get('/admission-types/listing', ['uses' => 'AdmissionTypeController@listing']);
+
+    Route::get('/admission', ['uses' => 'AdmissionController@index']);
+    
+    Route::get('/admission/{admissionRequest}/create', ['uses' => 'AdmissionController@create']);
+
+    Route::post('/admission/{admissionRequest}', ['uses' => 'AdmissionController@store']);
+
+    
+
 // ********************************************* API ****************************************************************** \\
 
     

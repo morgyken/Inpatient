@@ -46,9 +46,15 @@ class SidebarExtender implements Panda
                     $item->icon('fa fa-check-square-o');
                     $item->url('/inpatient/admit');
                 });
+                $item->item('Admissions', function(Item $item) {
+                    $item->icon('fa fa-bed');
+                    $item->url('/inpatient/admission');
+                    //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
+                    $item->weight(4);
+                });
                 $item->item('Awaiting admission', function(Item $item) {
                     $item->icon('fa fa-user-plus');
-                    $item->url('/inpatient/awaiting');
+                    $item->url('/inpatient/admission-requests');
                     //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
                     $item->weight(4);
                 });
@@ -96,24 +102,24 @@ class SidebarExtender implements Panda
                     //wards
                     $item->item('Wards', function(Item $item) {
                         $item->icon('fa fa-home');
-                        $item->url('/inpatient/ward/list');
+                        $item->url('/inpatient/ward');
                         //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
                         $item->weight(4);
                     });
-                    $item->item('Bed Positions', function(Item $item) {
+                    $item->item('Beds', function(Item $item) {
                         $item->icon('fa fa-bed');
-                        $item->url('/inpatient/beds/position');
+                        $item->url('/inpatient/beds');
                         //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
                         $item->weight(4);
                     });
 
                     // Beds
-                    $item->item('Add/View Beds', function(Item $item) {
-                        $item->icon('fa fa-bed');
-                        $item->url('/inpatient/beds/bedList');
-                        //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
-                        $item->weight(4);
-                    });
+                    // $item->item('Add/View Beds', function(Item $item) {
+                    //     $item->icon('fa fa-bed');
+                    //     $item->url('/inpatient/beds/bedList');
+                    //     $item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
+                    //     $item->weight(4);
+                    // });
                         
                     /**
                     * Removed bed types and added standard bed types
@@ -123,18 +129,7 @@ class SidebarExtender implements Panda
                     //     $item->url('/inpatient/beds/bedTypes');
                     //     //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
                     //     $item->weight(4);
-                    // });
-
-                    //types of deposits
-                    $item->item('Deposit', function(Item $item) {
-                        $item->icon('fa fa-gear');
-                        $item->url('/inpatient/accounts/deposit');
-                        //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
-                        $item->weight(4);
-                    });
-  
-
-
+                    // });  
                 });
             });
         });

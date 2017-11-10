@@ -36,10 +36,8 @@ class AdmissionTypeController extends AdminBaseController
         return view('inpatient::admission.types.index', compact('admissionTypes'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     * @param  AdmissionTypeRequest $request
-     * @return Response
+    /*
+     * Persist a new admission type record.
      */
     public function store(AdmissionTypeRequest $request)
     {
@@ -73,12 +71,10 @@ class AdmissionTypeController extends AdminBaseController
      */
     public function update($id)
     {
-        $admissionType = $this->admissionTypeRepository->findById($id);
+        $admissionType = $this->admissionTypeRepository->update($id, request()->except(['_token', 'admission_type_id']));
 
-        $editedType = $admissionType->update(request()->all());
-
-        return $editedType ?redirect()->back()->with('success', 'Admission Type Ppdated Sucesfully!') : 
-                            redirect()->back()->with('error', 'Something Went Wrong ');
+        return $admissionType ? redirect()->back()->with('success', 'Admission Type Updated Sucesfully!') : 
+                                redirect()->back()->with('error', 'Something Went Wrong ');
     }
 
     public function listing()

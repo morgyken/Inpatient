@@ -39,17 +39,26 @@ class WardController extends AdminBaseController
         return view('Inpatient::wards.index', ['wards' => $wards]);
     }
 
+    /*
+    * Show the form for creating a new ward
+    */
+    public function create()
+    {
+        return view('Inpatient::wards.create');
+    }
+
     public function getAll(){
         $wards = $this->ward->get()->map(function($w){
             return [
                 'id' => $w->id,
                 'number' => $w->number,
                 'name'  => $w->name,
-                'cost' =>  'Ksh. '.$w->cost,
+                'insurance_cost' =>  'Ksh. '.$w->insurance_cost,
+                'cash_cost' =>  'Ksh. '.$w->cash_cost,
                 'category' => $w->category,
                 'gender' => $w->gender,
                 'age_group' => $w->age_group,
-                'created_on' => $w->created_at->format('d/m/Y H:i a')
+                // 'created_on' => $w->created_at->format('d/m/Y H:i a')
             ];
         })->toArray();
 
@@ -60,10 +69,11 @@ class WardController extends AdminBaseController
                 $ward['name'], 
                 $ward['gender'],
                 $ward['age_group'],
-                $ward['cost'],
-                $ward['created_on'],
-                '<a href="'.url("/inpatient/ward/".$ward["id"]."/delete").'" class="btn btn-danger btn-xs">Delete</a>
-                                        <button class="btn btn-primary btn-xs edit" id="'.$ward["id"].'" >Edit</button>'
+                $ward['insurance_cost'],
+                $ward['cash_cost'],
+                // $ward['created_on'],
+                '<button class="btn btn-primary btn-xs edit" id="'.$ward["id"].'" >Edit</button>
+                <a href="'.url("/inpatient/ward/".$ward["id"]."/delete").'" class="btn btn-danger btn-xs">Delete</a>'
             ];
         }
 
@@ -78,7 +88,6 @@ class WardController extends AdminBaseController
      */
     public function store(WardRequest $request)
     {
-        // dd(request()->all());
         try{
 
             $request['category'] = 'inpatients';
@@ -130,7 +139,6 @@ class WardController extends AdminBaseController
             \DB::rollback();
             return redirect()->back()->with('error', 'Something went Wrong');
         }
-
     }
 
     /**

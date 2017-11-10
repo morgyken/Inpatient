@@ -26,18 +26,32 @@
                     {!! Form::open(['url'=>'/inpatient/admission-types']) !!}
                     <div class="col-md-12">
                         <div class="col-md-6">
-                            <div class="form-group {{ $errors->has('name') ? ' has-error' : '' }} req">
-                                <label class="control-label col-md-4">Name</label>
-                                <div class="col-md-8">
-                                    <input type="text" name="name" class="form-control" value="{{ old('name') }}" required />
+                            <div class="col-md-12">
+                                <div class="form-group {{ $errors->has('name') ? ' has-error' : '' }} req">
+                                    <label class="control-label">Name</label>
+                                    <div>
+                                        <input type="text" name="name" class="form-control" value="{{ old('name') }}" required />
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-12">
+                                <div class="form-group {{ $errors->has('name') ? ' has-error' : '' }} req">
+                                    <label class="control-label">Deposit</label>
+                                    <div>
+                                        <input type="number" name="deposit" class="form-control" value="{{ old('deposit') }}" required />
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
                         <div class="col-md-6">
-                        	<div class="form-group {{ $errors->has('description') ? ' has-error' : '' }}">
-                                <label class="control-label col-md-4">Description</label>
-                                <div class="col-md-8">
-                                     <textarea name="description" class="form-control" /></textarea>
+                            <div class="col-md-12">
+                                <div class="form-group {{ $errors->has('description') ? ' has-error' : '' }}">
+                                    <label class="control-label">Description</label>
+                                    <div>
+                                        <textarea name="description" rows="5" class="form-control" /></textarea>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -60,6 +74,7 @@
                         <thead>
                             <tr>
                                 <th>Name</th>
+                                <th>Deposit</th>
                                 <th>Description</th>
                                 <th>Created On</th>
                                 <th>Option</th>
@@ -92,13 +107,19 @@
                                     {{ csrf_field() }}
                                     <input type="hidden" name="admission_type_id" id="admission_type_id" class="form-control" required>
 
-                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-12">
                                         <div class="form-group {{ $errors->has('name') ? ' has-error' : '' }} req">
                                             <label>Name</label>
                                             <input type="text" required name="name" id = "edit-name" class="form-control" />
                                         </div>
                                     </div>
-                                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                                    <div class="col-xs-12 col-sm-12 col-md-12">
+                                        <div class="form-group {{ $errors->has('deposit') ? ' has-error' : '' }} req">
+                                            <label>Deposit</label>
+                                            <input type="text" required name="deposit" id = "edit-deposit" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                         <div class="form-group {{ $errors->has('description') ? ' has-error' : '' }}">
                                             <label>Description</label>
                                             <textarea name="description" id = "edit-description" class="form-control"></textarea>
@@ -137,11 +158,11 @@
                     $.ajax({
                         url:url
                     }).done(function (data) {
-                    	console.log(data);
 
                         document.getElementById("update_admission_type_form").reset();
                         $("#edit-name").val(data.name);
                         $("#edit-description").val(data.description);
+                        $("#edit-deposit").val(data.deposit);
                         $("#update_admission_type").html("<i class='fa fa-save'></i> Update");
                         $("#editAdmissionTypeModal").modal();
                     })

@@ -66,6 +66,8 @@ class Admission extends Model
 
     protected $table = "admissions";
 
+    protected $with = ['patient', 'doctor', 'ward', 'bed'];
+
     public function getDischargedAttribute(){
         return ($this->is_discharged == 0) ? false : true ;
     }

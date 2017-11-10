@@ -4,13 +4,13 @@ namespace Ignite\Inpatient\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AdmissionTypeRequest extends FormRequest
+class AdmissionRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
+    * Determine if the user is authorized to make this request.
+    *
+    * @return bool
+    */
     public function authorize()
     {
         return true;
@@ -24,8 +24,12 @@ class AdmissionTypeRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|unique:admission_types',
-            'deposit' => 'required'
+            'doctor_id' => 'required_without:external_doctor',
+            'external_doctor' => 'required_without:doctor_id',
+            'ward_id' => 'required',
+            'bed_id' => 'required'
         ];
     }
+
+    
 }

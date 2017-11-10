@@ -70,11 +70,6 @@ class AccountsController extends AdminBaseController
         }
     }
 
-     public function deposit() {
-        
-        return view('Inpatient::account.deposit');
-    }
-
     public function getAllDeposits(){
         $deposits = Deposit::get()->map(function($d){
             return [
