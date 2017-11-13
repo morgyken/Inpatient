@@ -11,14 +11,14 @@
 ?>
 
 @extends('layouts.app')
-@section('content_title','Nursing Charges')
-@section('content_description','Manage Nursing Charges')
+@section('content_title','Inpatient Charges')
+@section('content_description','Manage Inpatient Charges')
 
 @section('content')
 
 <div class="box box-info">
     <div class="box-header with-border">
-        <h3 class="box-title">Add Reccurent Charge</h3>
+        <h3 class="box-title">Add an Inpatient Charge</h3>
     </div>
     <div class="box-body">
        
@@ -46,11 +46,11 @@
 
 		            <div class="col-md-6">
 		                <div class="form-group {{  $errors->has('type') ? ' has-error' : ''  }}">
-		                    <label class="control-label col-md-4">type</label>
+		                    <label class="control-label col-md-4">Charge Type</label>
 		                    <div class="col-md-8">
-		                    <select name="type" class="form-control" id="type">
-		                            <option value="nursing">Nursing</option>
-		                            <option  value="admission">Admission</option>
+		                    <select name="type" class="form-control" id="type" required>
+		                            <option  value="admission">One-Off Charge</option>
+		                            <option value="nursing" selected>Recurring Charge</option>
 		                        </select>
 		                    </div>
 		                </div>
@@ -61,7 +61,7 @@
 		                    <select name="ward_id[]" class="ward form-control" multiple="multiple">
 		                            
 		                           @foreach($wards as $ward)
-		                            <option value="{{ $ward->id }}">{{ $ward->name }} Ward No.: {{ $ward->number }}</option>
+		                            <option value="{{ $ward->id }}">{{ $ward->name }} - Ward No: {{ $ward->number }}</option>
 		                           @endforeach()
 		                        </select>
 		                    </div>

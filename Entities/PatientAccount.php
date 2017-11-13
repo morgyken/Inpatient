@@ -23,6 +23,10 @@ use Illuminate\Database\Eloquent\Model;
  */
 class PatientAccount extends Model
 {
+    protected $fillable = [
+        'patient_id', 'balance'
+    ];
+
     protected $table = 'patient_account';
 
     public function patient(){

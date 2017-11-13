@@ -5,6 +5,9 @@ namespace Ignite\Inpatient\Entities;
 use Illuminate\Database\Eloquent\Model;
 
 use Ignite\Reception\Entities\Patients;
+
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 /**
  * Ignite\Inpatient\Entities\RequestAdmission
  *
@@ -26,16 +29,39 @@ use Ignite\Reception\Entities\Patients;
  */
 class RequestAdmission extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
-        'reason','patient_id','visit_id'
+        'patient_id','visit_id', 'admission_type_id', 'reason', 'canceled'
     ];
+
     protected $table = 'inpatient_request_admissions';
 
-    public function patient(){
+    protected $with = ['patient.account', 'admissionType'];
+
+    protected $dates = ['deleted_at'];
+
+    /*
+    * Relationship between the patient and the admission request
+    */
+    public function patient()
+    {
     	return $this->belongsTo(Patients::class, 'patient_id', 'id');
     }
 
-    public function visits(){
+    /*
+    * Relationship between the visit and the admission request
+    */
+    public function visits()
+    {
     	return $this->belongsTo(Visit::class, 'visit_id', 'id');
+    }
+
+    /*
+    * Relationship between the request and the admission types
+    */
+    public function admissionType()
+    {
+        return $this->belongsTo(AdmissionType::class);
     }
 }

@@ -38,6 +38,7 @@ use Ignite\Users\Entities\User;
 use Ignite\Users\Entities\UserRoles;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Ignite\Evaluation\Repositories\AdmissionRequestRepository;
 use Validator;
 
 //use Ignite\Inpatient\Entities\PatientAccount;
@@ -62,6 +63,8 @@ class InpatientController extends AdminBaseController
     protected $evaluation;
     private $helper;
 
+    protected $admissionRequestsRepository;
+
     /**
      * InpatientController constructor.
      * @param InpatientHelpers $helper
@@ -74,7 +77,8 @@ class InpatientController extends AdminBaseController
      * @param Visit $visit
      * @param EvaluationRepository $evaluation
      */
-    public function __construct(InpatientHelpers $helper, Carbon $carbon, Patients $patients, RequestAdmission $request_admission, Roles $roles, User $user, UserRoles $user_roles, Visit $visit, EvaluationRepository $evaluation)
+    public function __construct(InpatientHelpers $helper, Carbon $carbon, Patients $patients, RequestAdmission $request_admission, Roles $roles, User $user, UserRoles $user_roles, Visit $visit, EvaluationRepository $evaluation,
+                                AdmissionRequestRepository $admissionRequestsRepository)
     {
         parent::__construct();
         $this->_require_assets();
@@ -89,6 +93,7 @@ class InpatientController extends AdminBaseController
         $this->patients = $patients;
         $this->visit = $visit;
         $this->evaluation = $evaluation;
+        $this->admissionRequestsRepository = $admissionRequestsRepository;
     }
 
     public function orderEvaluation($type)
@@ -146,11 +151,14 @@ class InpatientController extends AdminBaseController
         return view('inpatient::index', ['patients' => $patients]);
     }
 
+    /*
+    * Fetch the entire list of patients awaiting admission
+    */
     public function awaiting()
     {
-        $patientIds = $this->request_admission->where('id', '!=', null)->get(['patient_id'])->toArray();
-        $patients = $this->request_admission->all();
-        return view('inpatient::admission.admitAwaiting', ['patientIds' => $patientIds, 'patients' => $patients]);
+        $admissionRequests = $this->admissionRequestsRepository->getAdmissionRequests();
+
+        return view('inpatient::admission.admission_requests', compact('admissionRequests'));
     }
 
     public function requestAdmission(Request $request)

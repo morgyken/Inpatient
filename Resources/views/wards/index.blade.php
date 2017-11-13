@@ -29,23 +29,14 @@
                             <div class="form-group {{ $errors->has('number') ? ' has-error' : '' }} req">
                                 <label class="control-label col-md-4">Ward Number</label>
                                 <div class="col-md-8">
-                                    <input type="text" required name="number" class="form-control" />
+                                    <input type="text" required name="number" class="form-control" value="{{ old('number') }}" />
                                     
                                 </div>
                             </div>
                             <div class="form-group {{ $errors->has('name') ? ' has-error' : '' }} req">
                                 <label class="control-label col-md-4">Ward Name</label>
                                 <div class="col-md-8">
-                                     <input required  type="text" name="name" class="form-control" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="form-group {{ $errors->has('cost') ? ' has-error' : '' }}">
-                                <label class="control-label col-md-4">Ward Cost</label>
-                                <div class="col-md-8">
-                                     <input type="number"  required name="cost" class="form-control" />
+                                     <input required  type="text" name="name" class="form-control" value="{{ old('name')}}" />
                                 </div>
                             </div>
                             <div class="form-group {{ $errors->has('gender') ? ' has-error' : '' }}">
@@ -59,6 +50,22 @@
                                     </select>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group {{ $errors->has('cost') ? ' has-error' : '' }}">
+                                <label class="control-label col-md-4">Insurance Cost</label>
+                                <div class="col-md-8">
+                                     <input type="number"  required name="insurance_cost" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group {{ $errors->has('cost') ? ' has-error' : '' }}">
+                                <label class="control-label col-md-4">Cash Cost</label>
+                                <div class="col-md-8">
+                                     <input type="number"  required name="cash_cost" class="form-control" />
+                                </div>
+                            </div>
+                            
 
                              <div class="form-group {{ $errors->has('age_group') ? ' has-error' : '' }}">
                                 <label class="control-label col-md-4">Age Group</label>
@@ -92,8 +99,9 @@
                                 <th>Name</th>
                                 <th>Gender</th>
                                 <th>Age Group</th>
-                                <th>Cost</th>
-                                <th>Created On</th>
+                                <th>Insurance Cost</th>
+                                <th>Cash Cost</th>
+                                <!-- <th>Created On</th> -->
                                 <th>Option</th>
                             </tr>
                         </thead>
@@ -139,8 +147,15 @@
 
                                     <div class="col-xs-12 col-sm-12 col-md-6">
                                         <div class="form-group {{ $errors->has('cost') ? ' has-error' : '' }}">
-                                            <label>Ward Cost</label>
-                                            <input type="number" required name="cost" id = "cost" class="form-control" />
+                                            <label>Insurance Cost</label>
+                                            <input type="number" required name="cash_cost" id = "cash_cost" class="form-control" />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div class="form-group {{ $errors->has('cost') ? ' has-error' : '' }}">
+                                            <label>Cash Cost</label>
+                                            <input type="number" required name="cash_cost" id = "cash_cost" class="form-control" />
                                         </div>
                                     </div>
 

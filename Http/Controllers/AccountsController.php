@@ -29,9 +29,11 @@ class AccountsController extends AdminBaseController
     }
 
     public function getNursingServices(Request $request) {
+
         $charges = NursingCharge::all();
         $wards = Ward::all();
         return view('Inpatient::admission.nursing_services', compact('charges', 'wards'));
+        
     }
 
     
@@ -66,11 +68,6 @@ class AccountsController extends AdminBaseController
             \DB::rollback();
             return redirect()->back()->with('error', 'An error occured.Could not add new recurrent charges');
         }
-    }
-
-     public function deposit() {
-        
-        return view('Inpatient::account.deposit');
     }
 
     public function getAllDeposits(){

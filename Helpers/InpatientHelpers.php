@@ -28,4 +28,6 @@ class InpatientHelpers
         else if ($bmi < 18.5)
             return "Underweight";
     }
+
+    
 }
