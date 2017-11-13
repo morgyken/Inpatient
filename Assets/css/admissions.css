@@ -1,3 +1,7 @@
-#hasInsurance{
-    background: red;
+#deposit-modal .modal-body{
+    overflow: auto;
+}
+
+#deposit-modal #hasInsurance{
+    overflow: auto;
 }  
