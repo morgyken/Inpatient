@@ -19,7 +19,8 @@
                     <th>Patient Name</th>
                     <th>Account Amount</th>
                     <th>Admission Type</th>
-                    <th>Balance</th>
+                    <th>Authorized Amount</th>
+                    <!-- <th>Balance</th> -->
                     <th>Date</th>
                     <th>Options</th>
                     </thead>
@@ -32,23 +33,33 @@
                                 {{ $request['type']['name'] }}
                                 ({{ number_format( $request['type']['deposit'] ) }})
                             </td>
-                            <td>
+                            <td>{{ $request['authorized'] }}</td>
+                            <!-- <td>
                                 {{ $request['due'] }}
-                            </td>
+                            </td> -->
                             <td>
                                 {{ $request['created_at'] }}
                             </td>
                             <td>
-                                <a class="btn btn-info btn-xs" href="{{ url('finance/patient/'.$request['patient']['id'].'/account') }}">
+                                <button class="btn btn-info btn-xs authorize" 
+                                   data-toggle="modal" data-target="#authorize-modal" value='{!! json_encode($request) !!}'>
                                     Authorize
-                                </a>
+                                </button>
                                 <button class="btn btn-success btn-xs deposit" 
                                         data-toggle="modal" data-target="#deposit-modal" value='{!! json_encode($request) !!}'>
                                     Payment Mode
                                 </button>
-                                <a class="btn btn-primary btn-xs" href="{{url('inpatient/admission/'.$request['id'].'/create')}}">
-                                    Admit
-                                </a>
+
+                                @if($request['can_admit'])
+                                    <a class="btn btn-primary btn-xs" href="{{url('inpatient/admission/'.$request['id'].'/create')}}">
+                                        Admit
+                                    </a>
+                                @else
+                                    <a class="btn btn-default btn-xs" href="#">
+                                        Admit
+                                    </a>    
+                                @endif
+
                                 <a class="btn btn-danger btn-xs" href="{{url('inpatient/admission/cancel/'.$request['patient']['id'])}}">Cancel</a>
                             </td>
                         </tr>
@@ -59,6 +70,8 @@
 
             @include('inpatient::admission.modals.admission_deposit_modal')
 
+            @include('inpatient::admission.modals.authorization_modal')
+
             {{-- @push('scripts') --}}
                 <script>
 
@@ -68,14 +81,25 @@
 
                         $('#patient-detail').val(data.patient.id);
 
-                        hideTypeSelection(data.patient.schemes);
+                        console.log(data.patient.schemes);
+
+                        data.patient.schemes.length == 0 ? $('#hasInsurance').addClass('hidden') : 
+                                                           $('#hasInsurance').removeClass('hidden'); 
 
                     });
 
-                    function hideTypeSelection(schemes)
-                    {
-                        schemes.length == 0 ? $('#hasInsurance').addClass('hidden') : null; 
-                    }
+                    $('.authorize').click(function(event){
+
+                        let data = JSON.parse(event.target.value);
+
+                        $('#admission-request-id').val(data.id);
+
+                        $('#authorized-amount').val(data.due);
+
+                        var requiredAmount = data.type.name + " - " + data.type.deposit;
+
+                        $('#required-amount').val(requiredAmount);
+                    })
 
                     $(function () {
                         $("table").dataTable();

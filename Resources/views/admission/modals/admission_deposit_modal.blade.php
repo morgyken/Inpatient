@@ -8,27 +8,25 @@
                 <h4 class="modal-title">Patient Account</h4>
             </div>
             <div class="modal-body">
-                {!! Form::open(['id'=>'payment-details-form','route'=>'finance.evaluation.pay.save','autocomplete'=>'off'])!!}
+                <!-- Payments Selection -->
+                <div id="hasInsurance" >
+                    <div class="form-group" class="row">
+                        <div class="col-md-6">
+                            <input id="cash-type" class="changeType" name="payment_type" value="cash_payment" type="radio" checked />
+                            <label for="cash-type">Cash Deposit</label>
+                        </div>
+                        <div class="col-md-6">
+                            <input id="insurance" class="changeType" name="payment_type" value="insurance" type="radio" />
+                            <label for="insurance">Insurance Cover</label>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+
+                {!! Form::open(['id'=>'payment-details-form','route'=>'finance.evaluation.pay.save','autocomplete'=>'off', 'files' => true])!!}
 
                     <input id="patient-detail" name="patient" type="hidden" value="" />
 
-
-                    <!-- Payments Selection -->
-                    <div id="hasInsurance">
-                        <div class="form-group">
-                            <div class="col-md-6">
-                                <input id="cash-type" class="changeType" name="payment_type" value="cash_payment" type="radio" checked />
-                                <label for="cash-type">Cash Deposit</label>
-                            </div>
-                            <div class="col-md-6">
-                                <input id="insurance" class="changeType" name="payment_type" value="insurance" type="radio" />
-                                <label for="insurance">Insurance Cover</label>
-                            </div>
-                        </div>
-
-                        <hr>
-                    </div>
-                    
                     <div id="cash-display">
                         <div class="panel-group" id="payment-method">
                             <div class="panel panel-default">
@@ -137,20 +135,23 @@
                         </div>
                     </div>
 
-                    <!-- <div id="insurance-display" class="hidden">
+                    <div id="insurance-display" class="hidden">
                         <div class="form-group col-md-12">
                             <label>Insurance Scheme</label>
-                            {!! Form::text('cash[amount]', null, ['class'=>'form-control']) !!}
-                        </div>
-                        <div class="form-group col-md-12">
-                            <label>Upload Authorization Letter</label>
-                            {!! Form::text('cash[amount]', null, ['class'=>'form-control']) !!}
+                            <select name="insurance_scheme" id="insurance-scheme" class="form-control">
+                                
+                            </select>
                         </div>
                         <div class="form-group col-md-12">
                             <label>Maximum Amount Allowed By Insurance</label>
-                            {!! Form::text('cash[amount]', null, ['class'=>'form-control']) !!}
+                            {!! Form::text('maximum_amount', null, ['class'=>'form-control']) !!}
                         </div>
-                    </div> -->
+                        <div class="form-group col-md-12">
+                            <label>Upload Authorization Letter</label>
+                            {!! Form::file('authorization_letter', ['class'=>'form-control']) !!}
+                        </div>
+                        
+                    </div>
                 {!! Form::close()!!}
             </div>
             <div class="modal-footer">
@@ -160,6 +161,8 @@
         </div>
     </div>
 </div>
+
+<link rel="stylesheet" href="{{ m_asset('inpatient:css/admissions.css') }}">
 
 {{-- @push('scripts') --}}
 <script type="text/javascript">

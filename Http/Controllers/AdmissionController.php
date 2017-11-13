@@ -74,6 +74,8 @@ class AdmissionController extends AdminBaseController
     public function store(AdmissionRequest $request)
     {
         $this->admissionRepository->create(request()->all());
+
+        $this->admissionRequestRepository->delete(request()->get('inpatient_request_admission_id'));
         
         return redirect()->back()->with(['success' => 'Patient has been admitted']);
     }
