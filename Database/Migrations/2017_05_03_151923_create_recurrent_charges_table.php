@@ -19,25 +19,7 @@ class CreateRecurrentChargesTable extends Migration
             $table->unsignedInteger('visit_id');
             $table->unsignedInteger('recurrent_charge_id');
             $table->string('status')->default('unpaid');
-            $table->timestamps();
-
-            $table->foreign('admission_id')
-                  ->references('id')
-                  ->on('admissions')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade');   
-
-            $table->foreign('visit_id')
-                  ->references('id')
-                  ->on('evaluation_visits')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade');   
-
-            $table->foreign('recurrent_charge_id')
-                  ->references('id')
-                  ->on('nursing_charges')
-                  ->onDelete('cascade')
-                  ->onUpdate('cascade');         
+            $table->timestamps();        
         });
     }
 
