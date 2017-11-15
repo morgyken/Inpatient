@@ -20,27 +20,6 @@ class CreateInpatientsAdministrationLogsTable extends Migration
             $column->string('time');
             $column->unsignedInteger('user');
             $column->timestamps();
-
-            $column->foreign('admission_id')
-                    ->references('id')
-                    ->on('admissions')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-            $column->foreign('visit_id')
-                    ->references('id')
-                    ->on('evaluation_visits')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-            $column->foreign('prescription_id')
-                    ->references('id')
-                    ->on('evaluation_prescriptions')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-            $column->foreign('user')
-                    ->references('id')
-                    ->on('users')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
         });
     }
 

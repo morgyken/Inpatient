@@ -18,11 +18,6 @@ class CreatePatientAccountTable extends Migration
             $table->double('balance')->default(0.00);
             $table->unsignedInteger('patient_id');
             $table->timestamps();
-
-            $table->foreign('patient_id')
-                ->references('id')
-                ->on('reception_patients')
-                ->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

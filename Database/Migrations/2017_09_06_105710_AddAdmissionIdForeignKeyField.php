@@ -15,11 +15,6 @@ class AddAdmissionIdForeignKeyField extends Migration
     {
         Schema::table('evaluation_prescriptions', function (Blueprint $table) {
             $table->unsignedInteger('admission_id')->nullable();
-            $table->foreign('admission_id')
-                    ->references('id')
-                    ->on('admissions')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
         });
     }
 

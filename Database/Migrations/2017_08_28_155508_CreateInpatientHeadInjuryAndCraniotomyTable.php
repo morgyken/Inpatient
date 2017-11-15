@@ -25,17 +25,6 @@ class CreateInpatientHeadInjuryAndCraniotomyTable extends Migration
             $column->text('conscious_status');
             $column->text('pupil_status');
             $column->timestamps();
-
-           
-            $column->foreign('admission_id')->references('id')->on('admissions')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-            $column->foreign('visit_id')->references('id')->on('evaluation_visits')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-            $column->foreign('user_id')->references('id')->on('users')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
         });
     }
 
