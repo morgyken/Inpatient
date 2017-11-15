@@ -20,25 +20,7 @@ class CreateRequestDischargesTable extends Migration
             $table->unsignedInteger('doctor_id')->nullable();
             $table->string('reason')->nullable();
             $table->string('status')->default('unconfirmed');
-            $table->timestamps();
-
-            $table->foreign('admission_id')
-            ->references('id')
-            ->on('admissions')
-            ->onDelete('cascade')
-            ->onUpdate('cascade');
-
-            $table->foreign('doctor_id')
-            ->references('id')
-            ->on('users')
-            ->onDelete('cascade')
-            ->onUpdate('cascade');
-
-            $table->foreign('visit_id')
-            ->references('id')
-            ->on('evaluation_visits')
-            ->onDelete('cascade')
-            ->onUpdate('cascade');            
+            $table->timestamps();          
         });
     }
 

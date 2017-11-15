@@ -26,15 +26,6 @@ class CreateDischargeNotesTable extends Migration
             $table->longText('discharge_condition')->nullable();
             $table->longText('discharge_medications')->nullable(); // Serialized array of prescription ids
             $table->timestamps();
-           
-            $table->foreign('admission_id')->references('id')
-            ->on('admissions')->onDelete('cascade')->onUpdate('cascade');
-
-            $table->foreign('doctor_id')->references('id')
-            ->on('users')->onDelete('cascade')->onUpdate('cascade');
-
-            $table->foreign('visit_id')->references('id')
-            ->on('evaluation_visits')->onDelete('cascade')->onUpdate('cascade');
    
         });
     }

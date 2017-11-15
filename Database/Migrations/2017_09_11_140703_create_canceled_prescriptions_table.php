@@ -28,22 +28,6 @@ class CreateCanceledPrescriptionsTable extends Migration
             $table->unsignedInteger('user_id');
             $table->timestamps();
 
-            $table->foreign('admission_id')
-                    ->references('id')
-                    ->on('admissions')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-            $table->foreign('visit_id')
-                    ->references('id')
-                    ->on('evaluation_visits')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-            $table->foreign('user_id')
-                    ->references('id')
-                    ->on('users')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-
         });
     }
 

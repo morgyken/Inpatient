@@ -21,23 +21,6 @@ class CreateInpatientsNotesTable extends Migration
             $column->unsignedInteger('user');
             $column->integer('type')->default(0); // 0 - nurse's , 1- doctor's
             $column->timestamps();
-            // $column->softDeletes();
-
-            $column->foreign('admission_id')
-                    ->references('id')
-                    ->on('admissions')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-            $column->foreign('visit_id')
-                    ->references('id')
-                    ->on('evaluation_visits')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-            $column->foreign('user')
-                    ->references('id')
-                    ->on('users')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
         });
     }
 

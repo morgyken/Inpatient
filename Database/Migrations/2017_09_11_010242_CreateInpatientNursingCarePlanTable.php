@@ -26,16 +26,6 @@ class CreateInpatientNursingCarePlanTable extends Migration
             $column->date('date_recorded');
             $column->string('time_recorded');
             $column->timestamps();
-
-            $column->foreign('admission_id')->references('id')->on('admissions')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-            $column->foreign('visit_id')->references('id')->on('evaluation_visits')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
-            $column->foreign('user_id')->references('id')->on('users')
-                    ->onUpdate('cascade')
-                    ->onDelete('cascade');
         });
     }
 
