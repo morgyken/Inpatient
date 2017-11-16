@@ -64,7 +64,7 @@ class Admission extends Model
         'bedposition_id'
     ];
 
-    protected $table = "admissions";
+    protected $table = "inpatient_admissions";
 
     protected $with = ['patient', 'doctor', 'ward', 'bed'];
 
