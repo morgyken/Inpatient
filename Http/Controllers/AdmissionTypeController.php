@@ -33,7 +33,7 @@ class AdmissionTypeController extends AdminBaseController
     {
         $admissionTypes = $this->admissionTypeRepository->all();
 
-        return view('inpatient::admission.types.index', compact('admissionTypes'));
+        return view('inpatient::settings.admissiontypes.index', compact('admissionTypes'));
     }
 
     /*

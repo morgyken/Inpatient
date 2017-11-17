@@ -26,9 +26,11 @@ use Ignite\Inpatient\Entities\Ward;
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\NursingCharge whereWardId($value)
  * @mixin \Eloquent
  */
-class NursingCharge extends Model
+class Charge extends Model
 {
     protected $fillable = [];
+
+    protected $table = "inpatient_charges";
 
     public function ward(){
     	return $this->belongsTo(Ward::class,'ward_id');

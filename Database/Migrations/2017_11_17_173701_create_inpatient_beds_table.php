@@ -17,6 +17,12 @@ class CreateInpatientBedsTable extends Migration
 
             $table->increments('id');
 
+            $table->string('number');
+
+            $table->integer('ward_id');
+
+            $table->integer('bed_type_id');
+
             $table->timestamps();
 
         });

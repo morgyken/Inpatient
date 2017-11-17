@@ -7,23 +7,28 @@
 
 <div class="box box-info">
     <div class="panel panel-info">
-        <!-- <div class="panel-heading">
-            <i class="fa fa-user"></i>
-        </div> -->
-
         <div class="panel-body">
             <div class="row">
             {!! Form::open(['url'=>'inpatient/beds','autocomplete'=>'off'])!!}
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
                     <label>Enter Bed Number</label>
                     <input type="text" name="number" class="form-control" />
                 </div>
 
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
                     <label>Choose Ward</label>
                     <select name="ward_id" class="form-control">
                         @foreach($wards as $ward)
                             <option value="{{ $ward->id }}">{{ $ward->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="form-group col-md-4">
+                    <label>Choose Bed Type</label>
+                    <select name="bed_type_id" class="form-control">
+                        @foreach($bedTypes as $bedType)
+                            <option value="{{ $bedType->id }}">{{ $bedType->name }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -43,6 +48,7 @@
                                 <tr>
                                     <th>Bed Number</th>
                                     <th>Ward</th>
+                                    <th>Type</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -51,9 +57,9 @@
                                     <tr>
                                         <td>{{ $bed->number }}</td>
                                         <td>{{ $bed->ward->name }}</td>
+                                        <td>{{ $bed->type->name }}</td>
                                         <td>
-                                            <button class="btn btn-primary btn-xs">Edit</button>
-                                            <button class="btn btn-danger btn-xs">Delete</button>
+                                            <button class="btn btn-danger btn-xs">Remove Bed</button>
                                         </td>
                                     </tr>
                                 @endforeach

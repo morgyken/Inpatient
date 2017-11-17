@@ -26,16 +26,12 @@ use Illuminate\Database\Eloquent\Model;
 class Bed extends Model
 {
     protected $fillable = [
-        'id',
-        'number',
-        'type',
-        'status',
-        'ward_id'
+        'number', 'bed_type_id', 'ward_id'
     ];
 
-    protected $table = 'beds';
+    protected $table = 'inpatient_beds';
 
-    protected $with = ['ward'];
+    protected $with = ['ward', 'type'];
 
     /*
     * Relationship between a bed and a ward
@@ -48,7 +44,7 @@ class Bed extends Model
     /*
     * Relationship between a bed and a bedtype
     */
-    public function bedType()
+    public function type()
     {
         return $this->belongsTo(BedType::class, 'bed_type_id', 'id');   
     }

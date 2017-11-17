@@ -49,7 +49,7 @@ class BedTypeController extends AdminBaseController
      */
     public function store(BedTypeRequest $request)
     {
-        $bedType = $this->bedTypeRepository->create(request()->except('_token'));
+        $bedType = $this->bedTypeRepository->create(request()->all());
 
         return $bedType ? redirect()->back()->with(['success' => 'Bed type listed successfully']) :
                           redirect()->back()->with(['error' => 'Something went wrong']);

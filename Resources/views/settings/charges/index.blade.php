@@ -1,15 +1,3 @@
-<?php
-/*
- * =============================================================================
- *
- * Collabmed Solutions Ltd
- * Project: iClinic
- * Authors: Samuel Okoth <sodhiambo@collabmed.com>, David Ngugi <dngugi@collabmed.com>
- *
- * =============================================================================
- */
-?>
-
 @extends('layouts.app')
 @section('content_title','Inpatient Charges')
 @section('content_description','Manage Inpatient Charges')
@@ -26,7 +14,7 @@
 
 		<div class="row">
 		    <div class="form-horizontal">
-		        {!! Form::open(['url'=>'/inpatient/accounts/addReccurentCharge', 'method' => 'POST']) !!}
+		        {!! Form::open(['url'=>'/inpatient/charges', 'method' => 'POST']) !!}
 		        <div class="col-md-12">
 		            <div class="col-md-6">
 		                <div class="form-group {{  $errors->has('name') ? ' has-error' : ''  }} req">

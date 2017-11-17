@@ -53,12 +53,12 @@ Route::group(['as' => 'inpatient.'], function() {
 
         Route::get('/delete/{wardId}', ['uses'=>'WardController@destroy']);
 
-        Route::get('/{id}/recurrent_charges','WardController@getWardCharges')->name('inpatient.wards.charges');
-        Route::get('/all','WardController@getAll');
-        Route::get('/create','WardController@create')->name('inpatient.wards.create');
-        Route::get('/editWard/{ward_id}','WardController@getRecordWard')->name('inpatient.wards.edit');;
-        Route::post('/{id}/update', 'WardController@update')->name('inpatient.wards.update');;
-        Route::get('/{id}/delete',['uses'=>'WardController@destroy'])->name('inpatient.wards.delete');
+        // Route::get('/{id}/recurrent_charges','WardController@getWardCharges')->name('inpatient.wards.charges');
+        // Route::get('/all','WardController@getAll');
+        // Route::get('/create','WardController@create')->name('inpatient.wards.create');
+        // Route::get('/editWard/{ward_id}','WardController@getRecordWard')->name('inpatient.wards.edit');;
+        // Route::post('/{id}/update', 'WardController@update')->name('inpatient.wards.update');;
+        // Route::get('/{id}/delete',['uses'=>'WardController@destroy'])->name('inpatient.wards.delete');
     });
 
     /*
@@ -68,6 +68,10 @@ Route::group(['as' => 'inpatient.'], function() {
     */
 
     Route::group(['prefix' => 'beds'], function(){
+        Route::get('/', ['uses' => 'BedController@index']);
+
+        Route::post('/', ['uses' => 'BedController@store']);
+
         Route::post('/change_bed','BedsController@change_bed');
         Route::get('/bedList',['uses'=>'BedsController@index']);
         Route::get('/bedTypes',['uses'=>'BedsController@listBedTypes']);
@@ -85,8 +89,7 @@ Route::group(['as' => 'inpatient.'], function() {
         Route::get('/delete_bed/{id}',['uses'=>'BedsController@postdelete_bed']);
         Route::post('/delete_bed',['uses'=>'BedsController@delete_bed']);
 
-        Route::get('/', ['uses' => 'BedController@index']);
-        Route::post('/', ['uses' => 'BedController@store']);
+       
     });
 
     /*
@@ -125,6 +128,21 @@ Route::group(['as' => 'inpatient.'], function() {
         Route::get('/account_deposit/{patient}',['uses'=>'InpatientController@account_deposit_amount']);
         Route::get('/account_withdraw/{patient}',['uses'=>'InpatientController@account_withdraw_amount']);
         Route::post('/PostWithdrawAccount',['uses'=>'InpatientController@PostWithdrawAccount']);
+    });
+
+    /*
+    * Inpatient Charges Management
+    */
+    Route::group(['prefix' => 'charges'], function(){
+
+        Route::get('/', ['uses'=>'ChargeController@index']); 
+
+        Route::post('/', ['uses'=>'ChargeController@store']);
+        
+        // Route::get('/',['uses'=>'AccountsController@getNursingServices']); 
+
+        // Route::get('/delete_service/{service}',['uses'=>'AccountsController@delete_service']);
+
     });
 
 
