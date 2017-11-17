@@ -55,6 +55,7 @@ class ChargeController extends AdminBaseController
      */
     public function store(Request $request)
     {
+        dd(request()->all());
     }
 
     /**

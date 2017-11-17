@@ -145,19 +145,6 @@ Route::group(['as' => 'inpatient.'], function() {
 
     });
 
-
-     /*
-    |--------------------------------------------------------------------------
-    | Nursing Services Management
-    |--------------------------------------------------------------------------
-    */
-
-    Route::group(['prefix' => 'nursing'], function(){
-        /*nursing & admission charges*/
-        Route::get('/services',['uses'=>'AccountsController@getNursingServices']); 
-        Route::get('/delete_service/{service}',['uses'=>'AccountsController@delete_service']);
-    });
-
  	/*
     |--------------------------------------------------------------------------
     | Requests Management
