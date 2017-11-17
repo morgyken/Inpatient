@@ -24,9 +24,9 @@ class WardRequest extends FormRequest
     public function rules()
     {
         return [
-            'number' => 'required|unique:wards',
-            'name' => 'required|unique:wards',
-            'cost' => 'required|numeric'
+            'name' => 'required|unique:inpatient_wards',
+            'cash_cost' => 'numeric',
+            'insurance_cost' => 'numeric'
         ];
     }
 
@@ -34,7 +34,6 @@ class WardRequest extends FormRequest
     {
         return [
             'number.unique' => 'The ward number already exists',
-            'name.unique' => 'The ward name already exists',
         ];
     }
 }

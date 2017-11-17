@@ -46,11 +46,16 @@ Route::group(['as' => 'inpatient.'], function() {
     */
     
     Route::group(['prefix' => 'ward'], function(){
+
+        Route::get('/', ['uses'=>'WardController@index']);
+
+        Route::post('/', ['uses'=>'WardController@store']);
+
+        Route::get('/delete/{wardId}', ['uses'=>'WardController@destroy']);
+
         Route::get('/{id}/recurrent_charges','WardController@getWardCharges')->name('inpatient.wards.charges');
         Route::get('/all','WardController@getAll');
-        Route::get('/','WardController@index')->name('inpatient.wards.index');
         Route::get('/create','WardController@create')->name('inpatient.wards.create');
-        Route::post('/add',['uses'=>'WardController@store'])->name('inpatient.wards.store');
         Route::get('/editWard/{ward_id}','WardController@getRecordWard')->name('inpatient.wards.edit');;
         Route::post('/{id}/update', 'WardController@update')->name('inpatient.wards.update');;
         Route::get('/{id}/delete',['uses'=>'WardController@destroy'])->name('inpatient.wards.delete');

@@ -10,7 +10,7 @@ class WardRepository
     */
     public function all()
     {
-        return Ward::with(['beds'])->get();
+        return Ward::all();
     }
 
     /*
@@ -18,14 +18,14 @@ class WardRepository
     */
     public function create($fields)
     {
-
+        return Ward::create($fields);
     }
 
     /*
-    * Attach a abew to a ward
+    * Delete a ward
     */
-    public function attachBed()
+    public function delete($id)
     {
-        
+        return Ward::where('id', $id)->delete();
     }
 }

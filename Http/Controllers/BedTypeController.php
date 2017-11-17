@@ -46,44 +46,13 @@ class BedTypeController extends AdminBaseController
 
     /**
      * Store a newly created resource in storage.
-     * @param  Request $request
-     * @return Response
      */
     public function store(BedTypeRequest $request)
     {
-        $bedType = $this->bedTypeRepository->create(
-            request()->except('_token')
-        );
+        $bedType = $this->bedTypeRepository->create(request()->except('_token'));
 
         return $bedType ? redirect()->back()->with(['success' => 'Bed type listed successfully']) :
                           redirect()->back()->with(['error' => 'Something went wrong']);
-    }
-
-    /**
-     * Show the specified resource.
-     * @return Response
-     */
-    public function show()
-    {
-        return view('inpatient::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     * @return Response
-     */
-    public function edit()
-    {
-        return view('inpatient::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     * @param  Request $request
-     * @return Response
-     */
-    public function update(Request $request)
-    {
     }
 
     /**

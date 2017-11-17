@@ -7,79 +7,41 @@ use Ignite\Core\Http\Controllers\AdminBaseController;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
-use Ignite\Inpatient\Entities\Ward;
-use Ignite\Inpatient\Entities\NursingCharge;
-
 use Ignite\Inpatient\Http\Requests\WardRequest;
-
-use Validator;
+use Ignite\Inpatient\Repositories\WardRepository;
 
 class WardController extends AdminBaseController
 {
-    protected $ward;
-
-    public function __construct(Ward $ward)
+    protected $wardRepository;
+    /*
+    * Inject the various dependencies into the system
+    */
+    public function __construct(WardRepository $wardRepository)
     {
         parent::__construct();
-        $this->ward = $ward;
+
+        $this->wardRepository = $wardRepository;
     }
 
-    public function getWardCharges($id){
-        return NursingCharge::where("ward_id", $id)->get(['id','name','cost']);
-
-    }
     /**
      * Display a listing of the resource.
      * @return Response
      */
     public function index()
     {
-        $wards = $this->ward->all();
-
-        return view('Inpatient::wards.index', ['wards' => $wards]);
+        $wards = $this->wardRepository->all();
+        
+        return view('inpatient::settings.wards.index', compact('wards'));
     }
 
-    /*
-    * Show the form for creating a new ward
-    */
+    /**
+     * Show the form for creating a new resource.
+     * @return Response
+     */
     public function create()
     {
-        return view('Inpatient::wards.create');
+        return view('inpatient::create');
     }
-
-    public function getAll(){
-        $wards = $this->ward->get()->map(function($w){
-            return [
-                'id' => $w->id,
-                'number' => $w->number,
-                'name'  => $w->name,
-                'insurance_cost' =>  'Ksh. '.$w->insurance_cost,
-                'cash_cost' =>  'Ksh. '.$w->cash_cost,
-                'category' => $w->category,
-                'gender' => $w->gender,
-                'age_group' => $w->age_group,
-                // 'created_on' => $w->created_at->format('d/m/Y H:i a')
-            ];
-        })->toArray();
-
-        $data = [];
-        foreach($wards as $key => $ward){
-            $data[] = [
-                $ward['number'],
-                $ward['name'], 
-                $ward['gender'],
-                $ward['age_group'],
-                $ward['insurance_cost'],
-                $ward['cash_cost'],
-                // $ward['created_on'],
-                '<button class="btn btn-primary btn-xs edit" id="'.$ward["id"].'" >Edit</button>
-                <a href="'.url("/inpatient/ward/".$ward["id"]."/delete").'" class="btn btn-danger btn-xs">Delete</a>'
-            ];
-        }
-
-        return response()->json(['data' => $data]);
-    }
-
 
     /**
      * Store a newly created resource in storage.
@@ -88,16 +50,10 @@ class WardController extends AdminBaseController
      */
     public function store(WardRequest $request)
     {
-        try{
+        $ward = $this->wardRepository->create(request()->except('_token'));
 
-            $request['category'] = 'inpatients';
-            $this->ward->create($request->all());
-            return redirect()->back()->with('success', 'Ward added Sucesfully!');
-
-        }catch (\Exception $e){
-            return redirect()->back()->with('error', 'Something Went Wrong '.$e->getMessage());
-        }
-
+        return $ward ? redirect()->back()->with(['success' => 'Ward listed successfully']) :
+                       redirect()->back()->with(['error' => 'Something went wrong']);
     }
 
     /**
@@ -109,8 +65,13 @@ class WardController extends AdminBaseController
         return view('inpatient::show');
     }
 
-    public function getRecordWard($id) {
-        return Ward::findorfail($id);
+    /**
+     * Show the form for editing the specified resource.
+     * @return Response
+     */
+    public function edit()
+    {
+        return view('inpatient::edit');
     }
 
     /**
@@ -118,27 +79,8 @@ class WardController extends AdminBaseController
      * @param  Request $request
      * @return Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        \DB::beginTransaction();
-         try{
-          
-            $ward = Ward::findOrFail($id);
-
-            if (!$request->has('number')){
-                $ward->number = random_int(4);
-            }
-
-            $ward->update($request->all());
-
-            \DB::commit();
-
-            return redirect()->back()->with('success','Ward updated Sucesfully!' );
-
-        }catch (\Exception $e){
-            \DB::rollback();
-            return redirect()->back()->with('error', 'Something went Wrong');
-        }
     }
 
     /**
@@ -147,15 +89,9 @@ class WardController extends AdminBaseController
      */
     public function destroy($id)
     {
-        \DB::beginTransaction();
-        try{
-            $item= $this->ward->where("id",$id)->first();
-            $item->delete();
-            \DB::commit();
-            return redirect()->back()->with('success', 'Ward Deleted Sucessfully!');
-        }catch(\Exception $e){
-            \DB::rollback();
-            return redirect()->back()->with('success', 'Ward Deleted Sucessfully!');
-        }
+        $deletes = $this->wardRepository->delete($id);
+        
+        return $deletes ? redirect()->back()->with(['success' => 'Ward removed successfully']) :
+                          redirect()->back()->with(['error' => 'Something went wrong']);
     }
 }
