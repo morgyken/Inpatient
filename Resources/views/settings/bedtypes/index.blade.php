@@ -35,9 +35,6 @@
                                 <tr>
                                     <th>Name</th>
                                     <th>Description</th>
-                                    <th>Total</th>
-                                    <th>Occupied</th>
-                                    <th>Available</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -46,9 +43,6 @@
                                     <tr>
                                         <td>{{ $bedType->name }}</td>
                                         <td>{{ $bedType->description }}</td>
-                                        <td>0</td>
-                                        <td>0</td>
-                                        <td>0</td>
                                         <td>
                                             <a href="{{ url('inpatient/bed-types/delete/'.$bedType->id) }}" class="btn btn-danger btn-xs">
                                                 Remove Bed Type
