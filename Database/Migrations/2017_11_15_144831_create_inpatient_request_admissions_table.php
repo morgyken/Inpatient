@@ -31,7 +31,7 @@ class CreateInpatientRequestAdmissionsTable extends Migration
 
             $table->tinyInteger('cancelled');
 
-            $table->timestamp('deleted_at');
+            $table->timestamp('deleted_at')->nullable()->default(null);
 
             $table->timestamps();
         
