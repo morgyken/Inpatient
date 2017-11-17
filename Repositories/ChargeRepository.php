@@ -5,6 +5,8 @@ use Ignite\Inpatient\Entities\Charge;
 
 class ChargeRepository
 {
+    protected $charge;
+
     /*
     * Fetch all the wards from the database
     */
@@ -14,18 +16,22 @@ class ChargeRepository
     }
 
     /*
-    * Create a new ward
+    * Create a new charge
     */
     public function create($fields)
     {
-        return Charge::create($fields);
+        $this->charge = Charge::create($fields);
+
+        return $this;
     }
 
     /*
-    * Delete a ward
+    * Sync a charge with wards
     */
-    public function delete($id)
+    public function syncWards($wards)
     {
-        return Charge::where('id', $id)->delete();
+        $this->charge->wards()->attach($wards);
+
+        return $this->charge;
     }
 }

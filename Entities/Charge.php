@@ -37,7 +37,7 @@ class Charge extends Model
     /*
     * Realtionship between a charge and all the wards that belong to it
     */
-    public function ward()
+    public function wards()
     {
         return $this->belongsToMany(Ward::class, 'inpatient_ward_charges', 'charge_id', 'ward_id')
                     ->withTimestamps();

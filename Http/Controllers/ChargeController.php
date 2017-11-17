@@ -55,7 +55,14 @@ class ChargeController extends AdminBaseController
      */
     public function store(Request $request)
     {
-        dd(request()->all());
+        $record = request()->except(['ward_id']);
+
+        $wards = request()->get('ward_id');
+
+        $charge = $this->chargeRepository->create($record)->syncWards($wards);
+
+        return $charge ? redirect()->back()->with(['success' => 'Charge added successfully']) :
+                         redirect()->back()->with(['error' => 'Something went wrong']);
     }
 
     /**

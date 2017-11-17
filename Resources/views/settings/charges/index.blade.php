@@ -36,9 +36,9 @@
 		                <div class="form-group {{  $errors->has('type') ? ' has-error' : ''  }}">
 		                    <label class="control-label col-md-4">Charge Type</label>
 		                    <div class="col-md-8">
-		                    <select name="type" class="form-control" id="type" required>
-		                            <option  value="admission">One-Off Charge</option>
-		                            <option value="nursing" selected>Recurring Charge</option>
+		                    	<select name="type" class="form-control" id="type" required>
+		                            <option  value="once">One-Off Charge</option>
+		                            <option value="recurring" selected>Recurring Charge</option>
 		                        </select>
 		                    </div>
 		                </div>
@@ -73,7 +73,7 @@
 		                        <tr>
 		                            <th>Name</th>
 		                            <th>Cost</th>
-		                            <th>Category</th>
+		                            <th>Type</th>
 		                            <th>Added at</th>
 		                            <th>Options</th>
 		                        </tr>
@@ -81,7 +81,7 @@
 		                    <tbody>
 		                        @foreach($charges as $charge)
 		                            <tr>
-		                                <td>{{ $charge->name }} @ {{ $charge->ward->name }} Ward</td>
+		                                <td>{{ $charge->name }}</td>
 		                                <td>{{ $charge->cost }}</td>
 		                                <td>{{ $charge->type }}</td>
 		                                <td>{{ $charge->created_at }}</td>
@@ -107,7 +107,7 @@
 	        try { $('table').dataTable(); } catch (e) { }
 
 	        var selBed = function () {
-	            if($("#type").val() == 'nursing'){
+	            if($("#type").val() == 'recurring'){
 		            $("div.ward").show();
 		        }else{
 		            $("div.ward").hide();
