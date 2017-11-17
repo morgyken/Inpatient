@@ -34,13 +34,10 @@ use Illuminate\Database\Eloquent\Model;
 class Ward extends Model
 {
     protected $fillable = [
-        'name',
-        'number',
-        'category',
-        'cost',
-        'age_group',
-        'gender'
+        'name', 'number', 'category', 'insurance_cost', 'cash_cost', 'age_group', 'gender'
     ];
+
+    protected $table = "inpatient_wards";
 
     public function patients(){
     	return $this->hasMany(Patients::class, 'patients');

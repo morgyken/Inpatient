@@ -22,10 +22,10 @@ class BedRepository
     }
 
     /*
-    * Attach a abew to a ward
+    * Delete a bed
     */
-    public function attachBed()
+    public function delete($id)
     {
-        
+        return Bed::where('id', $id)->delete();
     }
 }

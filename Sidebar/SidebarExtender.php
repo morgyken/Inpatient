@@ -96,7 +96,7 @@ class SidebarExtender implements Panda
                     /* add recurrent services */
                     $item->item('Recurring & One-off Fees', function(Item $item) {
                         $item->icon('fa fa-paypal');
-                        $item->url('/inpatient/nursing/services');
+                        $item->url('/inpatient/charges');
                         $item->weight(4);
                     });
                     

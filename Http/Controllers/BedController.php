@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Ignite\Inpatient\Repositories\BedRepository;
 use Ignite\Inpatient\Repositories\WardRepository;
+use Ignite\Inpatient\Repositories\BedTypeRepository;
 
 class BedController extends AdminBaseController
 {
@@ -16,13 +17,15 @@ class BedController extends AdminBaseController
     /*
     * Inject the various dependencies that will be required
     */
-    public function __construct(BedRepository $bedRepository, WardRepository $wardRepository)
+    public function __construct(BedRepository $bedRepository, WardRepository $wardRepository, BedTypeRepository $bedTypeRepository)
     {
         parent::__construct();
 
         $this->bedRepository = $bedRepository;
 
         $this->wardRepository = $wardRepository;
+
+        $this->bedTypeRepository = $bedTypeRepository;
     }
     /**
      * Display a listing of the resource.
@@ -30,20 +33,13 @@ class BedController extends AdminBaseController
      */
     public function index()
     {
+        $bedTypes = $this->bedTypeRepository->all();
+
         $wards = $this->wardRepository->all();
 
         $beds = $this->bedRepository->all();
 
-        return view('inpatient::beds.index', compact('wards', 'beds'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     * @return Response
-     */
-    public function create()
-    {
-        return view('inpatient::create');
+        return view('inpatient::settings.beds.index', compact('wards', 'beds', 'bedTypes'));
     }
 
     /*
@@ -88,7 +84,11 @@ class BedController extends AdminBaseController
      * Remove the specified resource from storage.
      * @return Response
      */
-    public function destroy()
-    {
-    }
+     public function destroy($id)
+     {
+         $deletes = $this->bedRepository->delete($id);
+ 
+         return $deletes ? redirect()->back()->with(['success' => 'Bed removed successfully']) :
+                           redirect()->back()->with(['error' => 'Something went wrong']);
+     }
 }

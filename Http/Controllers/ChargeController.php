@@ -7,19 +7,21 @@ use Ignite\Core\Http\Controllers\AdminBaseController;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
-use Ignite\Inpatient\Http\Requests\WardRequest;
 use Ignite\Inpatient\Repositories\WardRepository;
+use Ignite\Inpatient\Repositories\ChargeRepository;
 
-class WardController extends AdminBaseController
+class ChargeController extends AdminBaseController
 {
-    protected $wardRepository;
+    protected $chargeRepository, $wardRepository;
     
     /*
-    * Inject the various dependencies into the system
+    * Inject dependencies
     */
-    public function __construct(WardRepository $wardRepository)
+    public function __construct(ChargeRepository $chargeRepository, WardRepository $wardRepository)
     {
         parent::__construct();
+
+        $this->chargeRepository = $chargeRepository;
 
         $this->wardRepository = $wardRepository;
     }
@@ -30,9 +32,11 @@ class WardController extends AdminBaseController
      */
     public function index()
     {
+        $charges = $this->chargeRepository->all();
+
         $wards = $this->wardRepository->all();
-        
-        return view('inpatient::settings.wards.index', compact('wards'));
+
+        return view('inpatient::settings.charges.index', compact('charges', 'wards'));
     }
 
     /**
@@ -49,12 +53,9 @@ class WardController extends AdminBaseController
      * @param  Request $request
      * @return Response
      */
-    public function store(WardRequest $request)
+    public function store(Request $request)
     {
-        $ward = $this->wardRepository->create(request()->all());
-
-        return $ward ? redirect()->back()->with(['success' => 'Ward listed successfully']) :
-                       redirect()->back()->with(['error' => 'Something went wrong']);
+        dd(request()->all());
     }
 
     /**
@@ -88,11 +89,7 @@ class WardController extends AdminBaseController
      * Remove the specified resource from storage.
      * @return Response
      */
-    public function destroy($id)
+    public function destroy()
     {
-        $deletes = $this->wardRepository->delete($id);
-        
-        return $deletes ? redirect()->back()->with(['success' => 'Ward removed successfully']) :
-                          redirect()->back()->with(['error' => 'Something went wrong']);
     }
 }

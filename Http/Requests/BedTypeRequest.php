@@ -14,7 +14,7 @@ class BedTypeRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|unique:bed_types'
+            'name' => 'required|unique:inpatient_bed_types'
         ];
     }
 

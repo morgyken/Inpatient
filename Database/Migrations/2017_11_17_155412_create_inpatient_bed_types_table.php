@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateNursingChargesTable extends Migration
+class CreateInpatientBedTypesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,16 @@ class CreateNursingChargesTable extends Migration
      */
     public function up()
     {
-        Schema::create('nursing_charges', function (Blueprint $table) {
-            $table->increments('id');
+        Schema::create('inpatient_bed_types', function (Blueprint $table) {
+
+            $table->increments('id')->unsigned();
+
             $table->string('name');
-            $table->double('cost',2)->default(0.00);
-            $table->integer('ward_id')->unsigned()->nullable();
-            $table->enum('type',['nursing','admission']);
+
+            $table->longText('description');
+
             $table->timestamps();
-            
+
         });
     }
 
@@ -31,6 +33,6 @@ class CreateNursingChargesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('nursing_charges');
+        Schema::dropIfExists('bed_types');
     }
 }

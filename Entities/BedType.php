@@ -25,12 +25,5 @@ class BedType extends Model
         'name', 'description'
     ];
 
-    /*
-    * Relationship between a bed type and the bed
-    */
-    // public function beds()
-    // {
-    //     return $this->hasMany(Bed::class);
-    // }
-
+    public $table = "inpatient_bed_types";
 }

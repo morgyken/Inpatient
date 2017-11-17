@@ -23,30 +23,28 @@
         <div class="box-body">
             <div class="row">
                 <div class="form-horizontal">
-                    {!! Form::open(['url'=>'/inpatient/ward/add']) !!}
+                    {!! Form::open(['url'=>'/inpatient/ward', 'autocomplete'=>'off']) !!}
                     <div class="col-md-12">
                         <div class="col-md-6">
-                            <div class="form-group {{ $errors->has('number') ? ' has-error' : '' }} req">
+                            <div class="form-group {{ $errors->has('number') ? ' has-error' : '' }}">
                                 <label class="control-label col-md-4">Ward Number</label>
                                 <div class="col-md-8">
-                                    <input type="text" required name="number" class="form-control" value="{{ old('number') }}" />
-                                    
+                                    <input type="text" name="number" class="form-control" value="{{ old('number') }}" />
                                 </div>
                             </div>
                             <div class="form-group {{ $errors->has('name') ? ' has-error' : '' }} req">
                                 <label class="control-label col-md-4">Ward Name</label>
                                 <div class="col-md-8">
-                                     <input required  type="text" name="name" class="form-control" value="{{ old('name')}}" />
+                                     <input type="text" name="name" class="form-control" value="{{ old('name')}}" />
                                 </div>
                             </div>
                             <div class="form-group {{ $errors->has('gender') ? ' has-error' : '' }}">
                                 <label class="control-label col-md-4">Gender</label>
                                 <div class="col-md-8">
-                                <select name="gender" class="form-control" required>
-                                        
+                                    <select name="gender" class="form-control" required>
                                         <option value="male">Male</option>
                                         <option  value="female">Female</option>
-                                        <option value="both">Both</option>
+                                        <option value="other">Other</option>
                                     </select>
                                 </div>
                             </div>
@@ -56,13 +54,13 @@
                             <div class="form-group {{ $errors->has('cost') ? ' has-error' : '' }}">
                                 <label class="control-label col-md-4">Insurance Cost</label>
                                 <div class="col-md-8">
-                                     <input type="number"  required name="insurance_cost" class="form-control" />
+                                     <input type="number" name="insurance_cost" class="form-control" />
                                 </div>
                             </div>
                             <div class="form-group {{ $errors->has('cost') ? ' has-error' : '' }}">
                                 <label class="control-label col-md-4">Cash Cost</label>
                                 <div class="col-md-8">
-                                     <input type="number"  required name="cash_cost" class="form-control" />
+                                     <input type="number" name="cash_cost" class="form-control" />
                                 </div>
                             </div>
                             
@@ -70,17 +68,15 @@
                              <div class="form-group {{ $errors->has('age_group') ? ' has-error' : '' }}">
                                 <label class="control-label col-md-4">Age Group</label>
                                 <div class="col-md-8">
-                                <select name="age_group" class="form-control" required>
-                                        
-                                        <option value="Adult">Adult</option>
-                                        
-                                        <option  value="Children">Children</option>
+                                    <select name="age_group" class="form-control">
+                                        <option value="adult">Adult</option>
+                                        <option value="children">Children</option>
                                     </select>
                                 </div>
                             </div>
 
                             <div class="pull-right">
-                                <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Save</button>
+                                <button class="btn btn-sm btn-primary">Save Ward</button>
                             </div>
                         </div>
                     </div> 
@@ -101,12 +97,26 @@
                                 <th>Age Group</th>
                                 <th>Insurance Cost</th>
                                 <th>Cash Cost</th>
-                                <!-- <th>Created On</th> -->
-                                <th>Option</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody> 
-                           
+                            @foreach($wards as $ward)
+                                <tr>
+                                    <td>{{ $ward->number }}</td>
+                                    <td>{{ $ward->name }}</td>
+                                    <td>{{ $ward->gender }}</td>
+                                    <td>{{ $ward->age_group }}</td>
+                                    <td>{{ $ward->insurance_cost }}</td>
+                                    <td>{{ $ward->cash_cost }}</td>
+                                    <td>
+                                        <button class="btn btn-primary btn-xs">Edit</button>
+                                        <a href="{{ url('inpatient/ward/delete/'.$ward->id) }}" class="btn btn-danger btn-xs">
+                                            Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                     @else
@@ -190,54 +200,15 @@
                     </div>
                 </div>
             </div>
-
+            {{-- @push('scripts') --}}
+                <script>
+                    $(function () {
+                        $("table").dataTable();
+                    })
+                </script>
+            {{-- @endpush --}}
         </div>
     </div>
-
-    {{-- @push('scripts') --}}
-        <script type="text/javascript">
-            $(function () {
-                $(".table").dataTable({
-                    ajax: "{{ url('/inpatient/ward/all') }}",
-                    reponsive: true
-                });
-
-                //edit ward
-                $("body").on("click","button.edit", function (e) {
-                    e.preventDefault();
-                    // AAX FETCH RECOrd
-                    $("#wardId").val(this.id);
-                    $("#ward_id").val(this.id);
-                    var url = '{{url('/inpatient/ward/editWard')}}'+'/'+this.id;
-                    $.ajax({
-                        url:url
-                    }).done(function (data) {
-                        document.getElementById("update_ward_form").reset();
-                        $("#number").val(data.number);
-                        $("#name").val(data.name);
-                        $("#cost").val(data.cost);
-                        $("#update_ward").html("<i class='fa fa-save'></i> Update");
-                        $("#editWardModal").modal();
-                    })
-                });
-
-                $("#update_ward").click(function(e){
-                    $(this).html("Saving...");
-                    e.preventDefault();
-                    $.ajax({
-                        type: "POST",
-                        url: "{{ url('/inpatient/ward/') }}/"+$("#ward_id").val()+"/update",
-                        data: $("#update_ward_form").serialize()
-                    }).done(function (data) {
-                         document.getElementById("update_ward_form").reset();
-                        $(this).html("<i class='fa fa-save'></i> Update");
-                        $(".table").dataTable().api().ajax.reload();
-                        $("#editWardModal").modal("toggle");
-                    })
-                });
-            });
-        </script>
-    {{-- @endpush --}}
 
 @endsection
 

@@ -1,16 +1,16 @@
 <?php
 namespace Ignite\Inpatient\Repositories;
 
-use Ignite\Inpatient\Entities\Ward;
+use Ignite\Inpatient\Entities\Charge;
 
-class WardRepository
+class ChargeRepository
 {
     /*
     * Fetch all the wards from the database
     */
     public function all()
     {
-        return Ward::all();
+        return Charge::all();
     }
 
     /*
@@ -18,7 +18,7 @@ class WardRepository
     */
     public function create($fields)
     {
-        return Ward::create($fields);
+        return Charge::create($fields);
     }
 
     /*
@@ -26,6 +26,6 @@ class WardRepository
     */
     public function delete($id)
     {
-        return Ward::where('id', $id)->delete();
+        return Charge::where('id', $id)->delete();
     }
 }
