@@ -21,9 +21,16 @@ use Illuminate\Database\Eloquent\Model;
  */
 class BedType extends Model
 {
-    protected $fillable = [];
+    protected $fillable = [
+        'name', 'description'
+    ];
 
-    public $table = "inpatient_bed_types";
+    /*
+    * Relationship between a bed type and the bed
+    */
+    // public function beds()
+    // {
+    //     return $this->hasMany(Bed::class);
+    // }
 
-   
 }

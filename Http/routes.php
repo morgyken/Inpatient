@@ -84,6 +84,19 @@ Route::group(['as' => 'inpatient.'], function() {
         Route::post('/', ['uses' => 'BedController@store']);
     });
 
+    /*
+    * Bed Type Management
+    */
+    Route::group(['prefix' => 'bed-types'], function(){
+        
+        Route::get('/', ['uses'=>'BedTypeController@index']);
+
+        Route::post('/', ['uses'=>'BedTypeController@store']);
+
+        Route::get('/delete/{bedTypeId}', ['uses'=>'BedTypeController@destroy']);
+
+    });
+
      /*
     |--------------------------------------------------------------------------
     | Accounts Management

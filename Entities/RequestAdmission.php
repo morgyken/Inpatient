@@ -32,7 +32,7 @@ class RequestAdmission extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'patient_id','visit_id', 'admission_type_id', 'reason', 'canceled'
+        'patient_id','visit_id', 'admission_type_id', 'reason', 'authorized', 'authorized_by', 'canceled', 'deleted_at'
     ];
 
     protected $table = 'inpatient_request_admissions';

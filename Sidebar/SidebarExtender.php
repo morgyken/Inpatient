@@ -99,6 +99,7 @@ class SidebarExtender implements Panda
                         $item->url('/inpatient/nursing/services');
                         $item->weight(4);
                     });
+                    
                     //wards
                     $item->item('Wards', function(Item $item) {
                         $item->icon('fa fa-home');
@@ -109,6 +110,12 @@ class SidebarExtender implements Panda
                     $item->item('Beds', function(Item $item) {
                         $item->icon('fa fa-bed');
                         $item->url('/inpatient/beds');
+                        //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
+                        $item->weight(4);
+                    });
+                    $item->item('Bed Types', function(Item $item) {
+                        $item->icon('fa fa-bed');
+                        $item->url('/inpatient/bed-types');
                         //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
                         $item->weight(4);
                     });
