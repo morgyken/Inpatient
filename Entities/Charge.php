@@ -28,11 +28,18 @@ use Ignite\Inpatient\Entities\Ward;
  */
 class Charge extends Model
 {
-    protected $fillable = [];
+    protected $fillable = [
+        'name', 'cost', 'ward_id', 'type'
+    ];
 
     protected $table = "inpatient_charges";
 
-    public function ward(){
-    	return $this->belongsTo(Ward::class,'ward_id');
+    /*
+    * Realtionship between a charge and all the wards that belong to it
+    */
+    public function wards()
+    {
+        return $this->belongsToMany(Ward::class, 'inpatient_ward_charges', 'charge_id', 'ward_id')
+                    ->withTimestamps();
     }
 }

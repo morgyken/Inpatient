@@ -39,23 +39,34 @@ class Ward extends Model
 
     protected $table = "inpatient_wards";
 
-    public function patients(){
-    	return $this->hasMany(Patients::class, 'patients');
+    /*
+    * Relationship between the ward and patients in it
+    */
+    public function patients()
+    {
+        return $this->hasMany(Patients::class, 'patients'); 
     }
 
-    public function assigned(){
+
+    public function assigned()
+    {
         return $this->hasMany(WardAssigned::class);
     }
 
-    public function bedpositions()
-    {
-        return $this->hasMany(BedPosition::class,'ward_id', 'id');
-    }
-
+    /*
+    * Relationship between the ward and beds in it
+    */
     public function beds()
     {
         return $this->hasMany(Bed::class, 'ward_id', 'id');
     }
 
-
+    /*
+    * Relationship between the ward and charges that apply to it
+    */
+    public function charges()
+    {
+        return $this->belongsToMany(Charge::class, 'inpatient_ward_charges', 'ward_id', 'charge_id')
+                    ->withTimestamps();
+    }
 }
