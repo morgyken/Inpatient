@@ -81,8 +81,6 @@
 
                         $('#patient-detail').val(data.patient.id);
 
-                        console.log(data.patient.schemes);
-
                         data.patient.schemes.length == 0 ? $('#hasInsurance').addClass('hidden') : 
                                                            $('#hasInsurance').removeClass('hidden'); 
 
