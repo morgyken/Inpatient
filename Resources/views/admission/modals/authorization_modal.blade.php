@@ -18,11 +18,6 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="">Amount Due</label>
-                        <input id="authorized-amount" type="text" class="form-control" disabled />
-                    </div>
-
-                    <div class="form-group">
                         <label for="">Enter Authorize Amount</label>
                         <input name="authorized" type="text" class="form-control" />
                     </div>

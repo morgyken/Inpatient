@@ -18,7 +18,7 @@ class AdmissionTypeTableSeeder extends Seeder
         Model::unguard();
 
         AdmissionType::create([
-            'name' => 'General Surgery', 'deposit' => 100000, 'description' => 'general surgery'
+            'name' => 'General Surgery', 'deposit' => 10000, 'description' => 'general surgery'
         ]);
     }
 }

@@ -19,9 +19,9 @@ class ChargesTableSeeder extends Seeder
         Model::unguard();
 
         $charges = array(
-            ['name' => 'nursing', 'cost' => 2000, 'type' => 'recurring'],
+            ['name' => 'nursing', 'cost' => 500, 'type' => 'recurring'],
 
-            ['name' => 'doctor', 'cost' => 10000, 'type' => 'once']
+            ['name' => 'admission pack', 'cost' => 2200, 'type' => 'once']
         );
 
         foreach($charges as $charge)

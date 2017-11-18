@@ -2,12 +2,16 @@
 
 namespace Ignite\Inpatient\Repositories;
 
+use Ignite\Inpatient\Repositories\Traits\AdmissionRequestTrait;
+
 use Ignite\Inpatient\Entities\AdmissionRequest;
 
 use Carbon\Carbon;
 
 class AdmissionRequestRepository
 {
+    use AdmissionRequestTrait;
+
     protected $admissionRequest;
 
     /*
@@ -25,8 +29,6 @@ class AdmissionRequestRepository
     public function create($fields)
     {
         $fields['admitted'] = false;
-
-        $fields['deleted_at'] = null;
 
         return AdmissionRequest::create($fields);
     }
@@ -48,39 +50,9 @@ class AdmissionRequestRepository
 
         return $admissionRequests->map(function($request){
 
-            return [
-                'id' => $request->id,
-
-                'reason' => $request->reason,
-
-                'authorized' => $request->authorized,
-
-                'due' => $this->due($request),
-
-                'can_admit' => $this->admit($request),
-
-                'created_at' => Carbon::parse($request->created_at)->toFormattedDateString(),
-
-                'patient' => $this->patient($request->patient),
-
-                'type' => $this->admissionType($request->admissionType)
-            ];
+            return $this->transform($request);
 
         });
-    }
-
-    /*
-    * Tranforms the patient within an admission request into a more json encodedable array
-    */
-    public function patient($patient)
-    {
-        return [
-            'id' => $patient->id,
-            'name' => $patient->fullName,
-            'visit' => $patient->visit_id,
-            'account' => $this->patientAccount($patient->account),
-            'schemes' => $this->patientSchemes($patient->schemes),
-        ];
     }
 
     /*
@@ -89,72 +61,6 @@ class AdmissionRequestRepository
     public function admitted($patientAdmission)
     {
         return $patientAdmission and is_null($patientAdmission->deleted_at);
-    }
-
-    /*
-    * Transform the patient account
-    */
-    public function patientAccount($account)
-    {
-        $accounts['balance'] = $account ? $account->balance : 0;
-
-        return $accounts;
-    }
-
-    /*
-    * Transform the details of the patient schemes
-    */
-    public function patientSchemes($schemes)
-    {
-        return $schemes ? $schemes : [];
-    }
-
-    /*
-    * Tranforms the amdission type within an admission request into a more json encodedable array
-    */
-    public function admissionType($type)
-    {
-        return [
-            'name' => $type->name,
-            'deposit' => $type->deposit,
-            'description' => $type->description
-        ];
-    }
-
-    /*
-    * Add the amount due before the patient can receive any form of treatment
-    */
-    public function due($request)
-    {
-        if($request->authorized)
-        {
-            return $request->authorized;
-        }
-
-        $deposit = $request->admissionType->deposit;
-
-        $balance = $request->patient->account ? $request->patient->account->balance : 0;
-
-        return ($deposit - $balance) < 0 ? 0 : ($deposit - $balance);
-    }
-
-    /*
-    * Determine if a request is good enough for admittance
-    */
-    public function admit($request)
-    {
-        $balance = $request->patient->account ? $request->patient->account->balance : 0;
-
-        if(count($request->patient->schemes) > 0)
-        {
-            return true;
-        }
-        else
-        {
-            return $request->authorized ? $balance >= $request->authorized : $this->due($request) === 0;
-        }
-
-        return false;
     }
 
     /*
@@ -168,7 +74,4 @@ class AdmissionRequestRepository
 
         $admissionRequets->save();
     }
-
-    
-
 }
