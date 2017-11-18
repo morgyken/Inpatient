@@ -10,6 +10,8 @@ class AdmissionType extends Model
     	'name', 'description', 'deposit'
     ];
 
+    protected $table = "inpatient_admission_types";
+
     /*
     * Accessor for the name column - Sets the name to title case
     */

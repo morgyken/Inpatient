@@ -16,6 +16,16 @@ class InpatientDatabaseSeeder extends Seeder
     {
         Model::unguard();
 
-        // $this->call("OthersTableSeeder");
+        $this->call(BedTypesTableSeeder::class);
+
+        $this->call(WardsTableSeeder::class);
+
+        $this->call(BedsTableSeeder::class);
+
+        $this->call(ChargesTableSeeder::class);
+
+        $this->call(ChargesTableSeeder::class);
+
+        $this->call(AdmissionTypeTableSeeder::class);
     }
 }

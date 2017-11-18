@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateInpatientRequestAdmissionsTable extends Migration
+class CreateInpatientAdmissionRequestsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateInpatientRequestAdmissionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('inpatient_request_admissions', function (Blueprint $table) {
+        Schema::create('inpatient_admission_requests', function (Blueprint $table) {
             
             $table->increments('id');
 
@@ -31,7 +31,7 @@ class CreateInpatientRequestAdmissionsTable extends Migration
 
             $table->tinyInteger('cancelled');
 
-            $table->timestamp('deleted_at')->nullable()->default(null);
+            $table->softDeletes();
 
             $table->timestamps();
         
@@ -45,6 +45,6 @@ class CreateInpatientRequestAdmissionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('inpatient_request_admissions');
+        Schema::dropIfExists('inpatient_admission_requests');
     }
 }
