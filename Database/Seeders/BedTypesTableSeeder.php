@@ -4,6 +4,7 @@ namespace Ignite\Inpatient\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
+use Ignite\Inpatient\Entities\BedType;
 
 class BedTypesTableSeeder extends Seeder
 {
@@ -16,6 +17,14 @@ class BedTypesTableSeeder extends Seeder
     {
         Model::unguard();
 
-        // $this->call("OthersTableSeeder");
+        $bedTypes = [
+            ['name' => 'railed', 'description' => 'has roll-off guard'],
+            ['name' => 'non-railed', 'description' => 'does not have roll-off guard'],
+        ];
+
+        foreach($bedTypes as $bedType)
+        {
+            BedType::create($bedType);
+        }
     }
 }

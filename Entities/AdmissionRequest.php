@@ -27,7 +27,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\RequestAdmission whereVisitId($value)
  * @mixin \Eloquent
  */
-class RequestAdmission extends Model
+class AdmissionRequest extends Model
 {
     use SoftDeletes;
 
@@ -35,7 +35,7 @@ class RequestAdmission extends Model
         'patient_id','visit_id', 'admission_type_id', 'reason', 'authorized', 'authorized_by', 'canceled', 'deleted_at'
     ];
 
-    protected $table = 'inpatient_request_admissions';
+    protected $table = 'inpatient_admission_requests';
 
     protected $with = ['patient.account', 'admissionType'];
 
