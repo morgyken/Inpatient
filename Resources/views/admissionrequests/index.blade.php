@@ -78,7 +78,7 @@
 
                         $('#patient-detail').val(data.patient.id);
 
-                        $('#insurance-visit').val(data.id);
+                        $('#admit-request-id').val(data.id);
 
                         let schemes = data.patient.schemes;
 

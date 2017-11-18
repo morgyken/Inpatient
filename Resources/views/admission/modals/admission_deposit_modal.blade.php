@@ -136,7 +136,7 @@
                     </div>
 
                     <div id="insurance-display" class="hidden">
-                        <input id="admission-request-id" type="hidden" name="insurance[admission_request_id]" />
+                        <input id="admit-request-id" type="hidden" name="insurance[admission_request_id]" />
 
                         <div class="form-group col-md-12">
                             <label>Insurance Scheme</label>
