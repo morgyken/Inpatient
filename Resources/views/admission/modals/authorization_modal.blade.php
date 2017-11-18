@@ -8,7 +8,7 @@
                 <h4 class="modal-title">Patient Account</h4>
             </div>
             <div class="modal-body">
-                {!! Form::open(['id'=>'authorize-form','route'=>'evaluation.authorize.admission']) !!}
+                {!! Form::open(['id'=>'authorize-form','url'=>'inpatient/admission-requests/update']) !!}
 
                     <input id="admission-request-id" name="admission_request_id" type="hidden" value="" />
                     

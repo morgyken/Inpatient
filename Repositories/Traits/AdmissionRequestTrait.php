@@ -29,8 +29,6 @@ trait AdmissionRequestTrait
 
             'authorization' => $this->authorization($request),
 
-            'admission_fees' => $this->admissionFees($request),
-
             'can_admit' => $this->canAdmit($request),
 
             'created_at' => Carbon::parse($request->created_at)->toFormattedDateString(),
@@ -54,36 +52,6 @@ trait AdmissionRequestTrait
     }
 
     /*
-    * Returns the basic admission dues and calculates their total
-    */
-    public function admissionFees($request)
-    {
-        // $admissionFees = $this->chargeRepository->getChargesByType('once')->map(function($charge){
-        //     return [
-        //         'name' => $charge->name,
-        //         'type' => 'One off charge',
-        //         'amount' => $charge->cost
-        //     ];
-        // })->toArray();
-
-        // array_push($admissionFees, [
-        //     'name' => $request->admissionType->name,
-        //     'type' => 'Deposit',
-        //     'amount' => $request->admissionType->deposit
-        // ]);
-
-        return [
-            'charges' => [
-                'name' => $request->admissionType->name,
-                'type' => 'Deposit',
-                'amount' => $request->admissionType->deposit
-            ],
-            // 'total' => collect($admissionFees)->pluck('amount')->sum()
-            'total' => $request->admissionType->deposit
-        ];
-    }
-
-    /*
     * Checks if one can admit a patient given all the variables available
     */
     public function canAdmit($request)
@@ -91,6 +59,8 @@ trait AdmissionRequestTrait
         $patient = $request->patient;
 
         $schemes = $patient->schemes;
+
+        $deposit = $request->admissionType->deposit;
 
         $accountBalance = $request->patient->account ? $request->patient->account->balance : 0;
 
@@ -103,14 +73,17 @@ trait AdmissionRequestTrait
             return true;
         }
 
-        if($accountBalance >= $this->admissionFees($request)['total'])
+        if($accountBalance >= $deposit)
         {
             return true;
         }
 
         if(count($schemes) > 0)
         {
-            return true;
+            if($request->insuranceMaximumAmount->count() > 0)
+            {
+                return true;
+            }
         }
 
         return false;
@@ -143,21 +116,23 @@ trait AdmissionRequestTrait
     /*
     * Transform the details of the patient schemes
     */
-    public function patientSchemes($schemes)
+    public function patientSchemes($companies)
     {
-        return $schemes ? $schemes : [];
+        return $companies ? $companies->pluck('schemes') : [];
     }
 
     /*
     * Tranforms the amdission type within an admission request into a more json encodedable array
     */
-    public function admissionType($type)
+    public function admissionType($admissionType)
     {
-        return [
-            'name' => $type->name,
-            'deposit' => $type->deposit,
-            'description' => $type->description
-        ];
+        $name = $admissionType->name;
+
+        $deposit = $admissionType->deposit;
+
+        $description = $admissionType->description;
+
+        return compact('name', 'deposit', 'description');
     }
 
 }

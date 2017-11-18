@@ -25,6 +25,8 @@ Route::group(['as' => 'inpatient.'], function() {
         Route::get('/', ['uses'=>'AdmissionRequestController@index']);
 
         Route::post('/', ['uses'=>'AdmissionRequestController@store']);
+
+        Route::post('/update', ['uses' => 'AdmissionRequestController@update']);
     });
 
 	/*
@@ -107,6 +109,29 @@ Route::group(['as' => 'inpatient.'], function() {
 
     });
 
+    /*
+    * Admissions Management
+    */
+    Route::group(['prefix' => 'admissions'], function(){
+        
+        Route::get('/', ['uses' => 'AdmissionController@index']);
+
+        Route::get('{admissionRequest}/create', ['uses' => 'AdmissionController@create']);
+        
+        Route::post('{admissionRequest}', ['uses' => 'AdmissionController@store']);
+
+    });
+
+    /*
+    * Admissions Management
+    */
+    Route::group(['prefix' => 'admission-letter'], function(){
+        
+        Route::get('create/{patient}', ['uses' => 'AdmissionFormController@create']);
+
+    });
+    
+
      /*
     |--------------------------------------------------------------------------
     | Accounts Management
@@ -140,10 +165,6 @@ Route::group(['as' => 'inpatient.'], function() {
         Route::get('/', ['uses'=>'ChargeController@index']); 
 
         Route::post('/', ['uses'=>'ChargeController@store']);
-        
-        // Route::get('/',['uses'=>'AccountsController@getNursingServices']); 
-
-        // Route::get('/delete_service/{service}',['uses'=>'AccountsController@delete_service']);
 
     });
 
@@ -183,11 +204,9 @@ Route::group(['as' => 'inpatient.'], function() {
 
     Route::get('/admission-types/listing', ['uses' => 'AdmissionTypeController@listing']);
 
-    Route::get('/admission', ['uses' => 'AdmissionController@index']);
     
-    Route::get('/admission/{admissionRequest}/create', ['uses' => 'AdmissionController@create']);
-
-    Route::post('/admission/{admissionRequest}', ['uses' => 'AdmissionController@store']);
+    
+    
 
     
 

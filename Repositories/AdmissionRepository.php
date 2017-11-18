@@ -18,6 +18,6 @@ class AdmissionRepository
     */
     public function all()
     {
-        return Admission::all();
+        return Admission::orderBy('created_at', 'DESC')->get();
     }
 }

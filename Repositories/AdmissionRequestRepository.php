@@ -48,9 +48,9 @@ class AdmissionRequestRepository
     {
         $admissionRequests = AdmissionRequest::orderBy('created_at', 'ASC')->get();
 
-        return $admissionRequests->map(function($request){
+        return $admissionRequests->map(function($admissionRequest){
 
-            return $this->transform($request);
+            return $this->transform($admissionRequest);
 
         });
     }
@@ -72,6 +72,6 @@ class AdmissionRequestRepository
 
         $admissionRequest->deleted_at = Carbon::now();
 
-        $admissionRequets->save();
+        $admissionRequest->save();
     }
 }

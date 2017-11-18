@@ -48,7 +48,7 @@
                                 </button>
 
                                 @if($request['can_admit'])
-                                    <a class="btn btn-primary btn-xs" href="{{url('inpatient/admission/'.$request['id'].'/create')}}">
+                                    <a class="btn btn-primary btn-xs" href="{{url('inpatient/admissions/'.$request['id'].'/create')}}">
                                         Admit
                                     </a>
                                 @else
@@ -57,7 +57,7 @@
                                     </a>    
                                 @endif
 
-                                <a class="btn btn-danger btn-xs" href="{{url('inpatient/admission/cancel/'.$request['patient']['id'])}}">Cancel</a>
+                                <a class="btn btn-danger btn-xs" href="{{url('inpatient/admissions/cancel/'.$request['patient']['id'])}}">Cancel</a>
                             </td>
                         </tr>
                     @endforeach
@@ -78,6 +78,12 @@
 
                         $('#patient-detail').val(data.patient.id);
 
+                        $('#insurance-visit').val(data.id);
+
+                        let schemes = data.patient.schemes;
+
+                        addPatientSchemes(schemes);
+
                         data.patient.schemes.length == 0 ? $('#hasInsurance').addClass('hidden') : 
                                                            $('#hasInsurance').removeClass('hidden'); 
 
@@ -89,12 +95,26 @@
 
                         $('#admission-request-id').val(data.id);
 
-                        $('#authorized-amount').val(data.due);
-
                         var requiredAmount = data.type.name + " - " + data.type.deposit;
 
                         $('#required-amount').val(requiredAmount);
                     })
+
+                    function addPatientSchemes(schemes)
+                    {
+                        $('#insurance-scheme').empty();
+
+                        for(var item = 0; item < schemes.length; item++)
+                        {
+                            var value = schemes[item]['id'];
+                            var text = schemes[item]['name'];
+
+                            $('#insurance-scheme').append($('<option>', {
+                                value: value,
+                                text: text
+                            }));
+                        }
+                    }
 
                     $(function () {
                         $("table").dataTable();
