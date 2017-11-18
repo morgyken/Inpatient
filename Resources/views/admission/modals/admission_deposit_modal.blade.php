@@ -136,20 +136,21 @@
                     </div>
 
                     <div id="insurance-display" class="hidden">
+                        <input id="insurance-visit" type="hidden" name="insurance[visit_id]" />
+
                         <div class="form-group col-md-12">
                             <label>Insurance Scheme</label>
-                            <select name="insurance_scheme" id="insurance-scheme" class="form-control">
-                                
-                            </select>
+                            <select name="insurance[scheme_id]" id="insurance-scheme" class="form-control"></select>
                         </div>
+                        
                         <div class="form-group col-md-12">
                             <label>Maximum Amount Allowed By Insurance</label>
-                            {!! Form::text('maximum_amount', null, ['class'=>'form-control']) !!}
+                            <input type="number" class="form-control" name="insurance[maximum_amount]" />
                         </div>
-                        <div class="form-group col-md-12">
+                        <!-- <div class="form-group col-md-12">
                             <label>Upload Authorization Letter</label>
                             {!! Form::file('authorization_letter', ['class'=>'form-control']) !!}
-                        </div>
+                        </div> -->
                         
                     </div>
                 {!! Form::close()!!}

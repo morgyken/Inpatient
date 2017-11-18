@@ -37,7 +37,7 @@ class AdmissionRequest extends Model
 
     protected $table = 'inpatient_admission_requests';
 
-    protected $with = ['patient.account', 'admissionType'];
+    protected $with = ['patient.account', 'admissionType', 'insuranceMaximumAmount'];
 
     protected $dates = ['deleted_at'];
 
@@ -63,5 +63,13 @@ class AdmissionRequest extends Model
     public function admissionType()
     {
         return $this->belongsTo(AdmissionType::class);
+    }
+
+    /*
+    * Relationship between a visit and insurance maximum amounts
+    */
+    public function insuranceMaximumAmount()
+    {
+        return $this->hasMany(InsuranceMaximumAmount::class, 'admission_request_id');
     }
 }

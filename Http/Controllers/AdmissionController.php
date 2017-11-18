@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Ignite\Users\Repositories\UserRepository;
-use Ignite\Inpatient\Entities\RequestAdmission;
 use Ignite\Inpatient\Repositories\BedRepository;
 use Ignite\Inpatient\Repositories\WardRepository;
 use Ignite\Inpatient\Http\Requests\AdmissionRequest;
@@ -77,7 +76,7 @@ class AdmissionController extends AdminBaseController
 
         $this->admissionRequestRepository->delete(request()->get('inpatient_request_admission_id'));
         
-        return redirect()->back()->with(['success' => 'Patient has been admitted']);
+        return redirect('/inpatient/admissions')->with(['success' => 'Patient has been admitted']);
     }
 
     /**

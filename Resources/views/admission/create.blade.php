@@ -33,7 +33,7 @@
                 <div class="col-md-6">
                     <h4>Check In Details</h4>
 
-                    {!! Form::open(['url' => 'inpatient/admission/'. $admissionRequest->id, 'class' => 'form-horizontal']) !!}
+                    {!! Form::open(['url' => 'inpatient/admissions/'. $admissionRequest->id, 'class' => 'form-horizontal']) !!}
 
                         <input type="hidden" value="{{ $admissionRequest->id }}" name="inpatient_request_admission_id" />
 
@@ -110,6 +110,10 @@
 
         {{-- @push('scripts') --}}
             <script>
+                if(!$('#doctor').val()){
+                    $('#external').removeAttr('disabled');
+                }
+
                 $('#doctor').change(function(event){
 
                     var doctor_id = event.target.value;

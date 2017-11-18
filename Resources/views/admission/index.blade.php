@@ -26,11 +26,13 @@
                             @foreach($admissions as $admission)
                                 <tr>
                                     <td>{{ $admission->patient->full_name }}</td>
-                                    <td>{{ $admission->doctor->profile->name }}</td>
+                                    <td>
+                                        {{ $admission->doctor ? $admission->doctor->profile->name : $admission->external_doctor }}
+                                    </td>
                                     <td>{{ $admission->ward->name }}</td>
                                     <td>{{ $admission->bed->number }}</td>
                                     <td>
-                                        <button class="btn btn-primary btn-xs">Discharge</button>
+                                        <button class="btn btn-primary btn-xs">Manage</button>
                                         <button class="btn btn-danger btn-xs">Delete</button>
                                     </td>
                                 </tr>
