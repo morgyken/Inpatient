@@ -26,8 +26,8 @@ class ChargesTableSeeder extends Seeder
 
         foreach($charges as $charge)
         {
-            $wardIds = Ward::orderByRaw('RAND()')->take(rand(1, 4))->get()->pluck('id');
-
+            $wardIds = Ward::orderByRaw('RAND()')->take(rand(1, 4))->get()->pluck('id')->toArray();
+            
             Charge::create($charge)->wards()->attach($wardIds);
         }
     }
