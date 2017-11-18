@@ -13,7 +13,7 @@ use Ignite\Inpatient\Repositories\BedRepository;
 use Ignite\Inpatient\Repositories\WardRepository;
 use Ignite\Inpatient\Http\Requests\AdmissionRequest;
 use Ignite\Inpatient\Repositories\AdmissionRepository;
-use Ignite\Evaluation\Repositories\AdmissionRequestRepository;
+use Ignite\Inpatient\Repositories\AdmissionRequestRepository;
 
 class AdmissionController extends AdminBaseController
 {
