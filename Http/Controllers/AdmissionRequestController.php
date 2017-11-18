@@ -42,9 +42,9 @@ class AdmissionRequestController extends AdminBaseController
      */
     public function index()
     {
-        $this->admissionRequestRepository->getAdmissionRequests();
+        $admissionRequests = $this->admissionRequestRepository->getAdmissionRequests();
         
-        return view('evaluation::index');
+        return view('inpatient::admissionrequests.index', compact('admissionRequests'));
     }
 
     /*
@@ -65,9 +65,7 @@ class AdmissionRequestController extends AdminBaseController
      *  Store admission requests and approvals
      */
     public function store()
-    {  
-        dd(request()->all());
-
+    { 
         $admissionRequest = $this->admissionRequestRepository->create(request()->all());
 
         return $admissionRequest ? redirect()->back()->with('success', 'Admission request sent!') :

@@ -34,4 +34,12 @@ class ChargeRepository
 
         return $this->charge;
     }
+
+    /*
+    * Get the charges by the type
+    */
+    public function getChargesByType($type)
+    {
+        return Charge::where('type', $type)->get();
+    }
 }

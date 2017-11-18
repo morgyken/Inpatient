@@ -20,7 +20,6 @@
                     <th>Account Amount</th>
                     <th>Admission Type</th>
                     <th>Authorized Amount</th>
-                    <!-- <th>Balance</th> -->
                     <th>Date</th>
                     <th>Options</th>
                     </thead>
@@ -33,18 +32,16 @@
                                 {{ $request['type']['name'] }}
                                 ({{ number_format( $request['type']['deposit'] ) }})
                             </td>
-                            <td>{{ $request['authorized'] }}</td>
-                            <!-- <td>
-                                {{ $request['due'] }}
-                            </td> -->
+                            <td>{{ $request['authorization']['amount'] }}</td>
                             <td>
                                 {{ $request['created_at'] }}
                             </td>
                             <td>
                                 <button class="btn btn-info btn-xs authorize" 
-                                   data-toggle="modal" data-target="#authorize-modal" value='{!! json_encode($request) !!}'>
+                                data-toggle="modal" data-target="#authorize-modal" value='{!! json_encode($request) !!}'>
                                     Authorize
                                 </button>
+
                                 <button class="btn btn-success btn-xs deposit" 
                                         data-toggle="modal" data-target="#deposit-modal" value='{!! json_encode($request) !!}'>
                                     Payment Mode
