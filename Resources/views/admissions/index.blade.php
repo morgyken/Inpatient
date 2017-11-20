@@ -32,8 +32,8 @@
                                     <td>{{ $admission->ward->name }}</td>
                                     <td>{{ $admission->bed->number }}</td>
                                     <td>
-                                        <button class="btn btn-primary btn-xs">Manage</button>
-                                        <button class="btn btn-danger btn-xs">Delete</button>
+                                        <a href="{{ url('inpatient/admissions/'.$admission->id) }}" class="btn btn-primary btn-xs">Manage</a>
+                                        <!-- <button class="btn btn-danger btn-xs">Delete</button> -->
                                     </td>
                                 </tr>
                             @endforeach

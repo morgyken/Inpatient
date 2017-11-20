@@ -41,7 +41,6 @@ Route::group(['as' => 'inpatient.'], function() {
     Route::get('/admit/{id}/visit/{visit_id}', 'InpatientController@admitPatientForm');
     Route::post('/admit_patient', 'InpatientController@admit');
     Route::get('/admit_check', 'InpatientController@admit_check');
-    Route::get('/admissions', 'InpatientController@admissionList');
     Route::get('/admissions/logs', 'InpatientController@admissionLogs');
     Route::get('/admission/cancel/{id}', 'InpatientController@cancel');
     //manage patient
@@ -120,10 +119,12 @@ Route::group(['as' => 'inpatient.'], function() {
         
         Route::post('{admissionRequest}', ['uses' => 'AdmissionController@store']);
 
+        Route::get('{admission}', ['uses' => 'AdmissionController@show']);
+
     });
 
     /*
-    * Admissions Management
+    * Admission Letter Routes
     */
     Route::group(['prefix' => 'admission-letter'], function(){
         

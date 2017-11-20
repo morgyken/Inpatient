@@ -10,7 +10,9 @@ class WardRepository
     */
     public function all()
     {
-        return Ward::all();
+        $wards = Ward::with(['beds'])->get();
+
+        return $wards;
     }
 
     /*
