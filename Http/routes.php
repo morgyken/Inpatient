@@ -125,9 +125,7 @@ Route::group(['as' => 'inpatient.'], function() {
 
         Route::post('{admission}/manage/{item}', ['uses' => 'AdmissionController@evaluate']);
 
-        Route::post('{admission}/manage/{item}/dispense', ['uses' => 'AdmissionController@evaluate']);
-
-        Route::post('/{admission}/prescription/dispense', ['uses' => 'PrescriptionPaymentController@store']);
+        Route::post('/{admission}/prescription/dispense', ['uses' => 'Evaluation\PrescriptionsController@dispense']);
 
     });
 

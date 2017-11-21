@@ -15,7 +15,6 @@ use Auth;
 
 class AdmissionRequestController extends AdminBaseController
 {
-
     protected $admissionRequestRepository, $admissionTypeRepository, $visitRepository;
 
     /*

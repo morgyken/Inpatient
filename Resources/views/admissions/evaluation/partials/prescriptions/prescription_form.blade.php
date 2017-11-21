@@ -1,4 +1,4 @@
-<div class="panel panel-info">
+<div class="panel panel-info" id="focus">
     <div class="panel-heading">
         <h5>Drug Requisition &amp; Administration</h5>
     </div>

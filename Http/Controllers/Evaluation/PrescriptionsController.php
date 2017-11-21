@@ -9,6 +9,9 @@ use Illuminate\Routing\Controller;
 use Ignite\Inpatient\Library\Interfaces\EvaluationInterface;
 use Ignite\Evaluation\Entities\Prescriptions;
 use Ignite\Inpatient\Library\Traits\PrescriptionsTrait;
+use Ignite\Evaluation\Entities\Dispensing;
+use Ignite\Evaluation\Entities\DispensingDetails;
+use Ignite\Inventory\Entities\InventoryStock;
 
 class PrescriptionsController extends Controller implements EvaluationInterface
 {
@@ -57,15 +60,47 @@ class PrescriptionsController extends Controller implements EvaluationInterface
         return $admission->prescriptions->map(function($prescription){
 
             return $this->transform($prescription);
-            
+
         });
     }
 
     /*
-    * Dispense drugs To the cashier
+    * Dispense drugs from the 
     */
     public function dispense()
     {
+        $quantities = request()->except(['_token', 'visit', 'user']);
 
+        //consider using an event for this
+        foreach($quantities as $prescription => $quantity)
+        {
+            $product = Prescriptions::findOrFail($prescription)->drug;
+
+            $dispensing = Dispensing::create([
+                'visit' => request()->get('visit'),
+
+                'user' => request()->get('user'),
+
+                'prescription' => $prescription,
+            ]);
+
+            DispensingDetails::create([
+
+                'batch' => $dispensing->id,
+
+                'quantity' => $quantity,
+
+                'product' => $product,
+
+            ]);
+
+            $stock = InventoryStock::where('product', $product)->first();
+
+            $stock->quantity = $stock->quantity - $quantity;
+
+            $stock->save();
+        }
+
+        return redirect()->back()->with(['success' => 'Drug dispensed successfully']);
     }
 }
