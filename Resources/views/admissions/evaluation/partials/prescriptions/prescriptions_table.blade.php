@@ -19,13 +19,10 @@
                     <td>{{ $prescription['drug'] }}</td>
                     <td>{{ $prescription['dose'] }}</td>
                     <td>{{ $prescription['prescribed'] }}</td>
+                    <td>{{ $prescription['dispensed'] }}</td>
+                    <td>{{ $prescription['remaining'] }}</td>
                     <td>
-                        TO DISPENSE {{ $prescription['to_dispense'] }}
-                    </td>
-                    <td>
-                        What to put?
-                    </td>
-                    <td>
+                        <a class="btn btn-success btn-xs" href="#">Administer</a>
                         <a class="btn btn-danger btn-xs" href="#">Cancel</a>
                     </td>
                 </tr>
@@ -46,20 +43,28 @@
                         <h4 class="modal-title">Drugs to be dispensed</h4>
                     </div>
                     <div class="modal-body" style="overflow: hidden;">
-                        {{form::open(['url' => 'inpatient/admissions/'.$admission->id.'/prescription/dispense', 'class' => 'form-horizontal', 'id' => 'dispense-form']) }}
+                        {!! Form::open(['url' => 'inpatient/admissions/'.$admission->id.'/prescription/dispense', 'class' => 'form-horizontal', 'id' => 'dispense-form']) !!}
+                            
+                            {!! Form::hidden('visit', $admission->visit->id) !!}
+
+                            {!! Form::hidden('user', Auth::user()->id) !!}
+                            
                             @foreach($prescriptions as $prescription)
+
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <div class="col-md-4">
                                             <label for="" style="line-height: 30px;">{{ $prescription['drug'] }}</label>
                                         </div>
                                         <div class="col-md-8">
-                                            {!! form::text($prescription['id'], $prescription['to_dispense'], ['class' => 'form-control']) !!}
+                                            {!! Form::text($prescription['id'], $prescription['to_dispense'], ['class' => 'form-control']) !!}
                                         </div>
                                     </div>
                                 </div>
+                            
                             @endforeach
-                        {{form::close() }}
+
+                        {{ Form::close() }}
                     </div>
                     <div class="modal-footer">
                         <button id="dispense-button" type="button" class="btn btn-primary">Confirm</button>
