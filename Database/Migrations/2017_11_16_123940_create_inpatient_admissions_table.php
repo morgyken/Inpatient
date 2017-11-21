@@ -18,17 +18,17 @@ class CreateInpatientAdmissionsTable extends Migration
 
             $table->integer('patient_id')->unsigned();
 
-            $table->integer('doctor_id')->unsigned();
+            $table->integer('doctor_id')->nullable();
 
             $table->integer('ward_id')->unsigned();
 
             $table->integer('bed_id')->unsigned();
 
-            $table->decimal('cost');
+            $table->decimal('cost')->nullable();
 
-            $table->longText('reason');
+            $table->longText('reason')->nullable();
 
-            $table->string('external_doctor', 255);
+            $table->string('external_doctor', 255)->nullable();
 
             $table->integer('visit_id')->unsigned();
 

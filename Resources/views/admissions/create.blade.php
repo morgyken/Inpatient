@@ -39,6 +39,8 @@
 
                         <input type="hidden" value="{{ $admissionRequest->patient->id }}" name="patient_id" />
 
+                        <input type="hidden" value="{{ $admissionRequest->visit_id }}" name="visit_id" />
+
                         <div class="form-group req">
                             <label class="col-md-4">Admission Doctor</label>
                             <div class="col-md-8">

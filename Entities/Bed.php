@@ -31,7 +31,7 @@ class Bed extends Model
 
     protected $table = 'inpatient_beds';
 
-    protected $with = ['ward', 'type'];
+    protected $with = ['ward', 'type', 'admission'];
 
     /*
     * Relationship between a bed and a ward
@@ -47,6 +47,14 @@ class Bed extends Model
     public function type()
     {
         return $this->belongsTo(BedType::class, 'bed_type_id', 'id');   
+    }
+
+    /*
+    * Relationship between a bed and an admission - hence patient
+    */
+    public function admission()
+    {
+        return $this->belongsTo(Admission::class, 'bed_id');
     }
 
 }

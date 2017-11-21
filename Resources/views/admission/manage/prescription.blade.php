@@ -1,8 +1,6 @@
 <div role="tabpanel" id="prescription" class="tab-pane fade">
     <h3 class="text-center">Request and Administer Prescriptions</h3>
-	{{-- {!! Form::open(['class'=>'form-horizontal', 'route'=>'evaluation.evaluate.pharmacy.prescription']) !!} --}}
-	<form>
-		{{ csrf_field() }}
+	{!! Form::open(['class'=>'form-horizontal', 'url'=>'inpatient/evaluate/prescriptions']) !!}
 		<input type="hidden" name="admission_id" value="{{ $admission->id }}" required>
 		<table class="table" style="width: 100%">
 		    <tr>
@@ -38,7 +36,17 @@
 		        	</div>
 		        </td>
 		    </tr>
-		    <tr>
+			<tr>
+				<th>Units to Dispense</th>
+				<td>
+					<div class="form-group">
+						<div class="col-md-8">
+							{{Form::text('quantity',1,['class'=>'form-control'])}}
+						</div>
+					</div>
+				</td>
+			</tr>
+		    <!-- <tr>
 		        <th>Substitution Allowed? (Check if yes) </th>
 		        <td>
 		            <input type="checkbox" name="allow_substitution" class = "checkbox" id = "allow_substitution" style="width: 20px !important; height: 20px !important;"/>
@@ -50,12 +58,12 @@
 		        <td>
 		            <input type="checkbox" name="type" class = "checkbox" id = "type" style="width: 20px !important; height: 20px !important;"/>
 		        </td>
-		    </tr>
+		    </tr> -->
 		</table>
 		<button type="button" class="btn btn-lg btn-primary " id="savePrescription">
 		    <i class="fa fa-save"></i> Save
 		</button>
-	</form>
+	{!! Form::close() !!}
 
 	<br/>
 	{{-- <div class="alerts-prescriptions"></div> --}}

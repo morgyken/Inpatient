@@ -13,9 +13,12 @@ use Ignite\Inpatient\Repositories\WardRepository;
 use Ignite\Inpatient\Http\Requests\AdmissionRequest;
 use Ignite\Inpatient\Repositories\AdmissionRepository;
 use Ignite\Inpatient\Repositories\AdmissionRequestRepository;
+use Ignite\Inpatient\Library\Traits\EvaluationTrait;
 
 class AdmissionController extends AdminBaseController
 {
+    use EvaluationTrait;
+
     protected $admissionRequestRepository, $userRepository;
     
     /*
@@ -45,7 +48,7 @@ class AdmissionController extends AdminBaseController
     {
         $admissions = $this->admissionRepository->all();
 
-        return view('inpatient::admission.index', compact('admissions'));
+        return view('inpatient::admissions.index', compact('admissions'));
     }
 
     /**
@@ -62,7 +65,7 @@ class AdmissionController extends AdminBaseController
 
         $beds = $this->bedRepository->all();
 
-        return view('inpatient::admission.create', compact('admissionRequest', 'doctors', 'wards', 'beds'));
+        return view('inpatient::admissions.create', compact('admissionRequest', 'doctors', 'wards', 'beds'));
     }
 
     /**
@@ -83,9 +86,15 @@ class AdmissionController extends AdminBaseController
      * Show the specified resource.
      * @return Response
      */
-    public function show()
+    public function show($admissionId, $evaluationItem)
     {
-        return view('inpatient::show');
+        $admission = $this->admissionRepository->find($admissionId);
+
+        $evaluationObject = $this->getEvaluationObject($evaluationItem);
+
+        $display = $this->display($admission, new $evaluationObject);
+
+        return view($display['view'], $display['data']);
     }
 
     /**
@@ -112,5 +121,19 @@ class AdmissionController extends AdminBaseController
      */
     public function destroy()
     {
+    }
+
+    /*
+    * Receives evaluation items and initiates persistance given the object
+    */
+    public function evaluate($admissionId, $evaluationItem)
+    {
+        $admission = $this->admissionRepository->find($admissionId);
+
+        $evaluationObject = $this->getEvaluationObject($evaluationItem);
+        
+        $persistance = $this->persist($admission, new $evaluationObject);
+
+        return redirect()->back()->with(['success' => 'Action successfully completed']);
     }
 }
