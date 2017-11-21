@@ -24,7 +24,7 @@ class AdmissionTypeRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|unique:admission_types',
+            'name' => 'required|unique:inpatient_admission_types',
             'deposit' => 'required'
         ];
     }

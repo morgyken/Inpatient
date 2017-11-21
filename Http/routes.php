@@ -175,6 +175,25 @@ Route::group(['as' => 'inpatient.'], function() {
 
     });
 
+    /*
+    * Admission Types Management
+    */
+    Route::group(['prefix' => 'admission-types'], function(){
+        
+        Route::get('/', ['uses' => 'AdmissionTypeController@index']);
+
+        Route::post('/', ['uses' => 'AdmissionTypeController@store']);
+    
+        Route::get('edit/{id}', ['uses' => 'AdmissionTypeController@edit']);
+
+        Route::post('{id}/update', ['uses' => 'AdmissionTypeController@update']);
+    
+        Route::get('listing', ['uses' => 'AdmissionTypeController@listing']);  
+
+    });
+
+    
+
  	/*
     |--------------------------------------------------------------------------
     | Requests Management
@@ -202,17 +221,6 @@ Route::group(['as' => 'inpatient.'], function() {
     Route::get('/print',['uses'=>'InpatientController@print']);
     //post discharge note
     Route::post('/postDischargeNote',['uses'=>'InpatientController@postDischargeNote']);
-
-    Route::get('/admission-types', ['uses' => 'AdmissionTypeController@index']);
-    Route::post('/admission-types', ['uses' => 'AdmissionTypeController@store']);
-
-    Route::get('/admission-types/edit/{id}', ['uses' => 'AdmissionTypeController@edit']);
-    Route::post('/admission-types/{id}/update', ['uses' => 'AdmissionTypeController@update']);
-
-    Route::get('/admission-types/listing', ['uses' => 'AdmissionTypeController@listing']);    
-    
-
-    
 
 // ********************************************* API ****************************************************************** \\
 
