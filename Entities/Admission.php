@@ -7,6 +7,7 @@ use Ignite\Reception\Entities\Patients;
 use Ignite\Inpatient\Entities\Vitals;
 use Ignite\Inpatient\Entities\WardAssigned;
 use Ignite\Inpatient\Entities\RequestDischarge;
+use Ignite\Evaluation\Entities\Prescriptions;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -108,5 +109,13 @@ class Admission extends Model
 
     public function vitals(){
          return $this->hasMany(Vitals::class);
+    }
+
+    /*
+    * Relationship between an admission and the prescriptions defined
+    */
+    public function prescriptions()
+    {
+        return $this->hasMany(Prescriptions::class);
     }
 }

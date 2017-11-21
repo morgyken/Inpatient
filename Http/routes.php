@@ -119,7 +119,15 @@ Route::group(['as' => 'inpatient.'], function() {
         
         Route::post('{admissionRequest}', ['uses' => 'AdmissionController@store']);
 
-        Route::get('{admission}', ['uses' => 'AdmissionController@show']);
+
+        //MOve these to an evaluation controller later
+        Route::get('{admission}/manage/{item}', ['uses' => 'AdmissionController@show']);
+
+        Route::post('{admission}/manage/{item}', ['uses' => 'AdmissionController@evaluate']);
+
+        Route::post('{admission}/manage/{item}/dispense', ['uses' => 'AdmissionController@evaluate']);
+
+        Route::post('/{admission}/prescription/dispense', ['uses' => 'PrescriptionPaymentController@store']);
 
     });
 
@@ -203,10 +211,7 @@ Route::group(['as' => 'inpatient.'], function() {
     Route::get('/admission-types/edit/{id}', ['uses' => 'AdmissionTypeController@edit']);
     Route::post('/admission-types/{id}/update', ['uses' => 'AdmissionTypeController@update']);
 
-    Route::get('/admission-types/listing', ['uses' => 'AdmissionTypeController@listing']);
-
-    
-    
+    Route::get('/admission-types/listing', ['uses' => 'AdmissionTypeController@listing']);    
     
 
     

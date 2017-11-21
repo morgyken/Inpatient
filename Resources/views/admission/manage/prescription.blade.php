@@ -1,8 +1,6 @@
 <div role="tabpanel" id="prescription" class="tab-pane fade">
     <h3 class="text-center">Request and Administer Prescriptions</h3>
-	{{-- {!! Form::open(['class'=>'form-horizontal', 'route'=>'evaluation.evaluate.pharmacy.prescription']) !!} --}}
-	<form>
-		{{ csrf_field() }}
+	{!! Form::open(['class'=>'form-horizontal', 'url'=>'inpatient/evaluate/prescriptions']) !!}
 		<input type="hidden" name="admission_id" value="{{ $admission->id }}" required>
 		<table class="table" style="width: 100%">
 		    <tr>
@@ -65,7 +63,7 @@
 		<button type="button" class="btn btn-lg btn-primary " id="savePrescription">
 		    <i class="fa fa-save"></i> Save
 		</button>
-	</form>
+	{!! Form::close() !!}
 
 	<br/>
 	{{-- <div class="alerts-prescriptions"></div> --}}
