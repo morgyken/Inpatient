@@ -12,6 +12,7 @@ use Ignite\Inpatient\Library\Traits\PrescriptionsTrait;
 use Ignite\Evaluation\Entities\Dispensing;
 use Ignite\Evaluation\Entities\DispensingDetails;
 use Ignite\Inventory\Entities\InventoryStock;
+use Ignite\Inpatient\Entities\AdministerDrug;
 
 class PrescriptionsController extends Controller implements EvaluationInterface
 {
@@ -30,7 +31,7 @@ class PrescriptionsController extends Controller implements EvaluationInterface
             'admission' => $admission,
             'patient' => $admission->patient,
             'active' => 'prescriptions',
-            'prescriptions' => $this->prescriptions($admission)
+            'prescriptions' => $this->prescriptions($admission),
         ];
     }
 
@@ -65,6 +66,10 @@ class PrescriptionsController extends Controller implements EvaluationInterface
     }
 
     /*
+    *
+    */
+
+    /*
     * Dispense drugs from the 
     */
     public function dispense()
@@ -73,8 +78,10 @@ class PrescriptionsController extends Controller implements EvaluationInterface
 
         //consider using an event for this
         foreach($quantities as $prescription => $quantity)
-        {
-            $product = Prescriptions::findOrFail($prescription)->drug;
+        {   
+            $pres = Prescriptions::findOrFail($prescription);
+
+            $product = $pres->drug;
 
             $dispensing = Dispensing::create([
                 'visit' => request()->get('visit'),
@@ -94,6 +101,8 @@ class PrescriptionsController extends Controller implements EvaluationInterface
 
             ]);
 
+            $this->administerSetUp($pres);
+
             $stock = InventoryStock::where('product', $product)->first();
 
             $stock->quantity = $stock->quantity - $quantity;
@@ -102,5 +111,46 @@ class PrescriptionsController extends Controller implements EvaluationInterface
         }
 
         return redirect()->back()->with(['success' => 'Drug dispensed successfully']);
+    }
+
+    /*
+    * Set up a prescription for administering
+    */
+    public function administerSetUp($prescription)
+    {
+        for($start = 0; $start < $this->administerRecords($prescription); $start++)
+        {
+            AdministerDrug::create([
+                'prescription_id' => $prescription->id
+            ]);
+        }
+    }
+
+    /*
+    * Shows the amount of drugs to dispense
+    */
+    public function administerRecords($prescription)
+    {
+        $method = trim(mconfig('evaluation.options.prescription_method.' . $prescription->method));
+
+        if($method == 'b.i.d')
+        {
+            $times = 2;
+        }
+        elseif($method == 't.i.d')
+        {
+            $times = 3;
+        }
+        elseif($method == 'q.i.d')
+        {
+            $times = 4;
+        }
+        else
+        {
+            $times = 1;
+        }
+
+        return $times;
+        
     }
 }
