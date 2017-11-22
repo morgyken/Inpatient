@@ -2,9 +2,11 @@
 
 namespace Ignite\Inpatient\Http\Controllers\Evaluation;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use Ignite\Inpatient\Entities\Charge;
 use Ignite\Inpatient\Library\Interfaces\EvaluationInterface;
 
 class ChargesController extends Controller implements EvaluationInterface
@@ -36,18 +38,91 @@ class ChargesController extends Controller implements EvaluationInterface
     }
 
     /*
+    * Get the deposit to be included in the general charges
+    */
+    public function getDeposit($admissionType)
+    {
+        return [
+            'name' => $admissionType->name,
+
+            'units' => 1,
+
+            'price' => $admissionType->deposit,
+
+            'total' =>  $admissionType->deposit * 1
+        ];
+    }
+
+    /*
+    * Get the recurring charges on an admission
+    */
+    public function getRecurringCharges($admission)
+    {
+        $days = Carbon::today()->diffInDays(Carbon::parse($admission->created_at)) + 1;
+
+        return Charge::where('type', 'recurring')->get()->map(function($charge) use($days){
+            return [
+
+                'name' => $charge->name,
+
+                'units' => $days,
+
+                'price' => $charge->cost,
+
+                'total' => $charge->cost * $days,
+
+            ];
+        })->toArray();
+    }
+
+    /*
+    * Get the bed charges on an admission
+    */
+    public function getBedCharges($admission) 
+    {
+        $days = Carbon::today()->diffInDays(Carbon::parse($admission->created_at));
+
+        $patient = $admission->patient;
+
+        $ward = $admission->ward;
+
+        $price = $admission->patient->schemes ? $ward->insurance_cost : $ward->cash_cost;
+
+        return [
+            
+            'name' => "Bed Charges",
+
+            'units' => $days,
+
+            'price' => $price,
+
+            'total' => $price * $days,
+
+        ];
+    }
+
+    /*
     * Get the general charges during admission of the patient
     */
     public function general($admission)
     {
-        //get charges for deposit
-        $patient = $admission->patient;
+        $admissionType = $admission->patient->admissionRequest->filter(function($request) use($admission){
 
-        $patient->with(['admissionRequest']);
-        
-        dd($admission->patient->load(['admissionRequest']));
+            return $request->visit_id == $admission->visit->id;
 
-        // ->admissionType
+        })->first()->admissionType;
+
+        $recurring = $this->getRecurringCharges($admission);
+
+        $deposit = $this->getDeposit($admissionType);
+
+        $bedCharges = $this->getBedCharges($admission); 
+
+        array_push($recurring, $deposit);
+
+        array_push($recurring, $bedCharges);
+
+        return $recurring;
     }
 
     /*
@@ -55,9 +130,18 @@ class ChargesController extends Controller implements EvaluationInterface
     */
     public function charges($admission)
     {
+        $generalTotal =  0;
+
+        foreach( $this->general($admission) as $charge)
+        {
+            $generalTotal = $generalTotal + $charge['total'];
+        }
+
         // $depositCharges = 
         return [
-            'general' => $this->general($admission)
+            'general' => $this->general($admission),
+
+            'generalTotal' => $generalTotal
         ];
     }
 }

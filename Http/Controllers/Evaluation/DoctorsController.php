@@ -37,4 +37,10 @@ class DoctorsController extends Controller implements EvaluationInterface
     {
         return $this->view;
     }
+
+    public function charge()
+    {
+        
+    }
 }
+

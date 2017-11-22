@@ -10,6 +10,7 @@
 <!-- Include navigation -->
 @include('inpatient::admissions.evaluation.includes.evaluation_navigation')
 
-
+<!-- Include General Charges -->
+@include('inpatient::admissions.evaluation.partials.charges.general_charges_table')
 
 @endsection
