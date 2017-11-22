@@ -43,8 +43,8 @@
     <li class="{{ $active != 'transfusion' ?: 'active' }}">
         <a href="{{ url('/inpatient/admissions/'. $admission->id.'/manage/transfusion') }}">Discharge</a>
     </li>
-    <li class="{{ $active != 'transfusion' ?: 'active' }}">
-        <a href="{{ url('/inpatient/admissions/'. $admission->id.'/manage/transfusion') }}">Charge Sheet</a>
+    <li class="{{ $active != 'charges' ?: 'active' }}">
+        <a href="{{ url('/inpatient/admissions/'. $admission->id.'/manage/charges') }}">Charge Sheet</a>
     </li>
     <li class="{{ $active != 'administer' ?: 'active' }}">
         <a href="{{ url('/inpatient/admissions/'. $admission->id.'/manage/administer') }}">Administer Drugs</a>
