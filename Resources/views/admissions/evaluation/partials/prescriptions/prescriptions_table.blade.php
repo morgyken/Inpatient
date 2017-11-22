@@ -22,7 +22,6 @@
                     <td>{{ $prescription['dispensed'] }}</td>
                     <td>{{ $prescription['remaining'] }}</td>
                     <td>
-                        <a class="btn btn-success btn-xs" href="#">Administer</a>
                         <a class="btn btn-danger btn-xs" href="#">Cancel</a>
                     </td>
                 </tr>
@@ -30,7 +29,7 @@
             </tbody>
         </table>
         <div>
-            <button class="btn btn-primary col-md-2" data-toggle="modal" data-target="#dispenseModal">Dispense Drugs</button>
+            <button class="btn btn-primary col-md-1" data-toggle="modal" data-target="#dispenseModal">Dispense</button>
         </div>
 
         <!-- Dispense modal -->
@@ -51,16 +50,18 @@
                             
                             @foreach($prescriptions as $prescription)
 
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <div class="col-md-4">
-                                            <label for="" style="line-height: 30px;">{{ $prescription['drug'] }}</label>
-                                        </div>
-                                        <div class="col-md-8">
-                                            {!! Form::text($prescription['id'], $prescription['to_dispense'], ['class' => 'form-control']) !!}
+                                @if($prescription['remaining'] != 0)
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <div class="col-md-4">
+                                                <label for="" style="line-height: 30px;">{{ $prescription['drug'] }}</label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                {!! Form::text($prescription['id'], $prescription['to_dispense'], ['class' => 'form-control']) !!}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                @endif
                             
                             @endforeach
 
@@ -75,7 +76,6 @@
         </div>
 
         <!-- End of Dispense Modal -->
-
     </div>
 
     <!-- Start Scripts -->

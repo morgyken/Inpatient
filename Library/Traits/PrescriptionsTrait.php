@@ -50,23 +50,25 @@ trait PrescriptionsTrait
     */
     public function toDispense($prescription)
     {
-        $method = mconfig('evaluation.options.prescription_method.' . $prescription->method);
+        $method = trim(mconfig('evaluation.options.prescription_method.' . $prescription->method));
 
-        switch($method)
+        if($method == 'b.i.d')
         {
-            case 'b.i.d':
-                $times = 2;
-                break;
-            case 't.i.d':
-                $times = 3;
-                break;
-            case 'q.i.d':
-                $times = 4;
-                break;
-            default:
-                $times = 1;
-
-            return $prescription->take * $times;
+            $times = 2;
         }
+        elseif($method == 't.i.d')
+        {
+            $times = 3;
+        }
+        elseif($method == 'q.i.d')
+        {
+            $times = 4;
+        }
+        else
+        {
+            $times = 1;
+        }
+        
+        return $prescription->take * $times;
     }   
 }
