@@ -1,14 +1,14 @@
-<div class="panel panel-info" id="focus">
+<div class="panel panel-info" id="form">
     <div class="panel-heading">
         <h5>Drug Requisition &amp; Administration</h5>
     </div>
     <div class="panel-body">
-        {!! Form::open(['class'=>'form-horizontal', 'url'=>'inpatient/admissions/'.$admission->id.'/manage/prescriptions']) !!}
+        {!! Form::open(['class'=>'form-horizontal', 'id'=>'prescription_form']) !!}
             
             <!-- Hidden Fields -->
             {!! Form::hidden('user', Auth::user()->id) !!}
 
-            {!! Form::hidden('visit', $admission->visit_id) !!}
+            {!! Form::hidden('visit', $visit->id) !!}
 
             {!! Form::hidden('admission_id', $admission->id) !!}
 
@@ -60,7 +60,8 @@
             </div>
 
             <div class="form-group">   
-                <div class="col-md-12">
+                <div class="loader" id="prescriptionLoader"></div>
+                <div class="col-md-12" id="savePrescription">
                     {!! Form::submit('Save', ['class' => 'btn btn-primary btn col-md-1']) !!}
                 </div>
             </div>
@@ -76,6 +77,7 @@
         var VISIT_ID = "{{ $admission->visit_id }}";
         var ADMISSION_ID = "{{ $admission->id }}";
         var USER_ID = "{{ Auth::user()->id }}";
+        var PRESCRIPTION_URL = "{{route('api.evaluation.save_prescription')}}";
         var PRESCRIPTIONS_URL = "{{ url('/api/inpatient/v1/prescriptions') }}";
         var PRESCRIPTIONS_DELETE_URL = "{{ url('/api/inpatient/v1/prescriptions/delete') }}";
         var PRESCRIPTIONS_STOP_URL = "{{ url('/api/inpatient/v1/prescriptions/stop') }}";
@@ -84,6 +86,7 @@
         var DELETE_ADMINISTRATION_URL = "{{ url('/api/inpatient/v1/prescriptions/administration/delete') }}";
     </script>
     <script src="{!! m_asset('evaluation:js/prescription.js') !!}"></script>
+    <script src="{!! m_asset('evaluation:js/doctor-prescriptions.js') !!}"></script>
 
     <script>
         $("#take").keyup(calculateDrugsToDispense);

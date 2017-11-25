@@ -18,7 +18,8 @@ class AdmissionRepository
     */
     public function create($fields)
     {
-        return Admission::create($fields);
+        
+        return Admission::firstOrCreate($fields);
     }
 
     /*

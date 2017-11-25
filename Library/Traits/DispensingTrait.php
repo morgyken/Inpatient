@@ -1,81 +1,20 @@
 <?php
 
-namespace Ignite\Inpatient\Http\Controllers\Evaluation;
+namespace Ignite\Inpatient\Library\Traits;
 
-use Auth;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Routing\Controller;
-use Ignite\Inpatient\Library\Interfaces\EvaluationInterface;
-use Ignite\Evaluation\Entities\Prescriptions;
-use Ignite\Inpatient\Library\Traits\PrescriptionsTrait;
 use Ignite\Evaluation\Entities\Dispensing;
-use Ignite\Evaluation\Entities\DispensingDetails;
 use Ignite\Inventory\Entities\InventoryStock;
 use Ignite\Inpatient\Entities\AdministerDrug;
+use Ignite\Evaluation\Entities\Prescriptions;
+use Ignite\Evaluation\Entities\DispensingDetails;
 
-class PrescriptionsController extends Controller implements EvaluationInterface
+trait DispensingTrait
 {
-    use PrescriptionsTrait;
     /*
-    * Defien the view that this class should return
+    * Dispense drugs from the pharmacy. Take to Dispensing Trait
     */
-    protected $view = "inpatient::admissions.evaluation.prescriptions";
-
-    /*
-    * Returns a view to be displayed
-    */
-    public function getData($admission)
+    public function dispense($quanitites)
     {
-        return [
-            'admission' => $admission,
-            'patient' => $admission->patient,
-            'active' => 'prescriptions',
-            'prescriptions' => $this->prescriptions($admission),
-        ];
-    }
-
-    /*
-    * Return the view 
-    */
-    public function getView()
-    {
-        return $this->view;
-    }
-
-    /*
-    * Store prescription data into the database
-    */
-    public function store()
-    {
-        $fields = request()->all();
-
-        return Prescriptions::create($fields);
-    }
-
-    /*
-    * Get the transformed prescriptions and send them to the view - imporove code by moving to transformer class
-    */
-    public function prescriptions($admission)
-    {
-        return $admission->prescriptions->map(function($prescription){
-
-            return $this->transform($prescription);
-
-        });
-    }
-
-    /*
-    *
-    */
-
-    /*
-    * Dispense drugs from the 
-    */
-    public function dispense()
-    {
-        $quantities = request()->except(['_token', 'visit', 'user']);
-
         //consider using an event for this
         foreach($quantities as $prescription => $quantity)
         {   
@@ -109,11 +48,9 @@ class PrescriptionsController extends Controller implements EvaluationInterface
 
             $stock->save();
         }
-
-        return redirect()->back()->with(['success' => 'Drug dispensed successfully']);
     }
 
-    /*
+        /*
     * Set up a prescription for administering
     */
     public function administerSetUp($prescription)
@@ -151,6 +88,5 @@ class PrescriptionsController extends Controller implements EvaluationInterface
         }
 
         return $times;
-        
     }
 }

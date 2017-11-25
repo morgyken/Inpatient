@@ -121,13 +121,24 @@ Route::group(['as' => 'inpatient.'], function() {
 
 
         //MOve these to an evaluation controller later
-        Route::get('{admission}/manage/{item}', ['uses' => 'AdmissionController@show']);
+        // Route::get('{admission}/manage/{item}', ['uses' => 'AdmissionController@show']);
 
-        Route::post('{admission}/manage/{item}', ['uses' => 'AdmissionController@evaluate']);
+        // Route::post('{admission}/manage/{item}', ['uses' => 'AdmissionController@evaluate']);
 
-        Route::post('/{admission}/prescription/dispense', ['uses' => 'Evaluation\PrescriptionsController@dispense']);
+        // Route::post('/{admission}/prescription/dispense', ['uses' => 'Evaluation\PrescriptionsController@dispense']);
 
-        Route::post('/drugs/administer', ['uses' => 'Evaluation\AdministerController@administerDrugs']);
+        // Route::post('/drugs/administer', ['uses' => 'Evaluation\AdministerController@administerDrugs']);
+
+    });
+
+    /*
+    * Evaluation
+    */
+    Route::group(['prefix' => 'evaluations'], function(){
+        
+        Route::get('/{visit}/{evaluation}', ['uses' => 'EvaluationController@index']);
+
+        Route::post('/{visit}/{evaluation}', ['uses' => 'EvaluationController@store']);
 
     });
 

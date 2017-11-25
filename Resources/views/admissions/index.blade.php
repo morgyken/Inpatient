@@ -32,7 +32,7 @@
                                     <td>{{ $admission->ward->name }}</td>
                                     <td>{{ $admission->bed->number }}</td>
                                     <td>
-                                        <a href="{{ url('inpatient/admissions/'.$admission->id.'/manage/prescriptions') }}" class="btn btn-primary btn-xs">Manage</a>
+                                        <a href="{{ url('inpatient/evaluations/'.$admission->visit_id.'/doctors') }}" class="btn btn-primary btn-xs">Manage</a>
                                         <!-- <button class="btn btn-danger btn-xs">Delete</button> -->
                                     </td>
                                 </tr>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('content_title',"Doctor's Notes Management")
-@section('content_description', "Manage the doctor's notes")
+@section('content_title','Charge Sheet Management')
+@section('content_description','View charges on patient')
 
 @section('content')
 
@@ -10,7 +10,9 @@
 <!-- Include navigation -->
 @include('inpatient::admissions.evaluation.includes.evaluation_navigation')
 
-<!-- Main Content  -->
-@include('inpatient::admissions.evaluation.partials.nurses.nurse_notes_form')
+
+
+<!-- Include Charge Sheets Here -->
+<!-- Include General Charges -->
 
 @endsection

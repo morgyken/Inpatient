@@ -12,6 +12,7 @@ use Ignite\Inpatient\Repositories\BedRepository;
 use Ignite\Inpatient\Repositories\WardRepository;
 use Ignite\Inpatient\Http\Requests\AdmissionRequest;
 use Ignite\Inpatient\Repositories\AdmissionRepository;
+use Ignite\Inpatient\Library\GeneralCharges;
 use Ignite\Inpatient\Repositories\AdmissionRequestRepository;
 use Ignite\Inpatient\Library\Traits\EvaluationTrait;
 
@@ -75,10 +76,20 @@ class AdmissionController extends AdminBaseController
      */
     public function store(AdmissionRequest $request)
     {
-        $this->admissionRepository->create(request()->all());
+        $admission = request()->except(['_token', 'inpatient_request_admission_id']);
 
-        $this->admissionRequestRepository->delete(request()->get('inpatient_request_admission_id'));
-        
+        $admissionRequest = request()->get('inpatient_request_admission_id');
+
+        $admission = $this->admissionRepository->create($admission);
+
+        $admission->visit->admission_request_id = $admissionRequest;
+
+        $admission->visit->save();
+
+        $this->admissionRequestRepository->delete($admissionRequest);
+
+        // (new GeneralCharges($admission->visit))->persist();
+
         return redirect('/inpatient/admissions')->with(['success' => 'Patient has been admitted']);
     }
 

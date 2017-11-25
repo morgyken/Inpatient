@@ -4,7 +4,6 @@
     </div>
     <div class="panel-body">
         <table class="table table-stripped table-condensed">
-            <caption>The Patient List: All The Patients awaiting admission</caption>
             <thead>
                 <th>Name</th>
                 <th>Date/Time</th>
@@ -28,13 +27,10 @@
             @endforeach
             </tbody>
         </table>
-        <div>
-            <button class="btn btn-primary col-md-1" data-toggle="modal" data-target="#dispenseModal">Dispense</button>
-        </div>
 
         <!-- Dispense modal -->
 
-        <div class="modal fade" id="dispenseModal" role="dialog">
+        <!-- <div class="modal fade" id="dispenseModal" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -73,17 +69,8 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <!-- End of Dispense Modal -->
     </div>
-
-    <!-- Start Scripts -->
-    {{-- @push('scripts') --}}
-    <script>
-        $('#dispense-button').click(function(){
-            $('#dispense-form').submit();
-        })
-    </script>
-    {{-- @endpush --}}
 </div>

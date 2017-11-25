@@ -71,4 +71,6 @@ trait PrescriptionsTrait
         
         return $prescription->take * $times;
     }   
+
+
 }
