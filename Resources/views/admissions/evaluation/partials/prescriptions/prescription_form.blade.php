@@ -3,7 +3,7 @@
         <h5>Drug Requisition &amp; Administration</h5>
     </div>
     <div class="panel-body">
-        {!! Form::open(['class'=>'form-horizontal', 'id'=>'prescription_form']) !!}
+        {!! Form::open(['class'=>'form-horizontal', 'id'=>'prescription_form', 'autocomplete' => 'off']) !!}
             
             <!-- Hidden Fields -->
             {!! Form::hidden('user', Auth::user()->id) !!}
@@ -87,7 +87,6 @@
     </script>
     <script src="{!! m_asset('evaluation:js/prescription.js') !!}"></script>
     <script src="{!! m_asset('evaluation:js/doctor-prescriptions.js') !!}"></script>
-
     <script>
         $("#take").keyup(calculateDrugsToDispense);
 

@@ -53,6 +53,17 @@ class Evaluator
         ], $this->getEvaluation()->data($this->visit));
     }
 
+    /*
+    * Useful when we are sending an API call and data will be expected in a certain format 
+    */
+    public function getTable()
+    {
+        return $this->getEvaluation()->table($this->visit);
+    }
+
+    /*
+    * Returns the data that the evaluator should display on its view
+    */
     public function getData()
     {
         return $this->data;

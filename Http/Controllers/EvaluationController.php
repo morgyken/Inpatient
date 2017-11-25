@@ -17,6 +17,11 @@ class EvaluationController extends AdminBaseController
     {
         $evaluator = new Evaluator($visit, $key);
 
+        if(request()->ajax())
+        {
+            return response()->json($evaluator->getTable());
+        }
+
         return view($evaluator->getView(), $evaluator->getData());
     }
 

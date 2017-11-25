@@ -27,7 +27,7 @@
 
     <!-- Start Scripts -->
     {{-- @push('scripts') --}}
-
+        
     {{-- @endpush --}}
     <!-- End Scripts -->
 </div>
