@@ -7,15 +7,10 @@
 <!-- Include patient information -->
 @include('inpatient::admissions.evaluation.includes.admission_details')
 
-<div class="box box-info">
-    <div class="box-body">
+<!-- Include navigation -->
+@include('inpatient::admissions.evaluation.includes.evaluation_navigation')
 
-    <!-- Include navigation -->
-    @include('inpatient::admissions.evaluation.includes.evaluation_navigation')
+<!-- Main Content  -->
+@include('inpatient::admissions.evaluation.partials.doctors.doctor_notes_form')
 
-    <!-- Main Content  -->
-
-
-    </div>
-</div>
 @endsection

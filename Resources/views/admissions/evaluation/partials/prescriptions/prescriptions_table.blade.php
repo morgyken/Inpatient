@@ -3,87 +3,135 @@
         Prescriptions Table
     </div>
     <div class="panel-body">
-        <table class="table table-stripped table-condensed">
-            <caption>The Patient List: All The Patients awaiting admission</caption>
+        <table class="table table-stripped table-condensed" id="prescribed_drugs">
             <thead>
                 <th>Name</th>
                 <th>Date/Time</th>
                 <th>Prescribed</th>
                 <th>Dispensed</th>
+                <th>Status</th>
                 <th>Remaining</th>
+                <th>Administered</th>
                 <th>Actions</th>
             </thead>
             <tbody>
-            @foreach($prescriptions as $prescription)
-                <tr>
-                    <td>{{ $prescription['drug'] }}</td>
-                    <td>{{ $prescription['dose'] }}</td>
-                    <td>{{ $prescription['prescribed'] }}</td>
-                    <td>{{ $prescription['dispensed'] }}</td>
-                    <td>{{ $prescription['remaining'] }}</td>
-                    <td>
-                        <a class="btn btn-danger btn-xs" href="#">Cancel</a>
-                    </td>
-                </tr>
-            @endforeach
             </tbody>
         </table>
+
         <div>
-            <button class="btn btn-primary col-md-1" data-toggle="modal" data-target="#dispenseModal">Dispense</button>
+            <button class="col-md-2 btn btn-primary btn-sm">Administer Drugs</button>   
         </div>
+    </div>
+    
+    <!-- Administer drugs modal -->
+    <div id="administer-modal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Stop drug dispensing &amp; administering</h4>
+                </div>
+                <div class="modal-body">
+                    {!! Form::open(['id'=>'authorize-form','url'=>'inpatient/admission-requests/update']) !!}
 
-        <!-- Dispense modal -->
+                        <input id="admission-request-id" name="admission_request_id" type="hidden" value="" />
+                        
+                        <div class="form-group">
+                            <label for="">Required Amount</label>
+                            <input id="required-amount" type="text" class="form-control" disabled />
+                        </div>
 
-        <div class="modal fade" id="dispenseModal" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Drugs to be dispensed</h4>
-                    </div>
-                    <div class="modal-body" style="overflow: hidden;">
-                        {!! Form::open(['url' => 'inpatient/admissions/'.$admission->id.'/prescription/dispense', 'class' => 'form-horizontal', 'id' => 'dispense-form']) !!}
-                            
-                            {!! Form::hidden('visit', $admission->visit->id) !!}
+                        <div class="form-group">
+                            <label for="">Enter Authorize Amount</label>
+                            <input name="authorized" type="text" class="form-control" />
+                        </div>
 
-                            {!! Form::hidden('user', Auth::user()->id) !!}
-                            
-                            @foreach($prescriptions as $prescription)
-
-                                @if($prescription['remaining'] != 0)
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <div class="col-md-4">
-                                                <label for="" style="line-height: 30px;">{{ $prescription['drug'] }}</label>
-                                            </div>
-                                            <div class="col-md-8">
-                                                {!! Form::text($prescription['id'], $prescription['to_dispense'], ['class' => 'form-control']) !!}
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endif
-                            
-                            @endforeach
-
-                        {{ Form::close() }}
-                    </div>
-                    <div class="modal-footer">
-                        <button id="dispense-button" type="button" class="btn btn-primary">Confirm</button>
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                    </div>
+                    {!! Form::close()!!}
+                </div>
+                <div class="modal-footer">
+                    <button id="authorize" type="button" class="btn btn-info">Authorize</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
                 </div>
             </div>
         </div>
-
-        <!-- End of Dispense Modal -->
     </div>
+    <!-- End of administer dugs -->
 
-    <!-- Start Scripts -->
-    {{-- @push('scripts') --}}
+    <!-- Stop drug modal -->
+    <div id="stop-modal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Stop Drug</h4>
+                </div>
+                <div class="modal-body">
+                    {!! Form::open(['id'=>'stop-drug-form']) !!}
+                        <div class="form-group">
+                            <label id="prescription-name"></label>
+                            <input id="prescription-id" name="prescriptionId" type="hidden" class="form-control" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="">Reason</label>
+                            <textarea name="stop_reason" type="text" class="form-control" rows="5"></textarea>
+                        </div>
+
+                    {!! Form::close()!!}
+                </div>
+                <div class="modal-footer">
+                    <button id="confirm-stop" type="button" class="btn btn-info">Confirm</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End of drug modal -->
+    
+    
     <script>
-        $('#dispense-button').click(function(){
-            $('#dispense-form').submit();
-        })
+        $(document).ready(function(){
+            $('#prescribed_drugs').dataTable({
+                'ajax': {
+                    'url': PRESCRIPTIONS_ENDPOINT,
+                },
+            });
+
+            // Note that this action button is generated by the datatable - backend - for the time being :) im on a deadline   
+            $('body').on('click', '.stop-drug', function(e){
+                
+                let prescription = JSON.parse(e.target.value);
+
+                $('#prescription-name').html(prescription.drug);
+
+                $('#prescription-id').val(prescription.id);
+
+                $('#stop-modal').modal();
+
+            });
+
+            $('body').on('click', '#confirm-stop', function(){
+
+                let data = $('#stop-drug-form').serialize();
+
+                $.post(CANCEL_PRESCRIPTION_ENDOINT, data, function(){
+                    
+                    $('#confirm-stop').hide();
+
+                }).done(function(){
+
+                    alertify.success("Drug cancelled successfully");
+                    $('#confirm-stop').show();
+                    $('#stop-modal').modal('hide');
+
+                }).fail(function(){
+
+                    alertify.error("Something went wrong");
+                    $('#confirm-stop').show();
+                    $('#stop-modal').modal('hide');
+
+                });
+            });
+        });
     </script>
-    {{-- @endpush --}}
 </div>

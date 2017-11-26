@@ -1,0 +1,199 @@
+<div class="panel panel-info" id="form">
+    <div class="panel-heading">
+        <h5>Previous Nurse Notes</h5>
+    </div>
+
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding:0;">
+        <div class="table-responsive">
+            <table class="table table-stripped" id = "nurses-table">
+                <thead>
+                    <tr>
+                        <th>Date & Time</th>
+                        <th>Note</th>
+                        <th>Recorded By</th>
+                        <th>Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($nursesNotes as $n)
+                        <tr id = "nurse_noterow_{{ $n->id }}">
+                            <td>{{ \Carbon\Carbon::parse($n->updated_at)->format('H:i A d/m/Y ') }}</td>
+                            <td>{{ substr($n->notes,0,20) }}...</td>
+                            <td>{{ $n->users->profile->fullName }}</td>
+                            <td>
+                                <div class='btn-group'>
+                                    <button class='btn btn-primary view-nurse-note' id = '{{ $n->id }}'><i class = 'fa fa-eye'></i> View</button>
+                                    <button type='button' class='btn btn-danger delete-nurse-note' id = '{{ $n->id }}'><i class = 'fa fa-times' ></i> Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach 
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-view-nurse-note">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">View Notes</h4>
+                </div>
+                <div class="modal-body">
+                        <form>
+                        <input type="hidden" name="nurse_note_id" id = "nurse_note_id" required>
+                        <textarea name="view-nurse-note" disabled="true" id="view-nurse-note" class="form-control" rows="3"  cols= "10" required></textarea>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary" id = "edit-nurse-note-view">Edit</button>
+                        <button type="button" class="btn btn-primary" style="display: none;" id = "update-nurse-note">Update</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-delete-nurse-id">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h3>Are you sure you want to delete this note?</h3>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger yes-delete-nurse-note">Yes</button>
+                    <button type="button" class="btn btn-success" id = "no-delete-nurse-note"  data-dismiss="modal">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    
+        
+    <script type="text/javascript">
+
+$(document).ready(function(){
+            
+            $("#nurses-table").dataTable({
+                "columnDefs": [ 
+                    { 
+                        "targets": [1], 
+                        "type": "html", 
+                        "render": function(data, type, row) { 
+                            return $("<div/>").html(data).text();
+                        } 
+                    }
+                ]
+            });
+
+            $('body').on('click','.view-nurse-note', function(e){
+                e.preventDefault();
+                var id = $(this).attr('id');
+                $("#nurse_note_id").val(id);
+
+                $.ajax({
+                    type: "GET",
+                    url: "{{ url('/api/inpatient/v1/notes') }}/"+id,
+                    success: function (resp) {
+                        if(resp.type === "success"){                      
+                            resp.data.map( (item, index) => {
+                                return(
+                                    $("#view-nurse-note").text(item.notes)
+                                );
+                            });
+
+                             $('#view-nurse-note').summernote('disable');
+
+                            $("#view-nurse-note").prop('disabled', true);
+                            $("#edit-nurse-note-view").css("display","block");
+                            $("#update-nurse-note").css("display","none");
+
+                            $("#modal-view-nurse-note").modal();
+                        }else{
+                             alertify.error(resp.data);
+                        }
+                    },
+                    error: function (resp) {
+                        alertify.error(resp.message);
+                    }
+                });
+            });
+
+            $('body').on('click','#edit-nurse-note-view', function(e){
+                e.preventDefault();
+                var id = $(this).attr('id');
+                $("#view-nurse-note").prop('disabled', false);
+                $("#view-nurse-note").summernote('enable');
+                $("#update-nurse-note").css("display","block");
+                $(this).css("display","none");
+            });   
+
+            $('#update-nurse-note').click(function(e){
+                var id = $("#nurse_note_id").val();
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url('/api/inpatient/v1/notes/update') }}",
+                    data: JSON.stringify({
+                         id : id,
+                         notes: $("#view-nurse-note").val(),
+                         user: {{ Auth::user()->id }}
+                     }),
+                    success: function (resp) {
+                         if(resp.type === "success"){
+                            alertify.success(resp.message);
+                            $("#modal-view-nurse-note").modal('toggle');
+                            // update 
+                        }else{
+                             alertify.error(resp.message);
+                        }
+                    },
+                    error: function (resp) {
+                        alertify.error(resp.message);
+                    }
+                });
+            }); 
+
+
+            $('body').on('click', '.delete-nurse-note', function(e){
+                e.preventDefault();
+                var id = $(this).attr('id');
+                $(".yes-delete-nurse-note").attr('id', id); 
+                $("#modal-delete-nurse-id").modal();
+            });
+
+
+            $('.yes-delete-nurse-note').click(function(e){
+                var id = $(this).attr('id');
+                 $.ajax({
+                    type: "POST",
+                    url: "{{ url('/api/inpatient/v1/notes/delete') }}",
+                    data: JSON.stringify({ id : id }),
+                    success: function (resp) {
+                         if(resp.type === "success"){
+                            alertify.success(resp.message);
+                            $("#modal-delete-nurse-id").modal('toggle');
+                            $("#nurse_noterow_"+id+"").remove();
+                        }else{
+                             alertify.error(resp.message);
+                        }
+                    },
+                    error: function (resp) {
+                        alertify.error(resp.message);
+                    }
+                });
+            });
+
+        });
+
+    
+    </script>
+
+
+
+
+</div>

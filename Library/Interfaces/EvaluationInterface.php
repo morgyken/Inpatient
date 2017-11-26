@@ -4,14 +4,10 @@ namespace Ignite\Inpatient\Library\Interfaces;
 
 interface EvaluationInterface
 {
-    /*** Move these to a template eventually ***/
-    public function getData($admission);
-
-    public function getView();
-
-    /*
-    * Store the details of the evaluation
+    /**
+    * Method that return an evaluator's data
+    * @return object
     */
-    // public function store($admission);
+    public function data();
 
 }

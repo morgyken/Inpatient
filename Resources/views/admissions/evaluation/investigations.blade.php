@@ -1,21 +1,48 @@
 @extends('layouts.app')
-@section('content_title','Investigations Management')
-@section('content_description','Manage investigations done on patient')
+@section('content_title',"Doctor's Notes Management")
+@section('content_description', "Manage the doctor's notes")
 
 @section('content')
 
 <!-- Include patient information -->
 @include('inpatient::admissions.evaluation.includes.admission_details')
 
-<div class="box box-info">
-    <div class="box-body">
+<!-- Include navigation -->
+@include('inpatient::admissions.evaluation.includes.evaluation_navigation')
 
-    <!-- Include navigation -->
-    @include('inpatient::admissions.evaluation.includes.evaluation_navigation')
-
-    <!-- Main Content  -->
-
-
+<!-- Investigations -->
+<div class="row">
+    <div class="col-md-8">
+        @include('inpatient::admissions.evaluation.partials.investigations.investigations_main')
+    </div>
+    <div class="col-md-4">
+        @include('inpatient::admissions.evaluation.partials.investigations.investigations_selected')
     </div>
 </div>
+
+
+<style>
+    .investigation_item {
+        height: 400px;
+        overflow-y: scroll;
+    }
+</style>
+
+<script>
+    var USER_ID = parseInt("{{ Auth::user()->id }}");
+    var VISIT_ID = parseInt("{{ $admission->id }}");
+    var DIAGNOSIS_URL = "{{ route('api.evaluation.save_diagnosis') }}";
+    var THE_TABLE_URL = "{{ url('/api/inpatient/v1/get/inpatient-investigations/'.$admission->visit_id) }}";
+    var THE_CONSUMABLE_URL = "{{ url('inpatient/evaluations/'.$visit->id.'/consumables') }}";
+
+    $(document).ready(function () {
+        $('.accordion').accordion({heightStyle: "content"});
+        $('#investigationTab input').iCheck({
+            checkboxClass: 'icheckbox_flat-green',
+            radioClass: 'iradio_square-blue',
+            increaseArea: '20%' // optional
+        });
+    });
+</script>
+<script src="{!! m_asset('inpatient:js/consumables.js') !!}"></script>
 @endsection

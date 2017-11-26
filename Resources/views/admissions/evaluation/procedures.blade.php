@@ -1,21 +1,16 @@
 @extends('layouts.app')
-@section('content_title','Procedures Management')
-@section('content_description','Manage procedures done on patient')
+@section('content_title','Prescriptions Management')
+@section('content_description','Manage a patients prescriptions')
 
 @section('content')
 
 <!-- Include patient information -->
 @include('inpatient::admissions.evaluation.includes.admission_details')
 
-<div class="box box-info">
-    <div class="box-body">
+<!-- Include navigation -->
+@include('inpatient::admissions.evaluation.includes.evaluation_navigation')
 
-    <!-- Include navigation -->
-    @include('inpatient::admissions.evaluation.includes.evaluation_navigation')
+<!-- Procedures Section  -->
+@include('inpatient::admissions.evaluation.partials.procedures.procedures_form')
 
-    <!-- Main Content  -->
-
-
-    </div>
-</div>
 @endsection

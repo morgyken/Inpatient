@@ -103,53 +103,6 @@
                 ]
             });
 
-            $('.summernote').summernote({
-                height: 200
-            });  
-
-            $('#save-nurse-note').click(function(e){
-                e.preventDefault();
-
-                console.log("New nurse's note: "+ $("#notes").val());
-                 $.ajax({
-                    type: "POST",
-                    url: "{{ url('/api/inpatient/v1/notes') }}",
-                    data: JSON.stringify({
-                         visit_id : {{ $admission->visit_id }},
-                         admission_id: {{ $admission->id }},
-                         notes: $("#nurses-notes").val(),
-                         type: 0,
-                         user: {{ Auth::user()->id }}
-                     }),
-                    success: function (resp) {
-                        // add table rows
-                         if(resp.type === "success"){
-                            alertify.success(resp.message);
-                            let data = JSON.parse(resp.data);
-                            console.log(data);
-                            data.map( (item, index) => {
-                                return(
-                                    $("#nurses-table > tbody").append("<tr id = 'nurse_noterow_"+ item.id +"'>\
-                                        <td>" + item.written_on + "</td>\
-                                        <td>" + item.notes + "</td>\
-                                        <td>" + item.name + "</td>\
-                                        <td><div class='btn-group'>\
-                                         <button type='button' class='btn btn-primary view-nurse-note' id = '"+ item.id + "'><i class = 'fa fa-eye' ></i> View</button>\
-                                            <button type='button' class='btn btn-danger delete-nurse-note' id = '"+ item.id + "'><i class = 'fa fa-times' ></i> Delete</button>\
-                                         </div></td></tr>")
-                                );
-                            });
-                        }else{
-                             alertify.error(resp.message);
-                        }
-                    },
-                    error: function (resp) {
-                        console.log(resp);
-                         alertify.error(resp.message);
-                    }
-                });
-            });
-
             $('body').on('click','.view-nurse-note', function(e){
                 e.preventDefault();
                 var id = $(this).attr('id');
