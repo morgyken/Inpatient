@@ -2,7 +2,7 @@
     <div class="panel-heading">
         <h5>Consumables</h5>
     </div>
-    <div class="panel-body">
+    <div class="panel-body consumable_item">
         @if(count($consumables) == 0)
             <div class="alert alert-info">
                 <i class="fa fa-info-circle"></i> There are no consumable products. Please add some in inventory.
@@ -10,6 +10,8 @@
         @else
             {!! Form::open(['id'=>'consumable_form'])!!}
                 {!! Form::hidden('visit', $visit->id) !!}
+
+                {!! Form::hidden('user', Auth::user()->id) !!}
 
                 <div class="row" style="margin-bottom: 10px; border-bottom: 2px solid #ddd; padding-bottom: 12px;">
                     <div class="col-md-12" style="font-weight: bold;">
@@ -26,13 +28,20 @@
                     <div id="row{{$consumable->id}}" class="row" style="margin: 15px -15px;">
                         <div class="col-md-12">
                             <div class="col-md-1">
-                                <input type="checkbox" name="item{{$consumable->id}}" value="{{$consumable->id}}" class="check"/>
+                                @if($consumable->stocks && $consumable->stocks->quantity > 0)
+                                    <input type="checkbox" name="item{{$consumable->id}}" value="{{$consumable->id}}" class="check"/>
+                                @else
+                                    <p>N/A</p>
+                                @endif
                             </div>
 
                             <div class="col-md-3">
                                 <span id="name{{$consumable->id}}"> {{$consumable->name}}</span>
                                 <br/>
-                                <input type="hidden" name="type{{$consumable->id}}" value="inpatient.consumable" disabled/>
+                                <p style="font-style: italic">
+                                    Items in stock - {{ $consumable->stocks ? $consumable->stocks->quantity : 0 }}
+                                </p> 
+                                <input type="hidden" name="type{{$consumable->id}}" value="inpatient_consumable" />
                             </div>
 
                             <div class="col-md-2">

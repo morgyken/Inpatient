@@ -36,11 +36,14 @@
 
 <!-- Start Scripts -->
 {{-- @push('scripts') --}}
+<script src="{!! m_asset('inpatient:js/consumables.js') !!}"></script>
 <script>
     var USER_ID = parseInt("{{ Auth::user()->id }}");
     var VISIT_ID = parseInt("{{ $visit->id }}");
-    var CONSUMABLE_URL = "{{url('api/inpatient/v1/saver/consumables')}}";
-    var THE_CONSUMABLE_URL = "{{url('/api/inpatient/v1/get/inpatient-consumables/'.$admission->visit_id)}}";
+    // var CONSUMABLE_URL = "{{url('api/inpatient/v1/saver/consumables')}}";
+    var CONSUMABLE_URL = "{{ url('inpatient/evaluations/'.$visit->id.'/consumables') }}";
+    // var THE_CONSUMABLE_URL = "{{url('/api/inpatient/v1/get/inpatient-consumables/'.$admission->visit_id)}}";
+    var THE_CONSUMABLE_URL = "{{ url('inpatient/evaluations/'.$visit->id.'/consumables') }}";
     $(document).ready(function () {
         $('#consumableTab input').iCheck({
             checkboxClass: 'icheckbox_flat-green',

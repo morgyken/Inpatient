@@ -3,7 +3,7 @@
         <h5>Drug Requisition &amp; Administration</h5>
     </div>
     <div class="panel-body">
-        {!! Form::open(['class'=>'form-horizontal', 'id'=>'prescription_form', 'autocomplete' => 'off']) !!}
+        {!! Form::open(['class'=>'form-horizontal', 'id'=>'prescription-form', 'autocomplete' => 'off']) !!}
             
             <!-- Hidden Fields -->
             {!! Form::hidden('user', Auth::user()->id) !!}
@@ -61,7 +61,7 @@
 
             <div class="form-group">   
                 <div class="loader" id="prescriptionLoader"></div>
-                <div class="col-md-12" id="savePrescription">
+                <div class="col-md-12" id="save-prescription">
                     {!! Form::submit('Save', ['class' => 'btn btn-primary btn col-md-1']) !!}
                 </div>
             </div>
@@ -155,6 +155,42 @@
 
             return 0;
         }
+
+        //Save prescriptions
+        var form = $('#prescription-form');
+
+        form.submit(function (e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            savePrescription();
+        });
+
+        function savePrescription() {
+            var saveButton = $('#save-prescription');
+            $.ajax({
+                type: "POST",
+                url: PRESCRIPTIONS_ENDPOINT,
+                data: form.serialize(),
+                beforeSend: function () {
+                    saveButton.hide();
+                    $('#prescriptionLoader').show();
+                },
+                success: function () {
+                    $('#prescriptionLoader').hide();
+                    $('table#prescribed_drugs').dataTable().api().ajax.reload();
+                    form.trigger("reset");
+                    alertify.success("Prescription saved");
+                    saveButton.show();
+                },
+                error: function () {
+                    alertify.error('<i class="fa fa-check-warning"></i> An error occured prescribing drug');
+                    $('#prescriptionLoader').hide();
+                    $btn.show();
+                }
+            });
+        }
+        
+        //End of saving prescription
     </script>
     {{-- @endpush --}}
     <!-- End Scripts -->

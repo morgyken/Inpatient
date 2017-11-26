@@ -12,8 +12,7 @@
                 <th>No. Performed</th>
                 <th>Discount</th>
                 <th>Amount</th>
-                <th>Date</th>
-                <th>Payment</th>
+                <!-- <th>Date</th> -->
             </tr>
             </thead>
             <tbody>

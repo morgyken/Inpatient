@@ -35,7 +35,7 @@ use Ignite\Inpatient\Entities\NursingCarePlan;
 use Ignite\Inpatient\Entities\NursingCharge;
 use Ignite\Inpatient\Entities\Prescription;
 // use Ignite\Inpatient\Entities\PatientAccount;
-use Ignite\Inpatient\Entities\RequestAdmission;
+use Ignite\Inpatient\Entities\AdmissionRequest;
 use Ignite\Inpatient\Entities\RequestDischarge;
 use Ignite\Inpatient\Entities\Temperature;
 use Ignite\Inpatient\Entities\Visit;

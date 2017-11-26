@@ -2,7 +2,7 @@
     <div class="panel-heading">
         <h5>Selected Consumables</h5>
     </div>
-    <div class="panel-body">
+    <div class="panel-body consumable_item" id="show_consumable_selection">
         <div id="consumableTable">
             <table id="consumableInfo" class=" table table-condensed">
                 <thead>

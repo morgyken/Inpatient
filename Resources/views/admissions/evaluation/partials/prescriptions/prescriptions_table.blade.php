@@ -18,13 +18,11 @@
         </table>
     </div>
     <script>
-        var PRESCRIPTIONS_ENDPOINT = "{{ url('inpatient/evaluations/'.$visit->id.'/prescriptions') }}";
-
         $(document).ready(function(){
             $('#prescribed_drugs').dataTable({
                 'ajax': {
                     'url': PRESCRIPTIONS_ENDPOINT,
-                }
+                },
             });
         });
     </script>

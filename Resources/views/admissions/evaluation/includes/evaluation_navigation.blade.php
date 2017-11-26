@@ -28,7 +28,7 @@
 </ul>
 <ul class="nav nav-pills">
     <li class="{{ $active != 'procedures' ?: 'active' }}">
-        <a href="{{ url('/inpatient/evaluations/'. $visit->id.'/precedures') }}">Procedures</a>
+        <a href="{{ url('/inpatient/evaluations/'. $visit->id.'/procedures') }}">Procedures</a>
     </li>
     <li class="{{ $active != 'blood-transfusion' ?: 'active' }}">
         <a href="{{ url('/inpatient/evaluations/'. $visit->id.'/blood-transfusion') }}">Blood Transfusion</a>

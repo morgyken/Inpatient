@@ -30,11 +30,14 @@ class EvaluationController extends AdminBaseController
      */
     public function store($visit, $key)
     {
-        (new Evaluator($visit, $key))->getEvaluation()->persist(
+        (new Evaluator($visit, $key))->getEvaluation()->persist();
 
-            request()->all()
-
-        );
+        if(request()->ajax())
+        {
+            return response()->json([
+                'data' => true
+            ]);
+        }
 
         return redirect()->back()->with(['success' => 'Action successfully completed']);
     }
@@ -51,31 +54,5 @@ class EvaluationController extends AdminBaseController
         );
 
         return redirect()->back()->with(['success' => 'Drugs successfully dispensed']);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     * @return Response
-     */
-    public function edit()
-    {
-        return view('inpatient::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     * @param  Request $request
-     * @return Response
-     */
-    public function update(Request $request)
-    {
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     * @return Response
-     */
-    public function destroy()
-    {
     }
 }
