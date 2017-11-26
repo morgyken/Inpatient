@@ -10,9 +10,9 @@
     <li class="{{ $active != 'prescriptions' ?: 'active' }}">
         <a href="{{ url('/inpatient/evaluations/'. $visit->id.'/prescriptions') }}">Prescriptions</a>
     </li>
-    <li class="{{ $active != 'administer' ?: 'active' }}">
+    <!-- <li class="{{ $active != 'administer' ?: 'active' }}">
         <a href="{{ url('/inpatient/evaluations/'. $visit->id.'/administer') }}">Administer Drugs</a>
-    </li>
+    </li> -->
     <li class="{{ $active != 'patient-vitals' ?: 'active' }}">
         <a href="{{ url('/inpatient/evaluations/'. $visit->id.'/patient-vitals') }}">Patient Vitals</a>
     </li>
@@ -25,11 +25,11 @@
     <li class="{{ $active != 'investigations' ?: 'active' }}">
         <a href="{{ url('/inpatient/evaluations/'. $visit->id.'/investigations') }}">Investigations</a>
     </li>
-</ul>
-<ul class="nav nav-pills">
     <li class="{{ $active != 'procedures' ?: 'active' }}">
         <a href="{{ url('/inpatient/evaluations/'. $visit->id.'/procedures') }}">Procedures</a>
     </li>
+</ul>
+<ul class="nav nav-pills">
     <li class="{{ $active != 'blood-transfusion' ?: 'active' }}">
         <a href="{{ url('/inpatient/evaluations/'. $visit->id.'/blood-transfusion') }}">Blood Transfusion</a>
     </li>

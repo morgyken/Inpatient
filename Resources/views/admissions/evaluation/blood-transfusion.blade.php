@@ -10,7 +10,10 @@
 <!-- Include navigation -->
 @include('inpatient::admissions.evaluation.includes.evaluation_navigation')
 
-<!-- Procedures Section  -->
-@include('inpatient::admissions.evaluation.partials.procedures.procedures_form')
+<!-- Transfusion Form  -->
+@include('inpatient::admissions.evaluation.partials.transfusion.transfusion_form')
+
+<!-- Transfusion Table -->
+
 
 @endsection

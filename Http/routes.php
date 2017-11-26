@@ -140,7 +140,16 @@ Route::group(['as' => 'inpatient.'], function() {
 
         Route::post('/{visit}/{evaluation}', ['uses' => 'EvaluationController@store']);
 
+        Route::post('/{visit}/{evaluation}/update', ['uses' => 'EvaluationController@update']);
+
     });
+
+    /*
+    * Dispensing routes
+    */
+    Route::get('visit/{visit}/dispense-drugs', ['uses' => 'DispenseController@index']);
+
+    Route::post('visit/{visit}/dispense-drugs', ['uses' => 'DispenseController@store']);
 
     /*
     * Admission Letter Routes

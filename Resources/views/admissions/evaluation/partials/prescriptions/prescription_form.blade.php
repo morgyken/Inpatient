@@ -62,7 +62,7 @@
             <div class="form-group">   
                 <div class="loader" id="prescriptionLoader"></div>
                 <div class="col-md-12" id="save-prescription">
-                    {!! Form::submit('Save', ['class' => 'btn btn-primary btn col-md-1']) !!}
+                    {!! Form::submit('Save Prescription', ['class' => 'btn btn-primary col-md-2']) !!}
                 </div>
             </div>
 

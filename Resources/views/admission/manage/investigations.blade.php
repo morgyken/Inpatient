@@ -1,46 +1,44 @@
-<div role="tabpanel" id="investigationTab" class="tab-pane fade">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="col-md-8">
-                <div class="accordion">
-                    <h4>Diagnosis</h4>
-                    <div class="investigation_item">
-                        @include('inpatient::admission.manage.partials.investigations-diagnostics')
-                    </div>
-                    <h4>Laboratory</h4>
-                    <div class="investigation_item">
-                        @include('inpatient::admission.manage.partials.investigations-lab')
-                    </div>
-                    <h4>Radiology</h4>
-                    <div class="investigation_item">
-                        @include('inpatient::admission.manage.partials.radiology')
-                    </div>
+ <div class="row">
+    <div class="col-md-12">
+        <div class="col-md-8">
+            <div class="accordion">
+                <h4>Diagnosis</h4>
+                <div class="investigation_item">
+                    @include('inpatient::admission.manage.partials.investigations-diagnostics')
+                </div>
+                <h4>Laboratory</h4>
+                <div class="investigation_item">
+                    @include('inpatient::admission.manage.partials.investigations-lab')
+                </div>
+                <h4>Radiology</h4>
+                <div class="investigation_item">
+                    @include('inpatient::admission.manage.partials.radiology')
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="row">
-                    <div class="col-md-12" id="show_selection">
-                        <div class="box box-primary">
-                            <div class="box-header">
-                                <h4 class="box-title">Selected investigations</h4>
-                            </div>
-                            <div class="box-body">
-                                <div id="diagnosisTable">
-                                    <table id="diagnosisInfo" class=" table table-condensed">
-                                        <thead>
-                                        <tr>
-                                            <th>Test</th>
-                                            <th>Price</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        </tbody>
-                                    </table>
-                                    <div class="pull-right">
-                                        <button type="button" class="btn btn-success" id="saveInvestigations">
-                                            <i class="fa fa-save"></i> Save
-                                        </button>
-                                    </div>
+        </div>
+        <div class="col-md-4">
+            <div class="row">
+                <div class="col-md-12" id="show_selection">
+                    <div class="box box-primary">
+                        <div class="box-header">
+                            <h4 class="box-title">Selected investigations</h4>
+                        </div>
+                        <div class="box-body">
+                            <div id="diagnosisTable">
+                                <table id="diagnosisInfo" class=" table table-condensed">
+                                    <thead>
+                                    <tr>
+                                        <th>Test</th>
+                                        <th>Price</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                                <div class="pull-right">
+                                    <button type="button" class="btn btn-success" id="saveInvestigations">
+                                        <i class="fa fa-save"></i> Save
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -49,6 +47,8 @@
             </div>
         </div>
     </div>
+</div>
+
     <div class="row">
         <div class="col-md-12">
             <div class="box box-success">
@@ -100,5 +100,3 @@
             });
         });
     </script>
-
-</div>

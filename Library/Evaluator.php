@@ -50,7 +50,7 @@ class Evaluator
 
             'admission' => is_module_enabled('Inpatient') ? $this->visit->admission : false,
 
-        ], $this->getEvaluation()->data($this->visit));
+        ], (Array) $this->getEvaluation()->data($this->visit));
     }
 
     /*
@@ -58,7 +58,7 @@ class Evaluator
     */
     public function getTable()
     {
-        return $this->getEvaluation()->table($this->visit);
+        return $this->getEvaluation()->table();
     }
 
     /*
@@ -100,6 +100,6 @@ class Evaluator
 
     public function getEvaluation()
     {
-        return new $this->evaluation;
+        return new $this->evaluation($this->visit);
     }
 }

@@ -4,5 +4,10 @@ namespace Ignite\Inpatient\Library\Interfaces;
 
 interface EvaluationInterface
 {
-    public function data($visit);
+    /**
+    * Method that return an evaluator's data
+    * @return object
+    */
+    public function data();
+
 }

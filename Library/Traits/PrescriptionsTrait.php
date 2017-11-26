@@ -18,6 +18,8 @@ trait PrescriptionsTrait
             'drug_id' => $prescription->drug,
 
             'drug' => $prescription->drugs->name,
+
+            'price' => $this->getDrugPrice($prescription),
             
             'dose' => $prescription->dose,
             
@@ -27,6 +29,12 @@ trait PrescriptionsTrait
 
             'dispensed' => $dispensed,
 
+            'stock' => $prescription->drugs->stocks->quantity,
+
+            'total' => $this->toDispense($prescription) * $this->getDrugPrice($prescription),
+
+            'stopped' => $prescription->stopped ? 'stopped' : 'active',
+
             'to_dispense' => $this->toDispense($prescription),
 
             'is_dispensed' => $prescription->payment
@@ -34,7 +42,7 @@ trait PrescriptionsTrait
     } 
     
     /*
-    * Gets all the drugs that have been dispensed on a prescription object
+    * Gets the sum of all the drugs that have been dispensed on a prescription object
     */
     public function dispensed($prescription)
     {
@@ -70,7 +78,65 @@ trait PrescriptionsTrait
         }
         
         return $prescription->take * $times;
-    }   
+    }
 
+    /*
+    * returns a drug price
+    */
+    public function getDrugPrice($prescription)
+    {
+        if(!$prescription)
+        {
+            return 0;
+        }
 
+        $visit = $prescription->visits;
+
+        $drug = $prescription->drugs;
+
+        if($drug)
+        {
+            return $visit->patient_scheme ? $drug->insurance_p : $drug->cash_price;
+        }
+
+        return 0;
+    }
+
+    /*
+    * Makes the data more friendly to a datatable
+    */
+    public function table()
+    {
+        $data = $this->data()['prescriptions']->map(function($prescription){
+
+            if($prescription['stopped'] == 'stopped')
+            {
+                $button = "<button class='btn btn-xs btn-warning' id='stop-'".$prescription['id']." 
+                    value='".json_encode($prescription)."' >".
+                    "<i class='fa fa-info-circle'></i> Stopped
+                </button>";
+            }
+            else
+            {
+                $button = "<button class='btn btn-xs btn-danger stop-drug' id='stop-'".$prescription['id']." 
+                    value='".json_encode($prescription)."' >".
+                    "<i class='fa fa-ban'></i> Stop
+                </button>";
+            }
+
+            return [
+                $prescription['drug'],
+                $prescription['dose'],
+                $prescription['prescribed'],
+                $prescription['dispensed'],
+                $prescription['stopped'],
+                $prescription['remaining'],
+                0,
+                $button
+            ];
+
+        })->toArray();
+
+        return compact('data');
+    }
 }

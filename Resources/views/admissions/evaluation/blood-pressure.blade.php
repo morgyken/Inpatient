@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('content_title','Prescriptions Management')
-@section('content_description','Manage a patients prescriptions')
+@section('content_title',"Doctor's Notes Management")
+@section('content_description', "Manage the doctor's notes")
 
 @section('content')
 
@@ -10,7 +10,7 @@
 <!-- Include navigation -->
 @include('inpatient::admissions.evaluation.includes.evaluation_navigation')
 
-<!-- Procedures Section  -->
-@include('inpatient::admissions.evaluation.partials.procedures.procedures_form')
+<!-- Include tht blood pressure chart -->
+@include('inpatient::admissions.evaluation.partials.graphs.blood_pressure')
 
 @endsection

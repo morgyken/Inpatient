@@ -11,7 +11,7 @@ class InvestigationsEvaluation implements EvaluationInterface
     /*
     * Return the data that will be presented to the view on the charge sheet
     */
-    public function data($visit)
+    public function data()
     {
         return [
             'investigations' => ''

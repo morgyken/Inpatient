@@ -43,16 +43,19 @@ class EvaluationController extends AdminBaseController
     }
 
     /*
-     * Dispense the drugs from the pharmacist - applicable for the Prescriptions Evalution Object only
-     */
-    public function dispense($visit, $key)
+    * Update an exising evaluation object
+    */
+    public function update($visit, $key)
     {
-        (new Evaluator($visit, $key))->getEvaluation()->dispense(
-            
-            request()->except(['_token', 'visit', 'user'])
-            
-        );
-
-        return redirect()->back()->with(['success' => 'Drugs successfully dispensed']);
+        (new Evaluator($visit, $key))->getEvaluation()->modify();
+ 
+        if(request()->ajax())
+        {
+            return response()->json([
+                 'data' => true
+            ]);
+        }
+ 
+         return redirect()->back()->with(['success' => 'Action successfully completed']);
     }
 }

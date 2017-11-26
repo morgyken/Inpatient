@@ -21,7 +21,7 @@
 {{-- @push('scripts') --}}
     <script>
         var PRESCRIPTIONS_ENDPOINT = "{{ url('inpatient/evaluations/'.$visit->id.'/prescriptions') }}";
-
+        var CANCEL_PRESCRIPTION_ENDOINT = "{{ url('inpatient/evaluations/'.$visit->id.'/prescriptions/update') }}";
     </script>
 {{-- @endpush --}}
 <!-- End Scripts -->

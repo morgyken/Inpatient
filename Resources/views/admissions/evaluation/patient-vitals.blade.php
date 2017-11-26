@@ -13,6 +13,4 @@
 <!-- Include Patient Vitals Form -->
 @include('inpatient::admissions.evaluation.partials.vitals.patient_vitals_form')
 
-
-
 @endsection
