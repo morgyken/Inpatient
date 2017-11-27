@@ -17,11 +17,12 @@
                     </tbody>
                 </table>
                 <div class="pull-right">
-                    <button type="button" class="btn btn-success" id="saveInvestigations">
+                    <div class="loader" id="diagnosisLoader"></div>
+                    <button type="button" class="btn btn-success" id="saveDiagnosis">
                         <i class="fa fa-save"></i> Save
                     </button>
                 </div>
             </div>
-        </div>    
+        </div>
     </div>
-<div>    
+</div>
