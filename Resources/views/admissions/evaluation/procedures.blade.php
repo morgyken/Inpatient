@@ -33,6 +33,7 @@
     </style>
     <script>
         var PERFOMED_URL = "{{ route('api.evaluation.performed_treatment',$visit->id) }}";
+        var DIAGNOSIS_URL = "{{ route('api.evaluation.save_diagnosis') }}";
         $(document).ready(function () {
             $('.treatment_item').find('input').iCheck({
                 checkboxClass: 'icheckbox_flat-blue',
