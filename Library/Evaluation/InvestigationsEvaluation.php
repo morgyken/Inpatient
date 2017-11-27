@@ -26,4 +26,9 @@ class InvestigationsEvaluation implements EvaluationInterface
             'investigations' => ''
         ];
     }
+
+    public function table()
+    {
+        return [1, 2, 3];
+    }
 }

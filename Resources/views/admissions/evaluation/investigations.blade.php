@@ -20,6 +20,7 @@
         </div>
     </div>
 
+    @include('inpatient::admissions.evaluation.partials.investigations.investigations_table')
 
     <style>
         .investigation_item {
@@ -34,6 +35,7 @@
         var DIAGNOSIS_URL = "{{ route('api.evaluation.save_diagnosis') }}";
         var THE_TABLE_URL = "{{ url('/api/inpatient/v1/get/inpatient-investigations/'.$admission->visit_id) }}";
         var THE_CONSUMABLE_URL = "{{ url('inpatient/evaluations/'.$visit->id.'/consumables') }}";
+        var PERFOMED_INVESTIGATION_URL = "{{ route('api.evaluation.performed_investigations',$admission->visit_id) }}";
 
         $(document).ready(function () {
             $('.accordion').accordion({heightStyle: "content"});
