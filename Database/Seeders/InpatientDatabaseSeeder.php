@@ -25,7 +25,5 @@ class InpatientDatabaseSeeder extends Seeder
         $this->call(ChargesTableSeeder::class);
 
         $this->call(AdmissionTypeTableSeeder::class);
-
-        $this->call(ChargeSheetTypesTableSeeder::class);
     }
 }
