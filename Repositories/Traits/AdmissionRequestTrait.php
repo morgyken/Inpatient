@@ -108,8 +108,8 @@ trait AdmissionRequestTrait
         return $this->patientSchemes($patient->schemes)->map(function($scheme){
 
             return [
-                'id' => $scheme->name,
-                'name' => $scheme->id
+                'id' => $scheme->id,
+                'name' => $scheme->name
             ];
 
         })->toArray();

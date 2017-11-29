@@ -1,5 +1,4 @@
 @include('Inpatient::includes.success')
-
 <div class="panel panel-info">
     <div class="panel-heading">
         <i class="fa fa-user"></i> {{ $patient->full_name }} | 

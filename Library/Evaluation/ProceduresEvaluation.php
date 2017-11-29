@@ -1,4 +1,5 @@
 <?php
+
 namespace Ignite\Inpatient\Library\Evaluation;
 
 use Ignite\Inpatient\Library\Interfaces\EvaluationInterface;

@@ -81,20 +81,12 @@ class AdmissionRequestRepository
 
             $type = $admissionRequest['type']['name']." (". $admissionRequest['type']['deposit'].")";
 
-            // foreach($admissionRequest['patient']['schemes'] as $scheme)
-            // {
-            //     $admissionRequest['patient']['schemes']['name'];
-            // }
-
             return [
                 $admissionRequest['patient']['name'],
                 $admissionRequest['patient']['account']['balance'],
                 $type,
                 $admissionRequest['authorization']['amount'],
                 $admissionRequest['created_at'],
-                
-
-                // str_replace("'", "", $string);
 
                 $this->actions($admissionRequest)
             ];
