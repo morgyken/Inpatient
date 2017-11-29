@@ -17,18 +17,6 @@ Route::group(['as' => 'inpatient.'], function() {
     Route::get('/chargesheet/{visit_id}', 'InpatientController@buildChargeSheet');
     Route::get('/summary/{visit_id}','InpatientController@buildDischargeSummary');
 
-    /*
-    * Admission Requests
-    */
-    Route::group(['prefix' => 'admission-requests'], function(){
-        
-        Route::get('/', ['uses'=>'AdmissionRequestController@index']);
-
-        Route::post('/', ['uses'=>'AdmissionRequestController@store']);
-
-        Route::post('/update', ['uses' => 'AdmissionRequestController@update']);
-    });
-
 	/*
     |--------------------------------------------------------------------------
     | Patient Admissions
@@ -48,6 +36,20 @@ Route::group(['as' => 'inpatient.'], function() {
     //admit patient awaiting
     Route::get('/awaitingAdmission', 'InpatientController@admitAwaiting');
     Route::get('/manage/{id}/visit/{visit_id}/move', 'InpatientController@movePatient');
+
+
+    /*
+    * Admission Requests
+    */
+    Route::group(['prefix' => 'admission-requests'], function(){
+        
+        Route::get('/', ['uses'=>'AdmissionRequestController@index']);
+
+        Route::post('/', ['uses'=>'AdmissionRequestController@store']);
+
+        Route::post('/update', ['uses' => 'AdmissionRequestController@update']);
+        
+    });
 
     /*
     |--------------------------------------------------------------------------
@@ -118,16 +120,6 @@ Route::group(['as' => 'inpatient.'], function() {
         Route::get('{admissionRequest}/create', ['uses' => 'AdmissionController@create']);
         
         Route::post('{admissionRequest}', ['uses' => 'AdmissionController@store']);
-
-
-        //MOve these to an evaluation controller later
-        // Route::get('{admission}/manage/{item}', ['uses' => 'AdmissionController@show']);
-
-        // Route::post('{admission}/manage/{item}', ['uses' => 'AdmissionController@evaluate']);
-
-        // Route::post('/{admission}/prescription/dispense', ['uses' => 'Evaluation\PrescriptionsController@dispense']);
-
-        // Route::post('/drugs/administer', ['uses' => 'Evaluation\AdministerController@administerDrugs']);
 
     });
 

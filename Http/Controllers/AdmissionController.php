@@ -4,6 +4,9 @@ namespace Ignite\Inpatient\Http\Controllers;
 
 use Ignite\Core\Http\Controllers\AdminBaseController;
 
+use Ignite\Inpatient\Entities\Ward;
+use Ignite\Inpatient\Entities\Charge;
+use Ignite\Inpatient\Entities\ChargeSheet;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
@@ -76,9 +79,32 @@ class AdmissionController extends AdminBaseController
      */
     public function store(AdmissionRequest $request)
     {
-        $admission = request()->except(['_token', 'inpatient_request_admission_id']);
-
         $admissionRequest = request()->get('inpatient_request_admission_id');
+
+        $visit = $this->admissionRequestRepository->find($admissionRequest)->visits;
+
+        $wardId = request()->get('ward_id');
+
+        $ward = Ward::find($wardId);
+
+        $wardPrice = $visit->patients->schemes ? $ward->insurance_cost : $ward->cash_cost;
+
+        ChargeSheet::create([
+            'visit_id' => $visit->id,
+            'ward_id' => $wardId,
+            'price' => $wardPrice
+        ]);
+
+        foreach(Charge::all() as $charge)
+        {
+            ChargeSheet::create([
+                'visit_id' => $visit->id,
+                'charge_id' => $charge->id,
+                'price' => $charge->cost
+            ]);
+        }
+
+        $admission = request()->except(['_token', 'inpatient_request_admission_id']);
 
         $admission = $this->admissionRepository->create($admission);
 
@@ -87,8 +113,6 @@ class AdmissionController extends AdminBaseController
         $admission->visit->save();
 
         $this->admissionRequestRepository->delete($admissionRequest);
-
-        // (new GeneralCharges($admission->visit))->persist();
 
         return redirect('/inpatient/admissions')->with(['success' => 'Patient has been admitted']);
     }

@@ -14,11 +14,11 @@
             <div class="col-lg-6">
                 <strong>Number:</strong> @if($patient->patient_no != null) {{ $admission->patient->patient_no }} @else
                     No Number Assigned @endif<br>
-                <strong>Account Balance:</strong> Ksh. {{ $admission->patient->account->balance }} <br>
+                <strong>Account Balance:</strong> Ksh. {{ $admission->patient->account ? $admission->patient->account->balance : 0 }} <br>
             </div>
             <div class="col-lg-6">
                 <strong>Admission Date:</strong> {{ date_format($admission->created_at,'l dS M, Y') }}<br>
-                <strong>Deposit:</strong> Ksh. {{ $admission->patient->account->balance }}<br>
+                <strong>Deposit:</strong> Ksh. {{ $admission->patient->account ? $admission->patient->account->balance : 0 }}<br>
             </div>
         </div>
     </div>

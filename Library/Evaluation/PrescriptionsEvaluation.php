@@ -2,18 +2,18 @@
 namespace Ignite\Inpatient\Library\Evaluation;
 
 use Ignite\Evaluation\Entities\Visit;
-// use Ignite\Evaluation\Entities\Dispensing;
+use Ignite\Evaluation\Entities\Dispensing;
 use Ignite\Evaluation\Entities\Prescriptions;
-// use Ignite\Evaluation\Entities\VisitDestinations;
+use Ignite\Evaluation\Entities\VisitDestinations;
 
-// use Ignite\Inpatient\Library\Traits\DrugsTrait;
+use Ignite\Inpatient\Library\Traits\DrugsTrait;
 use Ignite\Inpatient\Library\Traits\PrescriptionsTrait;
 
 use Ignite\Inpatient\Library\Interfaces\EvaluationInterface;
 
 class PrescriptionsEvaluation implements EvaluationInterface
 {
-    use PrescriptionsTrait;
+    use PrescriptionsTrait, DrugsTrait;
 
     protected $visit; 
 

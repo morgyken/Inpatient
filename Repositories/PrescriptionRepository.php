@@ -99,11 +99,17 @@ class PrescriptionRepository
             $dispensing->details()->create($details);
 
             $this->adjustStock($dispense['product'], $dispense['quantity']);
+
+            //Send to finance
             
         });
     }
 
-     /*
+    /*
+    * 
+    */
+
+    /*
     * Remove the items from the store
     */
     public function adjustStock($productId, $quantity)
