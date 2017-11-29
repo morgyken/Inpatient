@@ -200,6 +200,7 @@
             alertify.success("Success!");
             $('#save-details').show();
             $('#deposit-modal').modal('hide');
+            $('#print-modal').modal('open');
             $('#awaiting-admission').dataTable( ).api().ajax.reload();
 
         }).fail(function(){

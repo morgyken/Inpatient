@@ -1,6 +1,6 @@
 <div class="panel panel-info">
     <div class="panel-heading">
-        General Admission Charges
+        Ward Charges
     </div>
     <div class="panel-body">
         <table class="table table-stripped table-condensed">
@@ -11,17 +11,11 @@
                 <th>Total (Kshs)</th>
             </thead>
             <tbody>
-            @foreach($charges['general'] as $charge)
                 <tr>
-                    <td>{{ $charge['name'] }}</td>
-                    <td>{{ $charge['units'] }}</td>
-                    <td>{{ $charge['price'] }}</td>
-                    <td>{{ $charge['total'] }}</td>
-                </tr>
-            @endforeach
-                <tr>
-                    <td colspan="3"><b>Total</b></td>
-                    <td>{{ $charges['generalTotal'] }}</td>
+                    <td>{{ $wards['name'] }}</td>
+                    <td>{{ $wards['days'] }}</td>
+                    <td>{{ $wards['cost'] }}</td>
+                    <td>{{ $wards['price'] }}</td>
                 </tr>
             </tbody>
         </table>

@@ -8,7 +8,7 @@
                 <i class="fa fa-info-circle"></i> There are no consumable products. Please add some in inventory.
             </div>
         @else
-            {!! Form::open(['id'=>'consumable_form'])!!}
+            {!! Form::open(['id'=>'consumable_form', 'url'=>''])!!}
                 {!! Form::hidden('visit', $visit->id) !!}
 
                 {!! Form::hidden('user', Auth::user()->id) !!}

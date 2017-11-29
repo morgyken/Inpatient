@@ -5,8 +5,8 @@
     <div class="panel-body">
         <table class="table table-stripped table-condensed" id="prescribed_drugs">
             <thead>
-                <th>Name</th>
-                <th>Date/Time</th>
+                <th>Drug</th>
+                <th>Prescription</th>
                 <th>Prescribed</th>
                 <th>Dispensed</th>
                 <th>Status</th>
@@ -18,9 +18,9 @@
             </tbody>
         </table>
 
-        <div>
+        <!-- <div>
             <button class="col-md-2 btn btn-primary btn-sm">Administer Drugs</button>   
-        </div>
+        </div> -->
     </div>
     
     <!-- Administer drugs modal -->
@@ -123,6 +123,7 @@
                     alertify.success("Drug cancelled successfully");
                     $('#confirm-stop').show();
                     $('#stop-modal').modal('hide');
+                    $('#prescribed_drugs').dataTable().api().ajax.reload();
 
                 }).fail(function(){
 
