@@ -45,6 +45,8 @@
 
                         @if($prescription['stopped'] == 'stopped')
                             <small class="text-danger">Prescription Cancelled</small>
+                        @elseif($prescription['dispensed'] <= $prescription['prescribed'])
+                            <small class="text-info">Prescription Complete</small>
                         @else
                             <small class="text-success">Available in stock - {{ $prescription['stock'] }}</small>
                         @endif    
@@ -65,7 +67,7 @@
                         <div class="form-group">
                             <input type="number" name="prescriptions[{{$prescription['drug']}}][quantity]" 
                                 class="form-control" value="{{ $prescription['to_dispense'] }}" 
-                                {{ $prescription['stopped'] == 'active' ?: 'disabled' }}/>
+                                {{ $prescription['can_dispense'] ?: 'disabled' }}/>
                         </div>
                     </div>
                     <div class="col-md-1">

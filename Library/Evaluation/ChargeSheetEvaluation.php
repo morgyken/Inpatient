@@ -86,19 +86,27 @@ class ChargeSheetEvaluation implements EvaluationInterface
 
         });
 
-        return $consumableCharges->map(function($charge){
+        // dd($consumableCharges);
+
+        $charges = $consumableCharges->map(function($charge){
 
             $consumable = $charge->consumable;
+
+            $product = $consumable->product;
             
             return [
-                'name' => $consumable->name,
-
-                'cost' => $charge->price,
-
-                'date' => $charge->created_at,
+                'name' => $product->name, 
+                'units' => $consumable->quantity, 
+                'cost' => $consumable->price, 
+                'price' => $consumable->amount,
+                'used_on' => Carbon::parse($consumable->created_at)->toDayDateTimeString(),  
             ];
         
         });
+
+        $charges['total'] = $charges->pluck('price')->sum();
+        
+        return $charges;
     }
 
     /*

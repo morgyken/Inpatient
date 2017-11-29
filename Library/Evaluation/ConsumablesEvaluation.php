@@ -75,7 +75,7 @@ class ConsumablesEvaluation implements EvaluationInterface
             $price = request()->get("price$consumable");
             $quantity = request()->get("quantity$consumable");
 
-            InpatientConsumable::create([
+            $consumableId = InpatientConsumable::create([
                 'type' => request()->get("type$consumable"),
                 'visit' => request()->get("visit"),
                 'product_id' => $consumable,
@@ -89,7 +89,7 @@ class ConsumablesEvaluation implements EvaluationInterface
 
             $total = $quantity * $price;
 
-            $this->addToChargeSheet($consumable, $total);
+            $this->addToChargeSheet($consumableId, $total);
 
             $this->adjustStock($consumable, request()->get("quantity$consumable"));
         }

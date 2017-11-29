@@ -13,6 +13,8 @@
 <!-- Include Charge Sheets Here -->
 @include('inpatient::admissions.evaluation.partials.charges.ward_charges')
 
+@include('inpatient::admissions.evaluation.partials.charges.consumable_charges')
+
 @include('inpatient::admissions.evaluation.partials.charges.prescription_charges')
 
 @endsection
