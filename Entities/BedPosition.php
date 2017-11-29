@@ -7,20 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Ignite\Inpatient\Entities\BedPosition
  *
- * @property int $id
- * @property string $name
- * @property int $ward_id
- * @property string $status
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
  * @property-read \Ignite\Inpatient\Entities\Ward $ward
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\BedPosition isTaken()
- * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\BedPosition whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\BedPosition whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\BedPosition whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\BedPosition whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\BedPosition whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\BedPosition whereWardId($value)
  * @mixin \Eloquent
  */
 class BedPosition extends Model
