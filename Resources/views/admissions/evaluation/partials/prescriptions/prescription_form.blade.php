@@ -185,7 +185,7 @@
                 error: function () {
                     alertify.error('<i class="fa fa-check-warning"></i> An error occured prescribing drug');
                     $('#prescriptionLoader').hide();
-                    $btn.show();
+                    saveButton.show();
                 }
             });
         }

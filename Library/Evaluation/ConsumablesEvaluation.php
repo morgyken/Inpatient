@@ -1,6 +1,8 @@
 <?php
 namespace Ignite\Inpatient\Library\Evaluation;
 
+use Ignite\Evaluation\Entities\Visit;
+
 use Ignite\Inpatient\Entities\InpatientConsumable;
 
 use Ignite\Inventory\Entities\InventoryStockAdjustment;
@@ -11,10 +13,20 @@ use Ignite\Inpatient\Library\Interfaces\EvaluationInterface;
 
 class ConsumablesEvaluation implements EvaluationInterface
 {
+    protected $visit;
+    
+    /*
+    * Initialise the general charges 
+    */
+    public function __construct($visit)
+    {
+        $this->visit = $visit;
+    }
+
     /*
     * Return the data that will be presented to the view on the charge sheet
     */
-    public function data($visit)
+    public function data()
     {
         return [
             'consumables' => $this->getConsumables()
@@ -32,9 +44,9 @@ class ConsumablesEvaluation implements EvaluationInterface
     /*
     * Makes the data more friendly to a datatable
     */
-    public function table($visit)
+    public function table()
     {
-        $consumables = InpatientConsumable::with(['product'])->where('visit', $visit->id)->get();
+        $consumables = InpatientConsumable::with(['product'])->where('visit', $this->visit->id)->get();
 
         $data = $consumables->map(function($consumable){
 

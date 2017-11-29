@@ -9,72 +9,44 @@
                 <div class="alert text-warning">
                     <span>The are no patients recorded</span>
                 </div>
-
             @else
-
-                <table class="table table-stripped table-condensed">
+                <table class="table table-stripped table-condensed" id="awaiting-admission">
                     <caption>The Patient List: All The Patients awaiting admission</caption>
                     <thead>
-                    <!-- <th>ID/Passport</th> -->
-                    <th>Patient Name</th>
-                    <th>Account Amount</th>
-                    <th>Admission Type</th>
-                    <th>Authorized Amount</th>
-                    <th>Date</th>
-                    <th>Options</th>
+                        <th>Patient Name</th>
+                        <th>Account Amount</th>
+                        <th>Admission Type</th>
+                        <th>Authorized Amount</th>
+                        <th>Date</th>
+                        <th>Options</th>
                     </thead>
-                    <tbody>
-                    @foreach($admissionRequests as $request)
-                        <tr>
-                            <td>{{ $request['patient']['name'] }}</td>
-                            <td>{{ $request['patient']['account']['balance'] }}</td>
-                            <td>
-                                {{ $request['type']['name'] }}
-                                ({{ number_format( $request['type']['deposit'] ) }})
-                            </td>
-                            <td>{{ $request['authorization']['amount'] }}</td>
-                            <td>
-                                {{ $request['created_at'] }}
-                            </td>
-                            <td>
-                                <button class="btn btn-info btn-xs authorize" 
-                                data-toggle="modal" data-target="#authorize-modal" value='{!! json_encode($request) !!}'>
-                                    Authorize
-                                </button>
-
-                                <button class="btn btn-success btn-xs deposit" 
-                                        data-toggle="modal" data-target="#deposit-modal" value='{!! json_encode($request) !!}'>
-                                    Payment Mode
-                                </button>
-
-                                @if($request['can_admit'])
-                                    <a class="btn btn-primary btn-xs" href="{{url('inpatient/admissions/'.$request['id'].'/create')}}">
-                                        Admit
-                                    </a>
-                                @else
-                                    <a class="btn btn-default btn-xs" href="#">
-                                        Admit
-                                    </a>    
-                                @endif
-
-                                <a class="btn btn-danger btn-xs" href="{{url('inpatient/admissions/cancel/'.$request['patient']['id'])}}">Cancel</a>
-                            </td>
-                        </tr>
-                    @endforeach
-                    </tbody>
+                    <tbody></tbody>
                 </table>
             @endif
 
-            @include('inpatient::admission.modals.admission_deposit_modal')
+            @include('Inpatient::admission.modals.authorization_modal')
 
-            @include('inpatient::admission.modals.authorization_modal')
+            @include('Inpatient::admission.modals.admission_deposit_modal')
 
-            {{-- @push('scripts') --}}
-                <script>
+            @include('Inpatient::admission.modals.print_slip_modal')
 
-                    $('.deposit').click(function(event){
+
+            <script>
+                var ADMISSION_REQUEST_ENDPOINT = "/inpatient/admission-requests";
+
+                $(document).ready(function(){
+
+                    $('#awaiting-admission').dataTable({
+                        'ajax': {
+                            'url': ADMISSION_REQUEST_ENDPOINT,
+                        },
+                    });
+
+                    $('body').on('click', '.deposit', function(event){
 
                         let data = JSON.parse(event.target.value);
+
+                        $('#admission-letter-print').attr('href', '/inpatient/admission-letter/create/' + data.patient.id);
 
                         $('#patient-detail').val(data.patient.id);
 
@@ -85,11 +57,11 @@
                         addPatientSchemes(schemes);
 
                         data.patient.schemes.length == 0 ? $('#hasInsurance').addClass('hidden') : 
-                                                           $('#hasInsurance').removeClass('hidden'); 
+                                                            $('#hasInsurance').removeClass('hidden'); 
 
                     });
 
-                    $('.authorize').click(function(event){
+                    $('body').on('click', '.authorize', function(event){
 
                         let data = JSON.parse(event.target.value);
 
@@ -115,12 +87,9 @@
                             }));
                         }
                     }
-
-                    $(function () {
-                        $("table").dataTable();
-                    })
-                </script>
-            {{-- @endpush --}}
+                });
+                
+            </script>
         </div>
     </div>
 

@@ -8,7 +8,7 @@ class ProceduresEvaluation implements EvaluationInterface
     /*
     * Method must be defined, gets the prescriptions
     */
-    public function data($visit)
+    public function data()
     {
         $procedures = [];
 

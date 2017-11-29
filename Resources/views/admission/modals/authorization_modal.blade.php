@@ -8,7 +8,7 @@
                 <h4 class="modal-title">Patient Account</h4>
             </div>
             <div class="modal-body">
-                {!! Form::open(['id'=>'authorize-form','url'=>'inpatient/admission-requests/update']) !!}
+                {!! Form::open(['id'=>'authorize-form']) !!}
 
                     <input id="admission-request-id" name="admission_request_id" type="hidden" value="" />
                     
@@ -35,11 +35,35 @@
 {{-- @push('scripts') --}}
 <script type="text/javascript">
 
+var POST_AUTHORIZE_ENDPOINT = '/inpatient/admission-requests/update';
+
+$(document).ready(function(){
+
     $('#authorize').click(function(){
-        
-        $('#authorize-form').submit();
-    
+
+        let data = $('#authorize-form').serialize();
+
+        $.post(POST_AUTHORIZE_ENDPOINT, data, function(){
+            
+            $('#authorize').hide();
+
+        }).done(function(){
+
+            $('#authorize-modal').modal('hide');
+            alertify.success("Authrorization successful");
+            $('#authorize').show();
+            $('#awaiting-admission').dataTable( ).api().ajax.reload();
+            
+        }).fail(function(){
+
+            $('#authorize-modal').modal('hide');
+            alertify.error("Something went wrong");
+            $('#authorize').show();
+
+        });
+
     });
 
+})
 </script>
 {{-- @endpush --}}

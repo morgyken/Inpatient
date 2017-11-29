@@ -99,10 +99,22 @@ trait AdmissionRequestTrait
             'name' => $patient->fullName,
             'visit' => $patient->visit_id,
             'account' => $this->patientAccount($patient->account),
-            'schemes' => $this->patientSchemes($patient->schemes),
+            'schemes' => $this->getSchemes($patient),
         ];
     }
 
+    public function getSchemes($patient)
+    {
+        return $this->patientSchemes($patient->schemes)->map(function($scheme){
+
+            return [
+                'id' => $scheme->name,
+                'name' => $scheme->id
+            ];
+
+        })->toArray();
+    }
+    
     /*
     * Transform the patient account
     */
@@ -135,5 +147,39 @@ trait AdmissionRequestTrait
         return compact('name', 'deposit', 'description');
     }
 
+    /*
+    * In case of a data table return the action buttons that the admission requests table has asked for
+    */
+    public function actions($admissionRequest)
+    {
+        $encoded = json_encode($admissionRequest);
+
+        $authorize = "<button class='btn btn-info btn-xs authorize'". 
+                            "data-toggle='modal' data-target='#authorize-modal' value='".$encoded."'>".
+                                "Authorize".
+                        "</button>";
+
+        $payment = "<button class='btn btn-success btn-xs deposit'".
+                        "data-toggle='modal' data-target='#deposit-modal' value='".$encoded."'>".
+                            "Payment Mode".
+                    "</button>";
+                    
+        if($admissionRequest['can_admit'])
+        {
+            $admit = "<a class='btn btn-primary btn-xs' href='". url('inpatient/admissions/'.$admissionRequest['id'].'/create')."'>".
+                            "Admit".
+                        "</a>";
+        }  
+        else
+        {
+            $admit = "<a class='btn btn-default btn-xs' href='#'>".
+                            "Admit".
+                        "</a>"; 
+        }       
+
+        $cancel = "<a class='btn btn-danger btn-xs' href='". url('inpatient/admissions/cancel/'.$admissionRequest['patient']['id']) ."'>Cancel</a>";
+    
+        return "${authorize} ${payment} ${admit} ${cancel}";
+    }
 }
 

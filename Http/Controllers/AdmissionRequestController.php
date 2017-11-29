@@ -43,6 +43,13 @@ class AdmissionRequestController extends AdminBaseController
     {
         $admissionRequests = $this->admissionRequestRepository->getAdmissionRequests();
         
+        if(request()->ajax())
+        {
+            $data = $this->admissionRequestRepository->jsonAdmissionRequests($admissionRequests);
+
+            return response()->json(compact('data'));
+        }
+        
         return view('inpatient::admissionrequests.index', compact('admissionRequests'));
     }
 

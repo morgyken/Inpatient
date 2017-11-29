@@ -1,5 +1,4 @@
 <!-- Modal for controlling the payment type -->
-            
 <div id="deposit-modal" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -23,7 +22,7 @@
                     <hr>
                 </div>
 
-                {!! Form::open(['id'=>'payment-details-form','route'=>'finance.evaluation.pay.save','autocomplete'=>'off', 'files' => true])!!}
+                {!! Form::open(['id'=>'payment-details-form', 'autocomplete'=>'off', 'files' => true])!!}
 
                     <input id="patient-detail" name="patient" type="hidden" value="" />
 
@@ -147,11 +146,6 @@
                             <label>Maximum Amount Allowed By Insurance</label>
                             <input type="number" class="form-control" name="insurance[maximum_amount]" />
                         </div>
-                        <!-- <div class="form-group col-md-12">
-                            <label>Upload Authorization Letter</label>
-                            {!! Form::file('authorization_letter', ['class'=>'form-control']) !!}
-                        </div> -->
-                        
                     </div>
                 {!! Form::close()!!}
             </div>
@@ -167,6 +161,7 @@
 
 {{-- @push('scripts') --}}
 <script type="text/javascript">
+
     $('.changeType').click(function(event){
         
         var payment = event.target.value
@@ -187,10 +182,33 @@
 
     });
 
+    /*
+    * Submit the details form using ajax
+    */
     $('#save-details').click(function(){
-        
-        $('#payment-details-form').submit();
-    
+
+        var POST_PATIENT_ACCOUNT_ENDPOINT = "/finance/patient/" + $('#patient-detail').val() + "/account/deposit";
+
+        let data = $('#payment-details-form').serialize();
+
+        $.post(POST_PATIENT_ACCOUNT_ENDPOINT, data, function(){
+
+            $('#save-details').hide();
+
+        }).done(function(){
+
+            alertify.success("Success!");
+            $('#save-details').show();
+            $('#deposit-modal').modal('hide');
+            $('#awaiting-admission').dataTable( ).api().ajax.reload();
+
+        }).fail(function(){
+
+            alertify.error("Something went wrong");
+            $('#save-details').show();
+            $('#deposit-modal').modal('hide');
+
+        });
     });
 </script>
 {{-- @endpush --}}
