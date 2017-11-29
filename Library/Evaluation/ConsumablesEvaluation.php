@@ -2,6 +2,7 @@
 namespace Ignite\Inpatient\Library\Evaluation;
 
 use Ignite\Evaluation\Entities\Visit;
+use Ignite\Inpatient\Entities\ChargeSheet;
 
 use Ignite\Inpatient\Entities\InpatientConsumable;
 
@@ -71,17 +72,24 @@ class ConsumablesEvaluation implements EvaluationInterface
     public function persist()
     {
         foreach ($this->_get_selected_stack() as $consumable) {
+            $price = request()->get("price$consumable");
+            $quantity = request()->get("quantity$consumable");
+
             InpatientConsumable::create([
                 'type' => request()->get("type$consumable"),
                 'visit' => request()->get("visit"),
                 'product_id' => $consumable,
-                'quantity' => request()->get("quantity$consumable"),
+                'quantity' => $quantity,
                 'price' => request()->get("price$consumable"),
                 'discount' => request()->get("discount$consumable"),
                 'amount' => request()->get("amount$consumable"),
                 'user' => request()->get("user"),
                 'ordered' => true
             ]);
+
+            $total = $quantity * $price;
+
+            $this->addToChargeSheet($consumable, $total);
 
             $this->adjustStock($consumable, request()->get("quantity$consumable"));
         }
@@ -121,5 +129,17 @@ class ConsumablesEvaluation implements EvaluationInterface
             }
         }
         return $stack;
+    }
+
+    private function addToChargeSheet($consumable, $total)
+    {
+        ChargeSheet::create([
+
+            'consumable_id' => $consumable,
+
+            'price' => $total,
+
+            'visit_id' => $this->visit->id,
+        ]);
     }
 }

@@ -6,6 +6,7 @@ use Ignite\Inventory\Entities\InventoryStockAdjustment;
 use Ignite\Inpatient\Library\Traits\PrescriptionsTrait;
 use Ignite\Evaluation\Entities\Prescriptions;
 use Ignite\Evaluation\Entities\Dispensing;
+use Ignite\Inpatient\Entities\ChargeSheet;
 use Carbon\Carbon;
 
 class PrescriptionRepository
@@ -88,7 +89,7 @@ class PrescriptionRepository
                 'price' => $prescription['total'],
             ];
 
-        })->each(function($dispense){
+        })->each(function($dispense) use($visitId){
 
             $dispensing = collect($dispense)->only(['visit', 'user', 'prescription', 'amount'])->all();
 
@@ -98,16 +99,29 @@ class PrescriptionRepository
 
             $dispensing->details()->create($details);
 
+            $total = $details['quantity'] * $details['price'];
+
             $this->adjustStock($dispense['product'], $dispense['quantity']);
 
-            //Send to finance
+            $this->addToChargeSheet($dispensing->id, $total, $visitId);
             
         });
     }
 
     /*
-    * 
+    *  Add the details to a charge sheet
     */
+    private function addToChargeSheet($dispensing, $total, $visitId)
+    {
+        ChargeSheet::create([
+
+            'dispensing_id' => $dispensing,
+
+            'price' => $total,
+
+            'visit_id' => $visitId,
+        ]);
+    }
 
     /*
     * Remove the items from the store

@@ -35,11 +35,26 @@ trait PrescriptionsTrait
 
             'stopped' => $prescription->stopped ? 'stopped' : 'active',
 
+            'can_dispense' => $this->canDispense($prescription, $remaining),
+
             'to_dispense' => $this->toDispense($prescription),
 
             'is_dispensed' => $prescription->payment
         ];
     } 
+
+    /*
+    * Checks to see if the prescription can be dispensed
+    */
+    public function canDispense($prescription, $remaining)
+    {
+        if($prescription->stopped or $remaining <= 0)
+        {
+            return false;
+        }
+
+        return true;
+    }
     
     /*
     * Gets the sum of all the drugs that have been dispensed on a prescription object
@@ -60,6 +75,10 @@ trait PrescriptionsTrait
     {
         $method = trim(mconfig('evaluation.options.prescription_method.' . $prescription->method));
 
+        $dispensed = $this->dispensed($prescription);
+        
+        $remaining = $prescription->quantity - $dispensed;
+
         if($method == 'b.i.d')
         {
             $times = 2;
@@ -77,7 +96,9 @@ trait PrescriptionsTrait
             $times = 1;
         }
         
-        return $prescription->take * $times;
+        $dose = $prescription->take * $times;
+
+        return $remaining < $dose ? $remaining : $dose;
     }
 
     /*

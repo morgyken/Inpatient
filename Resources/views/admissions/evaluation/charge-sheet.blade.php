@@ -10,9 +10,9 @@
 <!-- Include navigation -->
 @include('inpatient::admissions.evaluation.includes.evaluation_navigation')
 
-
-
 <!-- Include Charge Sheets Here -->
-<!-- Include General Charges -->
+@include('inpatient::admissions.evaluation.partials.charges.ward_charges')
+
+@include('inpatient::admissions.evaluation.partials.charges.prescription_charges')
 
 @endsection

@@ -2,10 +2,10 @@
 namespace Ignite\Inpatient\Library\Evaluation;
 
 use Ignite\Evaluation\Entities\Visit;
-
 use Ignite\Inpatient\Entities\ChargeSheet;
-
 use Ignite\Inpatient\Library\Interfaces\EvaluationInterface;
+
+use Carbon\Carbon;
 
 class ChargeSheetEvaluation implements EvaluationInterface
 {
@@ -25,53 +25,119 @@ class ChargeSheetEvaluation implements EvaluationInterface
     public function data()
     {
         return [
-            'ward' => $this->wardCharges(),
+            'wards' => $this->wards(),
 
-            'nurse' => $this->nurseCharges(),
+            'charges' => $this->charges(),
+
+            'consumables' => $this->consumables(),
+
+            'prescriptions' => $this->prescriptions()
         ];
-
-
-        // $generalCharges = 
-
-        // return [
-        //     'charges' => ''
-        // ];
     }
 
     /*
     * Ward Charges
     */
-    public function wardCharges()
+    public function wards()
     {
-        $this->visit->chargeSheet->load('wards');
+        $charges = $this->visit->chargeSheet->load('ward');
 
-        $charges = $this->visit->chargeSheet->filter(function($charge){
+        $ward = $this->visit->admission->ward;
+
+        $days = $charges->filter(function($charge){
 
             return $charge->ward_id;
 
+        })->count();
+
+        $name = $ward->name;
+
+        $cost = $this->visit->patients->schemes ? $ward->insurance_cost : $ward->cash_cost;;
+
+        $price = $days * $cost;
+
+        return compact('name', 'days', 'cost', 'price');
+    }
+
+    /*
+    * Nursing charges
+    */
+    public function charges()
+    {
+        $charges = $this->visit->chargeSheet->load('charge');
+
+        $charges = $charges->filter(function($charge){
+            
+            return $charge->charge_id;
+
+        });
+    }
+
+    /*
+    * Consumable charges
+    */
+    public function consumables()
+    {
+        $charges = $this->visit->chargeSheet->load('consumable');
+
+        $consumableCharges = $charges->filter(function($charge){
+            
+            return $charge->consumable_id;
+
         });
 
-        dd($charges);
+        return $consumableCharges->map(function($charge){
+
+            $consumable = $charge->consumable;
+            
+            return [
+                'name' => $consumable->name,
+
+                'cost' => $charge->price,
+
+                'date' => $charge->created_at,
+            ];
         
-        // ('', function($query){
+        });
+    }
 
-        //     $wardCharges = $query->where('ward_id', '<>', '0')->get();
+    /*
+    * Prescription Charges
+    */
+    public function prescriptions()
+    {
+        $charges = $this->visit->chargeSheet->load('dispense');
 
-        //     dd($wardCharges);
+        $prescriptionCharges = $charges->filter(function($charge){
+            
+            return $charge->dispensing_id;
 
-        // });
-        // $charges = ChargeSheet::where('ward_id', '<>', '0')->get();
+        });
 
-        // return $charges->map(function($charge){
+        $charges = $prescriptionCharges->map(function($charge){
 
-        //     dd($charge);
+            $dispense = $charge->dispense;
 
-        //     return [
+            $details = $dispense->details->first();
 
+            $prescription = $dispense->prescriptions;
 
+            $drug = $prescription->drugs;
 
-        //     ];
+            $cost = $this->visit->patients->schemes ? $drug->insurance_p : $drug->cash_p;
 
-        // });
+            return [
+                'name' => $drug->name, 
+                'units' => $details->quantity, 
+                'cost' => $cost, 
+                'price' => $details->price,
+                'dispensed' => Carbon::parse($dispense->created_at)->toDayDateTimeString(),  
+            ];
+
+        });
+
+        $charges['total'] = $charges->pluck('price')->sum();
+
+        return $charges;
     }
 }

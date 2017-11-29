@@ -19,17 +19,15 @@ class CreateInpatientChargeSheetTable extends Migration
 
             $table->integer('visit_id');
 
-            $table->integer('prescription_id')->nullable();
+            $table->integer('dispensing_id')->nullable()->comment('rel:inventory_evaluation_dispensing');
 
-            $table->integer('consumable_id')->nullable();
+            $table->integer('consumable_id')->nullable()->comment('rel:inpatient_consumables');
 
-            $table->integer('investigation_id')->comment('charges made on investigations')->nullable();
+            $table->integer('investigation_id')->nullable()->comment('rel:evaluation_investigations');
 
-            $table->integer('procedure_id')->comment('charges made on procedures')->nullable();
+            $table->integer('charge_id')->nullable()->comment('rel:inpatient_charges');
 
-            $table->integer('charge_id')->comment('charges made id')->nullable();
-
-            $table->integer('ward_id')->comment('charges made on ward')->nullable();
+            $table->integer('ward_id')->nullable()->comment('rel:inpatient_wards');
 
             $table->boolean('paid')->default(0);
 

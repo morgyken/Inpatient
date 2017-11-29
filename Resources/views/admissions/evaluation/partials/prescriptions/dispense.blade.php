@@ -17,7 +17,8 @@
                 <div class="col-md-1">#</div>
                 <div class="col-md-2">Drug</div>
                 <div class="col-md-4">Prescription</div>
-                <div class="col-md-2">Dispensed</div>
+                <div class="col-md-1">Prescribed</div>
+                <div class="col-md-1">Dispensed</div>
                 <div class="col-md-1">Price</div>
                 <div class="col-md-1">Quantity</div>
                 <div class="col-md-1">Total</div>
@@ -35,17 +36,26 @@
 
             {!! Form::hidden("prescriptions[".$prescription['drug']."][stopped]", $prescription['stopped']) !!}
 
-            <div class="row" style="padding-top: 15px; padding-bottom: 5px; border-bottom: 1px solid #ddd;">
+            <div class="row {{ $prescription['can_dispense'] ? '' : 'strikethrough' }}" 
+                style="padding-top: 15px; padding-bottom: 5px; border-bottom: 1px solid #ddd;">
                 <div class="col-md-12">
                     <div class="col-md-1">#</div>
                     <div class="col-md-2">
-                        {{ $prescription['drug'] }} <br />
-                        <small>Available in stock - {{ $prescription['stock'] }}</small>
+                        <span class="name">{{ $prescription['drug'] }}</span> <br />
+
+                        @if($prescription['stopped'] == 'stopped')
+                            <small class="text-danger">Prescription Cancelled</small>
+                        @else
+                            <small class="text-success">Available in stock - {{ $prescription['stock'] }}</small>
+                        @endif    
                     </div>
                     <div class="col-md-4">
                         {{ $prescription['dose'] }}
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-1">
+                        {{ $prescription['prescribed'] }}
+                    </div>
+                    <div class="col-md-1">
                         {{ $prescription['dispensed'] }}
                     </div>
                     <div class="col-md-1">
@@ -53,7 +63,9 @@
                     </div>
                     <div class="col-md-1">
                         <div class="form-group">
-                            <input type="number" name="prescriptions[{{$prescription['drug']}}][quantity]" class="form-control" value="{{ $prescription['to_dispense'] }}" />
+                            <input type="number" name="prescriptions[{{$prescription['drug']}}][quantity]" 
+                                class="form-control" value="{{ $prescription['to_dispense'] }}" 
+                                {{ $prescription['stopped'] == 'active' ?: 'disabled' }}/>
                         </div>
                     </div>
                     <div class="col-md-1">
@@ -71,4 +83,10 @@
 
     {!! Form::close()!!}
     </div>
+
+    <style>
+        .strikethrough .name{
+            text-decoration: line-through;
+        }
+    </style>
 </div>
