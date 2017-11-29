@@ -9,7 +9,7 @@
                 <th>Units</th>
                 <th>Price (Kshs)</th>
                 <th>Total (Kshs)</th>
-                <th>Dispensed At</th>
+                <th>Used At</th>
             </thead>
             <tbody>
                 @foreach($consumables as $consumable)

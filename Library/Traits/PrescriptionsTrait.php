@@ -144,7 +144,7 @@ trait PrescriptionsTrait
                     "<i class='fa fa-ban'></i> Stop
                 </button>";
             }
-
+            
             return [
                 $prescription['drug'],
                 $prescription['dose'],
