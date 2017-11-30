@@ -6,6 +6,8 @@ use Ignite\Inpatient\Repositories\Traits\AdmissionRequestTrait;
 
 use Ignite\Inpatient\Entities\AdmissionRequest;
 
+use Ignite\Evaluation\Entities\Visit;
+
 use Carbon\Carbon;
 
 class AdmissionRequestRepository
@@ -30,7 +32,15 @@ class AdmissionRequestRepository
     {
         $fields['admitted'] = false;
 
-        return AdmissionRequest::create($fields);
+        $admissionRequest = AdmissionRequest::create($fields);
+
+        $visit = Visit::find($fields['visit_id']);
+
+        $visit->admission_request_id = $admissionRequest->id;
+
+        $visit->save();
+
+        return $admissionRequest;
     }
 
     /*
