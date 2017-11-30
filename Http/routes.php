@@ -124,7 +124,7 @@ Route::group(['as' => 'inpatient.'], function() {
     });
 
     /*
-    * Evaluation
+    * Evaluation - Managing patient routes
     */
     Route::group(['prefix' => 'evaluations'], function(){
         

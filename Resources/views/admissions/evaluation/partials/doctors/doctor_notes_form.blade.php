@@ -1,33 +1,24 @@
-<div class="panel panel-info" id="form">
+<div class="panel panel-info">
     <div class="panel-heading">
         <h5>Doctors Notes Form</h5>
     </div>
 
-    <div class="panel-body">
-        <form id="doctor_notes" action="{{ url('/inpatient/manage/notes') }}" method="POST">
-
-            {{ csrf_field() }}
-
-            <input type="hidden" name="admission_id" id="admission_id" value="{{ $admission->id }}" required>
-
-            <input type="hidden" name="visit_id" id = "visit_id" value="{{ $visit->id }}" required>
+    <div class="panel-body" style="height: 400px;">
+        {!! Form::open(['url' => "inpatient/evaluation/$visit->id/doctor" ]) !!}
+            <div class="form-group">
+                {!! Form::label('title', 'Note Title') !!}
+                {!! Form::text('title', null, ['id' => 'title', 'class' => 'form-control', 'placeholder' => 'Note Title ...']) !!}
+            </div>
 
             <div class="form-group">
-                <label>Write your notes here:</label>
-                <textarea name="notes" id="doctors-notes" class="form-control summernote" rows="10" placeholder="Doctor's Notes..." required autofocus></textarea>
+                {!! Form::label('notes', 'Write Doctors Notes') !!}
+                {!! Form::textarea('notes', null, ['id' => 'notes', 'class' => 'form-control summernote', 'rows' => '10', 'placeholder' => 'Doctors Notes ...']) !!}
             </div>
 
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0 !important;">
-                <button type="button" class="btn btn-primary col-md-1" id="save-note">Save Notes</button>
+                <button type="submit" class="btn btn-primary col-md-2" id="save-note">Save Note</button>
                 <!-- <button type="button" class="btn btn-default" id = "capture-modal"><i class = "fa fa-camera"></i> Capture</button> -->
             </div>
-            
-        </form>
+        {!! Form::close() !!}
     </div>
-
-    <!-- Start Scripts -->
-    {{-- @push('scripts') --}}
-        
-    {{-- @endpush --}}
-    <!-- End Scripts -->
 </div>
