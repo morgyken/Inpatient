@@ -6,6 +6,8 @@ use Ignite\Evaluation\Entities\Visit;
 
 use Ignite\Inpatient\Library\Interfaces\EvaluationInterface;
 
+use Ignite\Inpatient\Entities\InpatientDoctorNotes;
+
 class DoctorsEvaluation implements EvaluationInterface
 {
     protected $visit; 
@@ -24,6 +26,14 @@ class DoctorsEvaluation implements EvaluationInterface
     public function data()
     {
         return [];
+    }
+
+    /*
+    * Persist the doctors notes into the database
+    */
+    public function persist()
+    {
+        dd(request()->all());
     }
 }
 
