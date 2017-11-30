@@ -150,7 +150,7 @@
                 {!! Form::close()!!}
             </div>
             <div class="modal-footer">
-                <button id="save-details" type="button" class="btn btn-success">Save Details</button>
+                <button id="save-account-details" type="button" class="btn btn-success">Save Details</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
             </div>
         </div>
@@ -185,7 +185,9 @@
     /*
     * Submit the details form using ajax
     */
-    $('#save-details').click(function(){
+    $('#save-account-details').click(function(){
+
+        $('#save-account-details').hide();
 
         var POST_PATIENT_ACCOUNT_ENDPOINT = "/finance/patient/" + $('#patient-detail').val() + "/account/deposit";
 
@@ -193,20 +195,17 @@
 
         $.post(POST_PATIENT_ACCOUNT_ENDPOINT, data, function(){
 
-            $('#save-details').hide();
-
         }).done(function(){
 
             alertify.success("Success!");
-            $('#save-details').show();
+            $('#save-account-details').show();
             $('#deposit-modal').modal('hide');
-            $('#print-modal').modal('open');
             $('#awaiting-admission').dataTable( ).api().ajax.reload();
 
         }).fail(function(){
 
             alertify.error("Something went wrong");
-            $('#save-details').show();
+            $('#save-account-details').show();
             $('#deposit-modal').modal('hide');
 
         });
