@@ -9,22 +9,39 @@ use Ignite\Reception\Entities\Patients;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Ignite\Inpatient\Entities\RequestAdmission
+ * Ignite\Inpatient\Entities\AdmissionRequest
  *
  * @property int $id
  * @property int $patient_id
- * @property int|null $visit_id
- * @property string|null $reason
+ * @property int $visit_id
+ * @property int $admission_type_id
+ * @property string $reason
+ * @property float $authorized
+ * @property int $authorized_by
+ * @property int $cancelled
+ * @property \Carbon\Carbon|null $deleted_at
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
+ * @property-read \Ignite\Inpatient\Entities\AdmissionType $admissionType
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ignite\Inpatient\Entities\InsuranceMaximumAmount[] $insuranceMaximumAmount
  * @property-read \Ignite\Reception\Entities\Patients $patient
- * @property-read \Ignite\Inpatient\Entities\Visit|null $visits
- * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\RequestAdmission whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\RequestAdmission whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\RequestAdmission wherePatientId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\RequestAdmission whereReason($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\RequestAdmission whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\RequestAdmission whereVisitId($value)
+ * @property-read \Ignite\Inpatient\Entities\Visit $visits
+ * @method static bool|null forceDelete()
+ * @method static \Illuminate\Database\Query\Builder|\Ignite\Inpatient\Entities\AdmissionRequest onlyTrashed()
+ * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\AdmissionRequest whereAdmissionTypeId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\AdmissionRequest whereAuthorized($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\AdmissionRequest whereAuthorizedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\AdmissionRequest whereCancelled($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\AdmissionRequest whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\AdmissionRequest whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\AdmissionRequest whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\AdmissionRequest wherePatientId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\AdmissionRequest whereReason($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\AdmissionRequest whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\AdmissionRequest whereVisitId($value)
+ * @method static \Illuminate\Database\Query\Builder|\Ignite\Inpatient\Entities\AdmissionRequest withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|\Ignite\Inpatient\Entities\AdmissionRequest withoutTrashed()
  * @mixin \Eloquent
  */
 class AdmissionRequest extends Model

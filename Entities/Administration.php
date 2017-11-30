@@ -2,6 +2,7 @@
 
 namespace Ignite\Inpatient\Entities;
 
+use Ignite\Evaluation\Entities\Prescriptions;
 use Ignite\Inpatient\Entities\Admission;
 use Ignite\Inpatient\Entities\Prescription;
 use Ignite\Users\Entities\User;
@@ -19,7 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \Ignite\Inpatient\Entities\Admission $admission
- * @property-read \Ignite\Inpatient\Entities\Prescription $prescription
+ * @property-read \Ignite\Evaluation\Entities\Prescriptions $prescription
  * @property-read \Ignite\Users\Entities\User $users
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Administration whereAdmissionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Administration whereCreatedAt($value)
@@ -39,21 +40,24 @@ class Administration extends Model
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function admission() {
+    public function admission()
+    {
         return $this->belongsTo(Admission::class, 'admission_id');
     }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function prescription() {
-        return $this->belongsTo(Prescription::class, 'prescription_id');
+    public function prescription()
+    {
+        return $this->belongsTo(Prescriptions::class, 'prescription_id');
     }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function users() {
+    public function users()
+    {
         return $this->belongsTo(User::class, 'user');
     }
 

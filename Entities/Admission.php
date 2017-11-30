@@ -19,12 +19,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $doctor_id
  * @property int $ward_id
  * @property int $bed_id
- * @property int $bedposition_id
- * @property float $cost
+ * @property float|null $cost
  * @property string|null $reason
  * @property string|null $external_doctor
- * @property int|null $visit_id
- * @property int $is_discharged
+ * @property int $visit_id
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \Ignite\Inpatient\Entities\Bed $bed
@@ -32,18 +30,17 @@ use Illuminate\Database\Eloquent\Model;
  * @property-read mixed $discharged
  * @property-read mixed $has_discharge_request
  * @property-read \Ignite\Reception\Entities\Patients $patient
- * @property-read \Ignite\Inpatient\Entities\Visit|null $visit
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ignite\Evaluation\Entities\Prescriptions[] $prescriptions
+ * @property-read \Ignite\Inpatient\Entities\Visit $visit
  * @property-read \Illuminate\Database\Eloquent\Collection|\Ignite\Inpatient\Entities\Vitals[] $vitals
  * @property-read \Ignite\Inpatient\Entities\Ward $ward
  * @property-read \Ignite\Inpatient\Entities\WardAssigned $wardAssigned
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Admission whereBedId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Admission whereBedpositionId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Admission whereCost($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Admission whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Admission whereDoctorId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Admission whereExternalDoctor($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Admission whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Admission whereIsDischarged($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Admission wherePatientId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Admission whereReason($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Admission whereUpdatedAt($value)

@@ -36,6 +36,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property int|null $external_order
+ * @property int $admission_request_id
  * @property-read \Illuminate\Database\Eloquent\Collection|\Ignite\Inpatient\Entities\Admission[] $admissions
  * @property-read \Ignite\Reception\Entities\Appointments $appointments
  * @property-read \Ignite\Settings\Entities\Clinics $clinics
@@ -66,6 +67,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static bool|null forceDelete()
  * @method static \Illuminate\Database\Query\Builder|\Ignite\Inpatient\Entities\Visit onlyTrashed()
  * @method static bool|null restore()
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Visit whereAdmissionRequestId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Visit whereClinic($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Visit whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Visit whereDeletedAt($value)
