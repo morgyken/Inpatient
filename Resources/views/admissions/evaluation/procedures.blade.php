@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('content_title','Prescriptions Management')
-@section('content_description','Manage a patients prescriptions')
+@section('content_title','Inpatient Procedures')
+@section('content_description','Manage inpatient procedures')
 
 @section('content')
 
