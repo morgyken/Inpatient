@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('content_title','Prescriptions Management')
-@section('content_description','Manage a patients prescriptions')
+@section('content_title','Inpatient Procedures')
+@section('content_description','Manage inpatient procedures')
 
 @section('content')
 
@@ -32,8 +32,8 @@
         }
     </style>
     <script>
-        var PERFOMED_URL = "{{ route('api.evaluation.performed_treatment',$visit->id) }}";
-        var DIAGNOSIS_URL = "{{ route('api.evaluation.save_diagnosis') }}";
+        var PERFOMED_URL = "{{ route('api.evaluation.performed_treatment',[$visit->id,'__inpatient'=>$admission->visit_id]) }}";
+        var DIAGNOSIS_URL = "{{ route('api.evaluation.save_diagnosis',['__inpatient'=>$visit->id]) }}";
         $(document).ready(function () {
             $('.treatment_item').find('input').iCheck({
                 checkboxClass: 'icheckbox_flat-blue',

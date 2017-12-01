@@ -9,23 +9,24 @@ use Illuminate\Database\Eloquent\Model;
  * Ignite\Inpatient\Entities\Ward
  *
  * @property int $id
- * @property string $name
  * @property string $number
- * @property string $category
- * @property string $cost
- * @property string $age_group
+ * @property string $name
  * @property string $gender
+ * @property string $age_group
+ * @property float $insurance_cost
+ * @property float $cash_cost
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\Ignite\Inpatient\Entities\WardAssigned[] $assigned
- * @property-read \Illuminate\Database\Eloquent\Collection|\Ignite\Inpatient\Entities\BedPosition[] $bedpositions
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ignite\Inpatient\Entities\Bed[] $beds
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Ignite\Inpatient\Entities\Charge[] $charges
  * @property-read \Illuminate\Database\Eloquent\Collection|\Ignite\Reception\Entities\Patients[] $patients
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Ward whereAgeGroup($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Ward whereCategory($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Ward whereCost($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Ward whereCashCost($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Ward whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Ward whereGender($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Ward whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Ward whereInsuranceCost($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Ward whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Ward whereNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\Ward whereUpdatedAt($value)

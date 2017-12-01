@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('content_title',"Doctor's Notes Management")
-@section('content_description', "Manage the doctor's notes")
+@section('content_title','Inpatient Investigations')
+@section('content_description', 'Manage investigations')
 
 @section('content')
 
@@ -32,10 +32,10 @@
     <script>
         var USER_ID = parseInt("{{ Auth::user()->id }}");
         var VISIT_ID = parseInt("{{ $admission->id }}");
-        var DIAGNOSIS_URL = "{{ route('api.evaluation.save_diagnosis') }}";
+        var DIAGNOSIS_URL = "{{ route('api.evaluation.save_diagnosis',['__inpatient'=>$admission->visit_id]) }}";
         var THE_TABLE_URL = "{{ url('/api/inpatient/v1/get/inpatient-investigations/'.$admission->visit_id) }}";
         var THE_CONSUMABLE_URL = "{{ url('inpatient/evaluations/'.$visit->id.'/consumables') }}";
-        var PERFOMED_INVESTIGATION_URL = "{{ route('api.evaluation.performed_investigations',$admission->visit_id) }}";
+        var PERFOMED_INVESTIGATION_URL = "{{ route('api.evaluation.performed_investigations',[$admission->visit_id,'__inpatient'=>$admission->visit_id]) }}";
 
         $(document).ready(function () {
             $('.accordion').accordion({heightStyle: "content"});
