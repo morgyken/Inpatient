@@ -52,6 +52,19 @@ Route::group(['as' => 'inpatient.'], function() {
     });
 
     /*
+    * Admission Requests
+    */
+    Route::group(['prefix' => 'discharge-requests'], function(){
+        
+        Route::get('/', ['uses'=>'DischargeController@index']);
+
+        Route::post('/', ['uses'=>'AdmissionRequestController@store']);
+
+        Route::post('/update', ['uses' => 'AdmissionRequestController@update']);
+        
+    });
+
+    /*
     |--------------------------------------------------------------------------
     | Ward Management
     |--------------------------------------------------------------------------
@@ -109,6 +122,8 @@ Route::group(['as' => 'inpatient.'], function() {
         Route::get('/delete/{bedTypeId}', ['uses'=>'BedTypeController@destroy']);
 
     });
+
+
 
     /*
     * Admissions Management

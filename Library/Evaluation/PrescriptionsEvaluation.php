@@ -70,18 +70,6 @@ class PrescriptionsEvaluation implements EvaluationInterface
         ]);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
     /*
     * Consider having this function in a very seperate Controller or a trait for crying out loud
     */

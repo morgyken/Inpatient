@@ -4,7 +4,7 @@
     </div>
 
     <div class="panel-body" style="height: 400px;">
-        {!! Form::open(['url' => "inpatient/evaluation/$visit->id/doctor" ]) !!}
+        {!! Form::open(['url' => "inpatient/evaluations/$visit->id/doctors" ]) !!}
             <div class="form-group">
                 {!! Form::label('title', 'Note Title') !!}
                 {!! Form::text('title', null, ['id' => 'title', 'class' => 'form-control', 'placeholder' => 'Note Title ...']) !!}

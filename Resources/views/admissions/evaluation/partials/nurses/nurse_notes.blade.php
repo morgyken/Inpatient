@@ -1,6 +1,6 @@
 <div class="panel panel-info">
     <div class="panel-heading">
-        <h5>Previous Doctors Notes</h5>
+        <h5>Previous Nurse Notes</h5>
     </div>
 
     <div class="panel-body items-container">
@@ -21,6 +21,5 @@
 <script>
     $(document).ready(function(){
         $('.accordion').accordion({heightStyle: "content"});    
-
     })
 </script>
