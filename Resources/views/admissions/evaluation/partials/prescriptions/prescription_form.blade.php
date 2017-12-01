@@ -60,9 +60,12 @@
             </div>
 
             <div class="form-group">   
-                <div class="loader" id="prescriptionLoader"></div>
-                <div class="col-md-12" id="save-prescription">
-                    {!! Form::submit('Save Prescription', ['class' => 'btn btn-primary col-md-2']) !!}
+                <div class="col-md-12">
+                    <button id="loader" class="btn btn-info col-md-2 hidden">
+                        <i class="fa fa-spinner fa-spin fa-fw"></i> Loading ... 
+                    </button>
+
+                    {!! Form::submit('Save Prescription', ['class' => 'btn btn-primary col-md-2', 'id'=>'save-prescription']) !!}
                 </div>
             </div>
 
@@ -173,6 +176,7 @@
                 data: form.serialize(),
                 beforeSend: function () {
                     saveButton.hide();
+                    $('#loader').removeClass('hidden');
                     $('#prescriptionLoader').show();
                 },
                 success: function () {
@@ -181,6 +185,7 @@
                     form.trigger("reset");
                     alertify.success("Prescription saved");
                     saveButton.show();
+                    $('#loader').addClass('hidden');
                 },
                 error: function () {
                     alertify.error('<i class="fa fa-check-warning"></i> An error occured prescribing drug');

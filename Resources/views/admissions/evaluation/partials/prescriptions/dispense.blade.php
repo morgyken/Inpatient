@@ -16,12 +16,15 @@
             <div class="col-md-12">
                 <div class="col-md-1">#</div>
                 <div class="col-md-2">Drug</div>
-                <div class="col-md-4">Prescription</div>
+                <div class="col-md-3">Prescription</div>
+                <div class="col-md-1">Dispense</div>
                 <div class="col-md-1">Prescribed</div>
                 <div class="col-md-1">Dispensed</div>
-                <div class="col-md-1">Price</div>
-                <div class="col-md-1">Quantity</div>
-                <div class="col-md-1">Total</div>
+                <div class="col-md-1">Remaining</div>
+                <div class="col-md-1">Administered</div>
+                <!-- <div class="col-md-1">Price (Kshs)</div> -->
+                
+                <!-- <div class="col-md-1">Total (Kshs)</div> -->
             </div>
         </div>
 
@@ -45,14 +48,21 @@
 
                         @if($prescription['stopped'] == 'stopped')
                             <small class="text-danger">Prescription Cancelled</small>
-                        @elseif($prescription['dispensed'] <= $prescription['prescribed'])
+                        @elseif($prescription['dispensed'] >= $prescription['prescribed'])
                             <small class="text-info">Prescription Complete</small>
                         @else
                             <small class="text-success">Available in stock - {{ $prescription['stock'] }}</small>
                         @endif    
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         {{ $prescription['dose'] }}
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <input type="number" class="form-control" name="prescriptions[{{$prescription['drug']}}][quantity]" 
+                                max="{{ $prescription['remaining'] }}" min="1" value="{{ $prescription['to_dispense'] }}" 
+                                {{ $prescription['can_dispense'] ?: 'disabled' }}/>
+                        </div>
                     </div>
                     <div class="col-md-1">
                         {{ $prescription['prescribed'] }}
@@ -61,18 +71,18 @@
                         {{ $prescription['dispensed'] }}
                     </div>
                     <div class="col-md-1">
+                        {{ $prescription['remaining'] }}
+                    </div>
+                    <div class="col-md-1">
+                        {{ $prescription['remaining'] }}
+                    </div>
+                    <!-- <div class="col-md-1">
                         {{ $prescription['price'] }}
-                    </div>
-                    <div class="col-md-1">
-                        <div class="form-group">
-                            <input type="number" name="prescriptions[{{$prescription['drug']}}][quantity]" 
-                                class="form-control" value="{{ $prescription['to_dispense'] }}" 
-                                {{ $prescription['can_dispense'] ?: 'disabled' }}/>
-                        </div>
-                    </div>
-                    <div class="col-md-1">
+                    </div> -->
+                    
+                    <!-- <div class="col-md-1">
                         {{ $prescription['total']  }}
-                    </div>
+                    </div> -->
                 </div>
             </div>
         @empty

@@ -6,6 +6,7 @@ use Ignite\Evaluation\Entities\Dispensing;
 use Ignite\Evaluation\Entities\Prescriptions;
 use Ignite\Evaluation\Entities\VisitDestinations;
 
+use Ignite\Evaluation\Entities\Facility;
 use Ignite\Inpatient\Library\Traits\DrugsTrait;
 use Ignite\Inpatient\Library\Traits\PrescriptionsTrait;
 
@@ -15,7 +16,7 @@ class PrescriptionsEvaluation implements EvaluationInterface
 {
     use PrescriptionsTrait, DrugsTrait;
 
-    protected $visit; 
+    protected $visit, $facility; 
 
     /*
     * Initialize the visit property
@@ -23,6 +24,8 @@ class PrescriptionsEvaluation implements EvaluationInterface
     public function __construct(Visit $visit)
     {
         $this->visit = $visit;
+
+        $this->facility = Facility::where('name', 'inpatient')->first();
     }
 
     /*
@@ -48,9 +51,13 @@ class PrescriptionsEvaluation implements EvaluationInterface
 
         $cost = $this->getProductPrice(request()->only(['visit', 'drug']));
 
-        Prescriptions::create(request()->except('_token'))->payment()->create([
+        $prescription = request()->except('_token');
 
-            'price' => $cost, 'cost' => $cost * $quantity, 'quantity' => $quantity
+        $prescription['facility_id'] = $this->facility->id;
+
+        Prescriptions::create($prescription)->payment()->create([
+
+            'price' => $cost, 'cost' => $cost * $quantity, 'quantity' => $quantity,
 
         ]);
         

@@ -8,7 +8,7 @@ use Ignite\Evaluation\Entities\Patients;
 class AdministerDrug extends Model
 {
     protected $fillable = [
-        'prescription_id', 'administered'
+        'dispensing_id', 'administered', 'administered_at'
     ];
 
     protected $table = "inpatient_administer_drugs";
