@@ -44,6 +44,8 @@ class PrescriptionsEvaluation implements EvaluationInterface
 
         });
 
+        // dd($prescriptions);
+
         return compact('prescriptions');
     }
 
