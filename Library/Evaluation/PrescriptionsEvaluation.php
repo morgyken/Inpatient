@@ -30,10 +30,15 @@ class PrescriptionsEvaluation implements EvaluationInterface
 
     /*
     * Retrieves the data that will be displayed on the view
+    * Filters prescriptions by inpatient facility only
     */
     public function data()
     {
-        $prescriptions = $this->visit->prescriptions->map(function($prescription){
+        $prescriptions = $this->visit->prescriptions->filter(function($prescription){
+
+            return $prescription->facility->id == $this->facility->id;
+
+        })->map(function($prescription){
             
             return $this->transform($prescription);
 

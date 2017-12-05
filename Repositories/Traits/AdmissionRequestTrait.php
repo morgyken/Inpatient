@@ -163,6 +163,10 @@ trait AdmissionRequestTrait
                         "data-toggle='modal' data-target='#deposit-modal' value='".$encoded."'>".
                             "Payment Mode".
                     "</button>";
+
+        $print = "<a class='btn btn-warning btn-xs' value='".$encoded."'>".
+                        "Print Form".
+                    "</a>";
                     
         if($admissionRequest['can_admit'])
         {
@@ -179,7 +183,7 @@ trait AdmissionRequestTrait
 
         $cancel = "<a class='btn btn-danger btn-xs' href='". url('inpatient/admissions/cancel/'.$admissionRequest['patient']['id']) ."'>Cancel</a>";
     
-        return "${authorize} ${payment} ${admit} ${cancel}";
+        return "${authorize} ${payment} ${admit} ${cancel} ${print}";
     }
 }
 
