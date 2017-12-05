@@ -64,7 +64,7 @@ class ChargeSheetEvaluation implements EvaluationInterface
     }
 
     /*
-    * Nursing charges
+    * One off & recurring charges
     */
     public function charges()
     {
@@ -75,6 +75,13 @@ class ChargeSheetEvaluation implements EvaluationInterface
             return $charge->charge_id;
 
         });
+
+        foreach($charges as $charge)
+        {
+            $charge->name = $charge->charge->name;
+        }   
+
+        return $charges;
     }
 
     /*
@@ -89,8 +96,6 @@ class ChargeSheetEvaluation implements EvaluationInterface
             return $charge->consumable_id;
 
         });
-
-        // dd($consumableCharges);
 
         $charges = $consumableCharges->map(function($charge){
 
