@@ -20,9 +20,19 @@ class CreateInpatientDischargeRequestsTable extends Migration
 
             $table->integer('discharge_type_id');
 
-            $table->integer('notes');
+            $table->longText('principal');
 
-            $table->integer('deleted_at');
+            $table->longText('other');
+
+            $table->longText('complains');
+
+            $table->longText('investigations');
+
+            $table->longText('conditions');
+
+            $table->longText('medication');
+
+            $table->softDeletes();
 
             $table->timestamps();
         });

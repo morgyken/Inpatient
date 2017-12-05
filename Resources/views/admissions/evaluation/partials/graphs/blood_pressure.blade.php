@@ -7,15 +7,16 @@
             <div class="row">
                 <br/>
                 <div class="form-inline">
-                    {{Form::open(['url'=>'api/inpatient/v1/saver/blood_pressure','id'=>'bpForm'])}}
-                    <div class="form-group">
-                        <label class=" control-label">Blood Pressure Recording</label>
-                        {{Form::hidden('patient_id',$patient->id)}}
-                        {{Form::hidden('admission_id',$admission->id)}}
-                        {{Form::text('value',null,['class'=>'form-control','placeholder'=>'Blood pressure'])}}
-                        {{Form::text('diastolic',null,['class'=>'form-control','placeholder'=>'Diastolic'])}}
-                        <button type="button" class="btn btn-success" id="adder"> Add</button>
-                    </div>
+                    {{Form::open(['url'=>'inpatient/evaluations/'.$visit->id.'/blood-pressure', 'id'=>'bpForm'])}}
+                    <!-- {{Form::open(['url'=>'api/inpatient/v1/saver/blood_pressure','id'=>'bpForm'])}} -->
+                        <div class="form-group">
+                            <label class=" control-label">Blood Pressure Recording</label>
+                            {{Form::hidden('patient_id',$patient->id)}}
+                            {{Form::hidden('admission_id',$admission->id)}}
+                            {{Form::text('value',null,['class'=>'form-control','placeholder'=>'Systolic'])}}
+                            {{Form::text('diastolic',null,['class'=>'form-control','placeholder'=>'Diastolic'])}}
+                            <button class="btn btn-success" id="adder"> Add</button>
+                        </div>
                     {{Form::close()}}
                 </div>
             </div>

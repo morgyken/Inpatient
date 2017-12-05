@@ -18,9 +18,11 @@
             </tbody>
         </table>
 
-        <!-- <div>
-            <button class="col-md-2 btn btn-primary btn-sm">Administer Drugs</button>   
-        </div> -->
+        <div class="row">
+            <div class="col-md-12" id="save-prescription">
+                <button class="col-md-2 btn btn-primary btn-sm">Administer Drugs</button>   
+            </div>
+        </div>
     </div>
     
     <!-- Administer drugs modal -->

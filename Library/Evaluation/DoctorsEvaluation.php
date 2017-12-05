@@ -6,7 +6,9 @@ use Ignite\Evaluation\Entities\Visit;
 
 use Ignite\Inpatient\Library\Interfaces\EvaluationInterface;
 
-use Ignite\Inpatient\Entities\InpatientDoctorNotes;
+use Ignite\Inpatient\Entities\InpatientNote;
+
+use Carbon\Carbon;
 
 class DoctorsEvaluation implements EvaluationInterface
 {
@@ -25,7 +27,15 @@ class DoctorsEvaluation implements EvaluationInterface
     */
     public function data()
     {
-        return [];
+        $notes = InpatientNote::where('type', 'doctor')->orderBy('created_at', 'DESC')->get()->map(function($note){
+            return [
+                'title' => $note->title ? $note->title : 'Doctors Note',
+                'body' => $note->notes,
+                'date' => Carbon::parse($note->created_at)->toDateTimeString()
+            ];
+        });
+
+        return compact('notes');
     }
 
     /*
@@ -33,7 +43,11 @@ class DoctorsEvaluation implements EvaluationInterface
     */
     public function persist()
     {
-        dd(request()->all());
+        $notes = request()->all();
+        $notes['visit_id'] = $this->visit->id;
+        $notes['type'] = 'doctor';
+
+        return InpatientNote::create($notes);
     }
 }
 

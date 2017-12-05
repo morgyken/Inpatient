@@ -1,6 +1,6 @@
 <div class="panel panel-info" id="form">
     <div class="panel-heading">
-        <h5>Selected investigations</h5>
+        <h5>Patient's Temperature</h5>
     </div>
     <div class="panel-body" id="show_selection">
         <center>
@@ -23,7 +23,6 @@
                 <div class="form-inline">
                     {{Form::open(['url'=>'api/inpatient/v1/saver/temperature','id'=>'tempForm'])}}
                     <div class="form-group">
-                        <p>New recordings</p>
                         {{Form::hidden('patient_id',$patient->id)}}
                         {{Form::hidden('admission_id',$admission->id)}}
                         {{Form::text('respiration',null,['class'=>'form-control','placeholder'=>'Respiration'])}}

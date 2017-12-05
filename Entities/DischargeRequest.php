@@ -15,8 +15,10 @@ class DischargeRequest extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'visit_id', 'discharge_type_id', 'notes', 'deleted_at'
+        'visit_id', 'discharge_type_id', 'principal', 'other', 'complains', 'investigations', 'conditions',	'medication', 'deleted_at'
     ];
+
+    protected $table = 'inpatient_discharge_requests';
 
     /*
     * Relationship between a discharge request and a visit

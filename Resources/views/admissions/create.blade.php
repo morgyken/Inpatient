@@ -41,6 +41,8 @@
 
                         <input type="hidden" value="{{ $admissionRequest->visit_id }}" name="visit_id" />
 
+                        <input type="hidden" value="" name="ward_id" id="wardId" />
+
                         <div class="form-group req">
                             <label class="col-md-4">Admission Doctor</label>
                             <div class="col-md-8">
@@ -73,10 +75,10 @@
                         <div class="form-group req">
                             <label class="col-md-4" for="">Select a Ward</label>
                             <div class="col-md-8">
-                                <select name="ward_id" id="ward" class="form-control">
+                                <select id="ward" class="form-control">
                                     <option value="" disabled selected>Select a ward</option>
                                     @foreach($wards as $ward)
-                                        <option value="{{ $ward->id }}">{{ $ward->name }}</option>
+                                        <option value="{{ json_encode($ward) }}">{{ $ward->name }}</option>
                                     @endforeach
                                 </select>
                                 <p class="help-text text-danger">{{ $errors->first('ward_id') }}</p>
@@ -86,11 +88,7 @@
                         <div class="form-group req">
                             <label for="" class="col-md-4">Select a bed</label>
                             <div class="col-md-8">
-                                <select name="bed_id" id="" class="form-control">
-                                    <option value="" disabled selected>Select a bed</option>
-                                    @foreach($beds as $bed)
-                                        <option value="{{ $bed->id }}">{{ $bed->number }}</option>
-                                    @endforeach
+                                <select name="bed_id" id="beds" class="form-control">
                                 </select>
                                 <p class="help-text text-danger">{{ $errors->first('bed_id') }}</p>
                             </div>
@@ -125,7 +123,33 @@
                     }else{
                         $('#external').attr('disabled', 'disabled');
                     }
-                })
+                });
+
+                $('#ward').change(function(event){
+
+                    let ward = JSON.parse(event.target.value);
+
+                    $('#wardId').val(ward.id);
+
+                    let beds = ward.beds;
+
+                    let bedSelect = $('#beds');
+
+                    bedSelect.empty();
+
+                    var optionBuild = "";
+
+                    for(let key = 0; key < beds.length; key++)
+                    {
+                        optionBuild = optionBuild +  "<option value='"+ beds[key].id +"'>" + 
+
+                            beds[key].number + 
+                        
+                        "</option>";
+                    }
+
+                    bedSelect.append(optionBuild);
+                });
 
             </script>
         {{-- @endpush --}}

@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('content_title',"Doctor's Notes Management")
-@section('content_description', "Manage the doctor's notes")
+@section('content_title',"Blood Pressure Management")
+@section('content_description', "Manage the patients blood pressure")
 
 @section('content')
 

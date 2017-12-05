@@ -31,7 +31,11 @@ class ChargeSheetEvaluation implements EvaluationInterface
 
             'consumables' => $this->consumables(),
 
-            'prescriptions' => $this->prescriptions()
+            'prescriptions' => $this->prescriptions(),
+
+            'doctor_procedures' => $this->procedures('doctor'),
+
+            'nurse_procedures' => $this->procedures('nurse')
         ];
     }
 
@@ -147,5 +151,13 @@ class ChargeSheetEvaluation implements EvaluationInterface
         $charges['total'] = $charges->pluck('price')->sum();
 
         return $charges;
+    }
+
+    /*
+    * Get Procedures
+    */
+    public function procedures($procedureType)
+    {
+        
     }
 }

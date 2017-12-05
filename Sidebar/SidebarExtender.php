@@ -67,7 +67,7 @@ class SidebarExtender implements Panda
                 //patients waiting admissions
                 $item->item('Requested Discharge ', function(Item $item) {
                     $item->icon('fa fa-exclamation-circle');
-                    $item->url('/inpatient/request_discharge');
+                    $item->url('/inpatient/discharge-requests');
                     //$item->authorize($this->auth->hasAccess('evaluation.settings.admit_patient'));
                     $item->weight(4);
                 });

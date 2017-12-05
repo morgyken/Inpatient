@@ -168,14 +168,14 @@ trait AdmissionRequestTrait
         {
             $admit = "<a class='btn btn-primary btn-xs' href='". url('inpatient/admissions/'.$admissionRequest['id'].'/create')."'>".
                             "Admit".
-                        "</a>";
+                        "</a>";           
         }  
         else
         {
             $admit = "<a class='btn btn-default btn-xs' href='#'>".
                             "Admit".
                         "</a>"; 
-        }       
+        }
 
         $cancel = "<a class='btn btn-danger btn-xs' href='". url('inpatient/admissions/cancel/'.$admissionRequest['patient']['id']) ."'>Cancel</a>";
     
