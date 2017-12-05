@@ -32,7 +32,7 @@ class Bed extends Model
 
     protected $table = 'inpatient_beds';
 
-    protected $with = ['ward', 'type', 'admission'];
+    protected $with = ['type', 'admission'];
 
     /*
     * Relationship between a bed and a ward

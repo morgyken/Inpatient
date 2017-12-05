@@ -1,6 +1,8 @@
 <?php
 namespace Ignite\Inpatient\Library\Evaluation;
 
+use Ignite\Inpatient\Entities\Vitals;
+
 use Ignite\Inpatient\Library\Interfaces\EvaluationInterface;
 
 class PatientVitalsEvaluation implements EvaluationInterface
@@ -13,5 +15,13 @@ class PatientVitalsEvaluation implements EvaluationInterface
         return [
             'charges' => ''
         ];
+    }
+
+    /*
+    * Save the patients vitals
+    */
+    public function persist()
+    {
+        return Vitals::create(request()->all());
     }
 }

@@ -47,4 +47,12 @@ class BloodPressureEvaluation implements EvaluationInterface
             ->width(0)
             ->height(0);
     }
+
+    /*
+    * Post Blood pressure data
+    */
+    public function persist()
+    {
+        return BloodPressure::create(request()->all());
+    }
 }

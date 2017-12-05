@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('content_title','Charge Sheet Management')
-@section('content_description','View charges on patient')
+@section('content_title','Patient Vitals Management')
+@section('content_description','Manage the patient vitals')
 
 @section('content')
 

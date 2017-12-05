@@ -150,6 +150,9 @@
                 {!! Form::close()!!}
             </div>
             <div class="modal-footer">
+                <button id="depositLoader" type="button" class="btn btn-info hidden">
+                    <i class="fa fa-spinner fa-spin fa-fw"></i> Loading ... 
+                </button>
                 <button id="save-account-details" type="button" class="btn btn-success">Save Details</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
             </div>
@@ -188,6 +191,7 @@
     $('#save-account-details').click(function(){
 
         $('#save-account-details').hide();
+        $('#depositLoader').removeClass('hidden');
 
         var POST_PATIENT_ACCOUNT_ENDPOINT = "/finance/patient/" + $('#patient-detail').val() + "/account/deposit";
 
@@ -200,11 +204,13 @@
             alertify.success("Success!");
             $('#save-account-details').show();
             $('#deposit-modal').modal('hide');
+            $('#depositLoader').addClass('hidden');
             $('#awaiting-admission').dataTable( ).api().ajax.reload();
 
         }).fail(function(){
 
             alertify.error("Something went wrong");
+            $('#depositLoader').addClass('hidden');
             $('#save-account-details').show();
             $('#deposit-modal').modal('hide');
 

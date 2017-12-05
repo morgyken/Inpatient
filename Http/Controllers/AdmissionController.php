@@ -67,9 +67,7 @@ class AdmissionController extends AdminBaseController
 
         $wards = $this->wardRepository->all();
 
-        $beds = $this->bedRepository->all();
-
-        return view('inpatient::admissions.create', compact('admissionRequest', 'doctors', 'wards', 'beds'));
+        return view('inpatient::admissions.create', compact('admissionRequest', 'doctors', 'wards'));
     }
 
     /**

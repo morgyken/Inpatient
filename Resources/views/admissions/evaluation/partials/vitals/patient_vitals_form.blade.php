@@ -3,96 +3,141 @@
         <h5>Record Patient Vitals</h5>
     </div>
     <div class="panel-body">
-        <form id = "vitals-form">
-            {{ csrf_field() }}
-            <input type="hidden" name="visit_id" id = "visit_id" value="{{ $visit->id }}" required>
+        {!! Form::open(['url' => 'inpatient/evaluations/'.$visit->id.'/patient-vitals', 'id' => 'vitals-form', 'class' => 'row']) !!}
 
-            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding:0 !important;">
-                <br>
-                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0 !important;">
-                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="padding: 0 !important;">
-                        <label for="" class="control-label">Date recorded:</label>
-                        <input type="date" class="form-control" name="date_recorded" id ="date_recorded" value = "{{ \Carbon\Carbon::now('Africa/Nairobi')->toDateString() }}" required>
-                    </div>
-                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-                        <label for="" class="control-label">Time recorded:</label>
-                        <input type="text" class="form-control" name="time_recorded" id ="time_recorded" value = "{{ \Carbon\Carbon::now()->format('H:i A') }}" required>
-                    </div>
-                </div>                    
+            {!! Form::hidden('visit_id', $visit->id) !!}
 
-                <label for="" class="control-label">Weight:(Kgs)</label>
-                <input type="number" class="form-control" name="weight" id ="weight" value = "{{ (isset($admission->vitals->weight)) ? $admission->vitals->weight : "" }}" required>
+            {!! Form::hidden('user_id', Auth::user()->id) !!}
 
-                <label for="" class="control-label">Height:(Metres)</label>
-                <input type="text" class="form-control" name="height" id ="height" value = "{{ (isset($admission->vitals->height)) ? $admission->vitals->height : "" }}" required>
+            {!! Form::hidden('admission_id', $visit->admission->id) !!}            
 
-                <label for="" class="control-label">BP Systolic:[mm/hg]</label>
-                <input type="number" class="form-control" name="bp_systolic" id = "bp_systolic">
-
-                <label for="" class="control-label">BP Diastolic:[mm/hg]</label>
-                <input type="number" class="form-control" name="bp_diastolic" id = "bp_diastolic">
-
-                <label for="" class="control-label">Pulse:[Per Min]</label>
-                <input type="number" class="form-control" name="pulse" id="pulse">
-
-                <label for="" class="control-label">Respiration:[Per min]</label>
-                <input type="number" class="form-control" name="respiration" id = "respiration">
-
-                <label for="" class="control-label">Temperature:[Celsius]</label>
-                <input type="number" class="form-control" name="temperature" id = "temperature">
-
-                <label for="" class="control-label">Temperature Location:</label>
-                <select class="form-control" name="temperature_location" id = "temperature_location">
-                    <option value="Oral">Oral</option>
-                    <option value="Tympanic Membrane">Tympanic Membrane</option>
-                    <option value="Axillary">Axillary</option>
-                    <option value="Temporal Artery">Temporal Artery</option>
-                    <option value="Rectal">Rectal</option>
-                </select>
-
-                <label for="" class="control-label">Oxygen Saturation:[%]</label>
-                <input type="number" class="form-control" name="oxgyen" id = "oxygen">                   
+            <div class="col-md-4">
+                <div class="form-group">
+                    {!! Form::label('Date Recorded') !!}
+                    {!! Form::date('date_recorded', \Carbon\Carbon::now('Africa/Nairobi')->toDateString(), ['class'=>'form-control']) !!}
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    {!! Form::label('Time Recorded') !!}
+                    {!! Form::time('time_recorded', \Carbon\Carbon::now()->format('H:i A'), ['class'=>'form-control']) !!}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    {!! Form::label('Waist Circumference:[cm]') !!}
+                    {!! Form::number('waist', null, ['class' => 'form-control']) !!}
+                </div>
             </div>
 
-
-            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding:0 0 0 5px !important;">
-                <br>
-                <label for="" class="control-label">Waist Circumference:[cm]</label>
-                <input type="number" class="form-control" name="waist" id = "waist">
-
-                <label for="" class="control-label">Hip Circumference:[cm]</label>
-                <input type="number" class="form-control" name="hip" id = "hip">
-                {{--  <label for="" class="control-label">Waist to Hip Ratio</label>
-                <input type="number" class="form-control" disabled name="waist_hip_ratio">
-
-                <label for="" class="control-label">BMI:[%]</label>
-                <input type="number" class="form-control bmi" disabled name="bmi" id = "bmi">
-
-                <label for="" class="control-label">BMI Status:</label>
-                <input type="text" class="form-control" disabled name="bmi_status" id = "bmi_status"> --}}
-                
-                <label for="" class="control-label">Blood Sugar:</label>
-                <input type="number" class="form-control" name="blood_sugar" id = "blood_sugar">
-
-                <label for="" class="control-label">Blood Sugar Units:</label>
-                <select name="blood_sugar_units" id="blood_sugar_units" class="form-control" required="required">
-                    <option value="mmol/L">mmol/L</option>
-                    <option value="mg/dL">mg/dL</option>
-                </select>
-
-                <label for="" class="control-label">Allergies:</label>
-                <input type="text" class="form-control" name="allergies" id = "allergies" value="None">
-
-                <label for="" class="control-label">Chronic Illnesses:</label>
-                <input type="text" class="form-control" name="chronic_illnesses" id = "chronic_illnesses" value="None">
-
+            <div class="col-md-6">
+                <div class="form-group">
+                    {!! Form::label('Weight:[Kgs]') !!}
+                    {!! Form::number('weight', isset($admission->vitals->weight) ?? $admission->vitals->weight, ['class' => 'form-control']) !!}
+                </div>
             </div>
 
-            <div class="col-xs-12 col-sm-12 col-md-12" style="padding: 0 !important;">
-                <br>
-                <button type="button" class="btn  btn-primary" id = "record-vitals">Record</button>
+            <div class="col-md-6">
+                <div class="form-group">
+                    {!! Form::label('Hip Circumference:[cm]') !!}
+                    {!! Form::number('hip', null, ['class' => 'form-control']) !!}
+                </div>
             </div>
-        </form>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    {!! Form::label('Height:[m]') !!}
+                    {!! Form::number('height', isset($admission->vitals->height) ?? $admission->vitals->height, ['class' => 'form-control']) !!}
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    {!! Form::label('Blood Sugar') !!}
+                    {!! Form::number('blood_sugar', null, ['class' => 'form-control']) !!}
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    {!! Form::label('BP Systolic:[mm/hg]') !!}
+                    {!! Form::number('bp_systolic', null, ['class' => 'form-control']) !!}
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    {!! Form::label('Blood Sugar Units') !!}
+                    {!! Form::select('blood_sugar_units', ['mmol/L'=>'mmol/L', 'mg/dL'=>'mg/dL'], 'mmol/L', ['class' => 'form-control']) !!}
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    {!! Form::label('BP Diastolic:[mm/hg]') !!}
+                    {!! Form::number('bp_diastolic', null, ['class' => 'form-control']) !!}
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    {!! Form::label('Allergies') !!}
+                    {!! Form::text('allergies', null, ['class' => 'form-control']) !!}
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    {!! Form::label('Pulse:[Per Min]') !!}
+                    {!! Form::number('pulse', null, ['class' => 'form-control']) !!}
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    {!! Form::label('Chronic Illnesses') !!}
+                    {!! Form::text('chronic_illnesses', null, ['class' => 'form-control']) !!}
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    {!! Form::label('Respiration:[Per min]') !!}
+                    {!! Form::number('respiration', null, ['class' => 'form-control']) !!}
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    {!! Form::label('Temperature:[Celsius]') !!}
+                    {!! Form::number('temperature', null, ['class' => 'form-control']) !!}
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    {!! Form::label('Temperature Location]') !!}
+                    {!! Form::select('temperature_location', [
+                        'Oral' => 'Oral', 'Tympanic Membrane' => 'Tympanic Membrane',
+                        'Axillary' => 'Axillary', 'Temporal Artery' => 'Temporal Artery', 'Rectal' => 'Rectal'
+                    ], 'Oral', ['class' => 'form-control']) !!}
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    {!! Form::label('Oxygen Saturation:[%]') !!}
+                    {!! Form::number('oxygen', null, ['class' => 'form-control']) !!}
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    {!! Form::submit('Record Vitals', ['class'=>'btn btn-primary col-md-4']) !!}
+                </div>
+            </div>
+
+        {!! Form::close() !!}
     </div>
     <script type="text/javascript">
     

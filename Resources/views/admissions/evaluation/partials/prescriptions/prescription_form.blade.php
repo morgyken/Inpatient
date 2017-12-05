@@ -61,7 +61,7 @@
 
             <div class="form-group">   
                 <div class="col-md-12">
-                    <button id="loader" class="btn btn-info col-md-2 hidden">
+                    <button id="loader" type="button" class="btn btn-info col-md-2 hidden">
                         <i class="fa fa-spinner fa-spin fa-fw"></i> Loading ... 
                     </button>
 

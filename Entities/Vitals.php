@@ -64,6 +64,8 @@ class Vitals extends Model {
 
     public $table = 'inpatient_vitals';
 
+    protected $guarded = [];
+    
     public function visits() {
         return $this->belongsTo(Visit::class, 'visit_id');
     }

@@ -25,7 +25,10 @@
                 {!! Form::close()!!}
             </div>
             <div class="modal-footer">
-                <button id="authorize" type="button" class="btn btn-info">Authorize</button>
+                <button id="authorizeLoader" type="button" class="btn btn-info hidden">
+                    <i class="fa fa-spinner fa-spin fa-fw"></i> Loading ... 
+                </button>
+                <button id="authorize" type="button" class="btn btn-success">Authorize</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
             </div>
         </div>
@@ -43,15 +46,15 @@ $(document).ready(function(){
 
         let data = $('#authorize-form').serialize();
 
-        $.post(POST_AUTHORIZE_ENDPOINT, data, function(){
-            
-            $('#authorize').hide();
+        $('#authorize').hide();
+        $('#authorizeLoader').removeClass('hidden');
 
-        }).done(function(){
+        $.post(POST_AUTHORIZE_ENDPOINT, data, function(){}).done(function(){
 
             $('#authorize-modal').modal('hide');
             alertify.success("Authrorization successful");
             $('#authorize').show();
+            $('#authorizeLoader').addClass('hidden');
             $('#awaiting-admission').dataTable( ).api().ajax.reload();
             
         }).fail(function(){
@@ -59,6 +62,7 @@ $(document).ready(function(){
             $('#authorize-modal').modal('hide');
             alertify.error("Something went wrong");
             $('#authorize').show();
+            $('#authorizeLoader').addClass('hidden');
 
         });
 

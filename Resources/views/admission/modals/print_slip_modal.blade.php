@@ -1,5 +1,4 @@
-<!-- Modal for controlling the payment type -->
-            
+<!-- Modal for controlling the print outs needed after  -->  
 <div id="print-modal" class="modal fade" role="dialog">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
