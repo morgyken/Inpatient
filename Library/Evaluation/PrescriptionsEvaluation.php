@@ -36,7 +36,7 @@ class PrescriptionsEvaluation implements EvaluationInterface
     {
         $prescriptions = $this->visit->prescriptions->filter(function($prescription){
 
-            return $prescription->facility->id == $this->facility->id;
+            return $prescription->facility_id == $this->facility->id;
 
         })->map(function($prescription){
             
