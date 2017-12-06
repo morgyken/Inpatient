@@ -8,6 +8,7 @@ use Ignite\Evaluation\Entities\Prescriptions;
 use Ignite\Evaluation\Entities\Dispensing;
 use Ignite\Inpatient\Entities\ChargeSheet;
 use Carbon\Carbon;
+use Ignite\Evaluation\Entities\Facility;
 
 class PrescriptionRepository
 {
@@ -27,9 +28,17 @@ class PrescriptionRepository
     */
     public function getPrescriptions($visit)
     {
-        $ordered = $this->transformPrescriptions($visit->prescriptions);
+        $facility = Facility::where('name', 'inpatient')->first();
+        
+        $prescriptions = $visit->prescriptions->filter(function($prescription) use($facility){
 
-        $dispensed = $this->dispensedPrescriptions($visit->prescriptions);
+            return ($prescription->facility_id == $facility->id);
+
+        });
+
+        $ordered = $this->transformPrescriptions($prescriptions);
+
+        $dispensed = $this->dispensedPrescriptions($prescriptions);
 
         return compact('ordered', 'dispensed');
     }

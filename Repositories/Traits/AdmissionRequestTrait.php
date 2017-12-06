@@ -164,7 +164,7 @@ trait AdmissionRequestTrait
                             "Payment Mode".
                     "</button>";
 
-        $print = "<a class='btn btn-warning btn-xs' value='".$encoded."'>".
+        $print = "<a target='_blank' href='". url('inpatient/admission-letter/create/'.$admissionRequest['patient']['id']) ."' class='btn btn-warning btn-xs'>".
                         "Print Form".
                     "</a>";
                     
