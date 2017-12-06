@@ -48,7 +48,9 @@
                 $('.nav-tabs a').on('shown.bs.tab', function (e) {
                     window.location.hash = e.target.hash;
                 })
+                
                 var my_bp_chart = $("#bp_chart").highcharts();
+
                 $('#adder').click(function () {
                     $form = $(this).closest('form');
                     $.ajax({type: 'POST', url: $form.attr('action'), data: $form.serialize()})

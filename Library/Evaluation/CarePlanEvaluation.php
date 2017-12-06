@@ -22,9 +22,9 @@ class CarePlanEvaluation implements EvaluationInterface
     */
     public function data()
     {
-        return [
+        $plans = NursingCarePlan::where('visit_id', $this->visit->id)->get();
 
-        ];
+        return compact('plans');
     }
 
     /*
@@ -32,6 +32,8 @@ class CarePlanEvaluation implements EvaluationInterface
     */
     public function persist()
     {
-        
+        $record = request()->except('_token');
+
+        NursingCarePlan::create($record);
     }
 }

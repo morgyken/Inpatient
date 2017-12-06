@@ -4,61 +4,57 @@
     </div>
 
     <div class="panel-body">
-        <form id="transfusion" action="{{ url('/inpatient/manage/notes') }}" method="POST">
+        <div class="row">
+            {!! Form::open(['url' => "inpatient/evaluations/$visit->id/blood-transfusion"]) !!}
 
-            {{ csrf_field() }}
+                {!! Form::hidden('visit_id', $visit->id) !!}
 
-            <input type="hidden" name="admission_id" id="admission_id" value="{{ $admission->id }}" required>
+                {!! Form::hidden('user_id', Auth::user()->id) !!}
 
-            <input type="hidden" name="visit_id" id = "visit_id" value="{{ $admission->visit_id }}" required>
-            
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding:0 !important;">
+                {!! Form::hidden('admission_id', $visit->admission->id) !!}            
 
-                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding: 0 !important;">
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding: 0 !important;">
-                        <label for="" class="control-label">Date recorded:</label>
-                        <input type="date" class="form-control" name="blood_date_recorded" id ="blood_date_recorded" value = "{{ \Carbon\Carbon::now('Africa/Nairobi')->toDateString() }}" required>
-                    </div>
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding: 0 !important;">
-                        <label for="" class="control-label">Time recorded:</label>
-                        <input type="text" class="form-control" name="blood_time_recorded" id ="blood_time_recorded" value = "{{ \Carbon\Carbon::now()->format('H:i a') }}" required>
-                    </div>
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0 !important;">
-                         <div class="form-group">
-                            <label>Temperature (<sup>o</sup>C)</label>
-                            <input type="number" name="blood_temperature" id="blood_temperature" class="form-control" required>
-                        </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {!! Form::label('BP Systolic:[mm/hg]') !!}
+                        {!! Form::number('bp_systolic', null, ['class'=>'form-control']) !!}
                     </div>
                 </div>
 
-                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding: 0 !important; padding-left: 5px !important;">
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding: 0 !important;">
-                        <label for="" class="control-label">BP Systolic:[mm/hg]</label>
-                        <input type="number" class="form-control" name="blood_bp_systolic" id = "blood_bp_systolic" required>
-                    </div>
-                    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="padding: 0 !important;">
-                        <label for="" class="control-label">BP Diastolic:[mm/hg]</label>
-                        <input type="number" class="form-control" name="blood_bp_diastolic" id = "blood_bp_diastolic" required>
-                    </div>
-
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0 !important; padding-left: 1px !important;">
-                        <label>Respiration Rate</label>
-                        <input type="number" name="blood_respiration" id="blood_respiration" class="form-control" required>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {!! Form::label('BP Diastolic:[mm/hg]') !!}
+                        {!! Form::number('bp_diastolic', null, ['class'=>'form-control']) !!}
                     </div>
                 </div>
-            </div>
 
-            <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8" style="padding: 0 !important;">
-                <label>Remarks:</label>
-                 <textarea name="blood_remarks" id="blood_remarks" class="form-control" rows="3" cols="10" required></textarea>
-             </div> 
-           
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="padding: 0 !important;">
-                <br/>
-                <button type="button" class="btn btn-sm btn-primary" id = "save-transfusion">Record Details</button>
-            </div>
-           
-        </form>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {!! Form::label('Temperature:[deg] ') !!}
+                        {!! Form::number('temperature', null, ['class'=>'form-control']) !!}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {!! Form::label('Respiration Rate') !!}
+                        {!! Form::number('respiration', null, ['class'=>'form-control']) !!}
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="form-group">
+                        {!! Form::label('Remarks') !!}
+                        {!! Form::textarea('remarks', null, ['class'=>'form-control']) !!}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {!! Form::submit('Save', ['class'=>'btn btn-primary col-md-4']) !!}
+                    </div>
+                </div>
+            {!! Form::close() !!}
+        </div>
     </div>
     <script type="text/javascript">
 
