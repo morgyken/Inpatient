@@ -4,20 +4,21 @@ namespace Ignite\Inpatient\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Ignite\Evaluation\Entities\Patients;
+use Ignite\Evaluation\Entities\Prescriptions;
 
 class AdministerDrug extends Model
 {
     protected $fillable = [
-        'dispensing_id', 'administered', 'administered_at'
+        'prescription_id', 'administered',  'user_id'
     ];
 
     protected $table = "inpatient_administer_drugs";
 
     /*
-    * Relationship between administering a drug and the drug itself
+    * Relationship between a dispensed record and the administer trail
     */
-    // public function prescription()
-    // {
-    //     return $this->belongsTo();
-    // }
+    public function prescription()
+    {
+        $this->belongsTo(Prescription::class, 'prescription_id');
+    }
 }
