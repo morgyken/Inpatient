@@ -4,6 +4,8 @@ namespace Ignite\Inpatient\Library\Traits;
 
 use Ignite\Evaluation\Entities\DispensingDetails;
 
+use Ignite\Inpatient\Entities\AdministerDrug;
+
 trait PrescriptionsTrait
 {
     public function transform($prescription)
@@ -39,9 +41,20 @@ trait PrescriptionsTrait
 
             'to_dispense' => $this->toDispense($prescription),
 
+            // 'administered' => $this->administered($prescription),
+
             'is_dispensed' => $prescription->payment
         ];
     } 
+
+    /*
+    * Get the prescriptions that have been administered
+    */
+    public function administered($prescription)
+    {
+        dd($prescription->administered->pluck('administered')->sum());
+        // dd($prescription);
+    }
 
     /*
     * Checks to see if the prescription can be dispensed

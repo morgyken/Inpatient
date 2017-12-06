@@ -17,11 +17,11 @@ class CreateInpatientAdministerDrugsTable extends Migration
             
             $table->increments('id');
 
-            $table->integer('dispensing_id');
+            $table->integer('prescription_id');
 
-            $table->boolean('administered')->default(false);
+            $table->integer('administered');
 
-            $table->boolean('administered_at')->default(false);
+            $table->timestamp('user_id');
 
             $table->timestamps();
         

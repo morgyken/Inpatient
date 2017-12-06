@@ -9,6 +9,7 @@ use Ignite\Evaluation\Entities\Dispensing;
 use Ignite\Inpatient\Entities\ChargeSheet;
 use Carbon\Carbon;
 use Ignite\Evaluation\Entities\Facility;
+use Ignite\Inpatient\Entities\AdministerDrug;
 
 class PrescriptionRepository
 {
@@ -78,7 +79,7 @@ class PrescriptionRepository
         
         $dispenses = $prescriptions->filter(function($prescription, $key){
 
-            return $prescription['stopped'] != "stopped";
+            return ($prescription['stopped'] != "stopped" and $prescription['quantity']);
 
         })->map(function($prescription) use($visitId){   
 
