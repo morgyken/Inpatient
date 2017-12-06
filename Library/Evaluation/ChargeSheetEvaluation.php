@@ -113,6 +113,19 @@ class ChargeSheetEvaluation implements EvaluationInterface
         
         });
 
+        $charges = $charges->groupBy('name')->map(function($charge, $key){
+            
+            $units = $charge->pluck('units')->sum();
+            $cost = $charge->pluck('cost')->first();
+
+            return [
+                'name' => $charge->pluck('name')->first(),
+                'units' => $units, 
+                'cost' =>  $cost, 
+                'price' => $units * $cost, 
+            ];
+        });
+
         $charges['total'] = $charges->pluck('price')->sum();
         
         return $charges;
@@ -151,6 +164,19 @@ class ChargeSheetEvaluation implements EvaluationInterface
                 'dispensed' => Carbon::parse($dispense->created_at)->toDayDateTimeString(),  
             ];
 
+        });
+
+        $charges = $charges->groupBy('name')->map(function($charge, $key){
+
+            $units = $charge->pluck('units')->sum();
+            $cost = $charge->pluck('cost')->first();
+
+            return [
+                'name' => $charge->pluck('name')->first(),
+                'units' => $units, 
+                'cost' =>  $cost, 
+                'price' => $units * $cost, 
+            ];
         });
 
         $charges['total'] = $charges->pluck('price')->sum();

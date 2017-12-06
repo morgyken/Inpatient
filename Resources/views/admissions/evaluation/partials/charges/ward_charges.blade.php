@@ -7,7 +7,7 @@
             <thead>
                 <th>Name</th>
                 <th>Unit (Days)</th>
-                <th>Pice</th>
+                <th>Price</th>
                 <th>Total (Kshs)</th>
             </thead>
             <tbody>

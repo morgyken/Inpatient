@@ -85,7 +85,7 @@ class ConsumablesEvaluation implements EvaluationInterface
                 'amount' => request()->get("amount$consumable"),
                 'user' => request()->get("user"),
                 'ordered' => true
-            ]);
+            ])->id;
 
             $total = $quantity * $price;
 
@@ -107,17 +107,17 @@ class ConsumablesEvaluation implements EvaluationInterface
 
         $stock->save();
 
-        $adjustment = InventoryStockAdjustment::where('product', $productId)->latest()->first();
+        // $adjustment = InventoryStockAdjustment::where('product', $productId)->latest()->first();
 
-        InventoryStockAdjustment::create([
-            'product' => $productId,
-            'opening_qty' => $adjustment->quantity,
-            'quantity' => $adjustment->quantity - $quantity,
-            'new_stock' => $quantity,
-            'method' => '-',
-            'type' => 'consumable',
-            'user' => \Auth::user()->id,
-        ]);
+        // InventoryStockAdjustment::create([
+        //     'product' => $productId,
+        //     'opening_qty' => $adjustment->quantity,
+        //     'quantity' => $adjustment->quantity - $quantity,
+        //     'new_stock' => $quantity,
+        //     'method' => '-',
+        //     'type' => 'consumable',
+        //     'user' => \Auth::user()->id,
+        // ]);
     }
 
     private function _get_selected_stack()
