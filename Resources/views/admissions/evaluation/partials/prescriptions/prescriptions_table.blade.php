@@ -20,7 +20,9 @@
 
         <div class="row">
             <div class="col-md-12" id="save-prescription">
-                <button class="col-md-2 btn btn-primary btn-sm">Administer Drugs</button>   
+                <button class="col-md-2 btn btn-primary btn-sm" data-toggle="modal" data-target="#administer-modal">
+                    Administer Drugs
+                </button>   
             </div>
         </div>
     </div>
@@ -31,7 +33,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Stop drug dispensing &amp; administering</h4>
+                    <h4 class="modal-title">Administer Drugs</h4>
                 </div>
                 <div class="modal-body">
                     {!! Form::open(['id'=>'authorize-form','url'=>'inpatient/admission-requests/update']) !!}

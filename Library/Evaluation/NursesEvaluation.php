@@ -28,7 +28,9 @@ class NursesEvaluation implements EvaluationInterface
     */
     public function data()
     {
-        $notes = InpatientNote::where('type', 'nurse')->orderBy('created_at', 'DESC')->get()->map(function($note){
+        $notes = InpatientNote::where('type', 'nurse')->
+                                where('visit_id', $this->visit->id)->
+                                orderBy('created_at', 'DESC')->get()->map(function($note){
             return [
                 'title' => $note->title ? $note->title : 'Nurses Note',
                 'body' => $note->notes,
