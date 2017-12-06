@@ -9,7 +9,6 @@
                 <th>Units</th>
                 <th>Price (Kshs)</th>
                 <th>Total (Kshs)</th>
-                <th>Used At</th>
             </thead>
             <tbody>
                 @foreach($consumables as $consumable)
@@ -18,7 +17,6 @@
                         <td>{{ $consumable['units'] }}</td>
                         <td>{{ $consumable['cost'] }}</td>
                         <td>{{ $consumable['price'] }}</td>
-                        <td>{{ $consumable['used_on'] }}</td>
                     </tr>
                 @endforeach
             </tbody>

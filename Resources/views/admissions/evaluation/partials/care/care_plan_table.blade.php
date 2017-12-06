@@ -11,7 +11,7 @@
                     <th>Assessment</th>
                     <th>Diagnosis</th>
                     <th>Expected</th>
-                    <th>Outcome</th>
+                    <th>Reasons</th>
                     <th>Recorded By</th>
                     <th>Options</th>
                 </tr>
@@ -22,8 +22,8 @@
                         <td>{{ \Carbon\Carbon::parse($plan->created_at)->toDateTimeString() }}</td>
                         <td>{{ (strlen($plan->assessment) > 0) ? substr($plan->assessment, 0, 20) : 'None' }}</td>
                         <td>{{ (strlen($plan->diagnosis) > 0) ? substr($plan->diagnosis, 0, 20) : 'None' }}</td>
-                        <td>{{ (strlen($plan->expected) > 0) ? substr($plan->expected, 0, 20) : 'None' }}</td>
-                        <td>{{ (strlen($plan->outcome) > 0) ? substr($plan->outcome, 0, 20) : 'None' }}</td>
+                        <td>{{ (strlen($plan->expected_outcome) > 0) ? substr($plan->expected_outcome, 0, 20) : 'None' }}</td>
+                        <td>{{ (strlen($plan->reasons) > 0) ? substr($plan->reasons, 0, 20) : 'None' }}</td>
                         <td>{{ $plan->user->profile->fullName }}</td>
                         <td>Options</td>
                     </tr>

@@ -9,7 +9,6 @@
                 <th>Units</th>
                 <th>Price (Kshs)</th>
                 <th>Total (Kshs)</th>
-                <th>Dispensed At</th>
             </thead>
             <tbody>
                 @foreach($prescriptions as $prescription)
@@ -18,7 +17,6 @@
                         <td>{{ $prescription['units'] }}</td>
                         <td>{{ $prescription['cost'] }}</td>
                         <td>{{ $prescription['price'] }}</td>
-                        <td>{{ $prescription['dispensed'] }}</td>
                     </tr>
                 @endforeach
             </tbody>

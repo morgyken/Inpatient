@@ -46,8 +46,8 @@
 
             <div class="col-md-6">
                 <div class="form-group">
-                    {!! Form::label('Height:[cm]') !!}
-                    {!! Form::number('height', isset($admission->vitals->height) ?? $admission->vitals->height, ['class' => 'form-control']) !!}
+                    {!! Form::label('Height:[m]') !!}
+                    {!! Form::text('height', isset($admission->vitals->height) ?? $admission->vitals->height, ['class' => 'form-control']) !!}
                 </div>
             </div>
 
@@ -110,7 +110,7 @@
             <div class="col-md-6">
                 <div class="form-group">
                     {!! Form::label('Temperature:[Celsius]') !!}
-                    {!! Form::number('temperature', null, ['class' => 'form-control']) !!}
+                    {!! Form::text('temperature', null, ['class' => 'form-control']) !!}
                 </div>
             </div>
 
