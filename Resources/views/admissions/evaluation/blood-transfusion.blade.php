@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('content_title','Prescriptions Management')
-@section('content_description','Manage a patients prescriptions')
+@section('content_title','Blood Transfusion Management')
+@section('content_description','Manage a patients blood transfusions')
 
 @section('content')
 
@@ -14,6 +14,6 @@
 @include('inpatient::admissions.evaluation.partials.transfusion.transfusion_form')
 
 <!-- Transfusion Table -->
-
+@include('inpatient::admissions.evaluation.partials.transfusion.transfusion_table')
 
 @endsection

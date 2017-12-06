@@ -31,9 +31,9 @@
             <li class="{{ $active != 'blood-transfusion' ?: 'active' }}">
                 <a href="{{ url('/inpatient/evaluations/'. $visit->id.'/blood-transfusion') }}">Blood Transfusion</a>
             </li>
-            <li class="{{ $active != 'fluid-balance' ?: 'active' }}">
+            <!-- <li class="{{ $active != 'fluid-balance' ?: 'active' }}">
                 <a href="{{ url('/inpatient/evaluations/'. $visit->id.'/fluid-balance') }}">Fluid Balance</a>
-            </li>
+            </li> -->
             <li class="{{ $active != 'care-plan' ?: 'active' }}">
                 <a href="{{ url('/inpatient/evaluations/'. $visit->id.'/care-plan') }}">Care Plan</a>
             </li>

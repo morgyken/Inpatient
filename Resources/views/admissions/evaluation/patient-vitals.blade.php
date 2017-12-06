@@ -13,4 +13,7 @@
 <!-- Include Patient Vitals Form -->
 @include('inpatient::admissions.evaluation.partials.vitals.patient_vitals_form')
 
+<!-- Include Patient Vitals Table -->
+@include('inpatient::admissions.evaluation.partials.vitals.patient_vitals_table')
+
 @endsection

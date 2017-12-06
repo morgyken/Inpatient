@@ -46,6 +46,8 @@ class BloodTransfusion extends Model
 {
     public $table = 'inpatient_blood_transfusion';
 
+    public $guarded = ['id'];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
     */

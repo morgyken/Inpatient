@@ -10,6 +10,10 @@
 <!-- Include navigation -->
 @include('inpatient::admissions.evaluation.includes.evaluation_navigation')
 
-<!-- Include tht blood pressure chart -->
+<!-- Include the care plan form -->
+@include('inpatient::admissions.evaluation.partials.care.care_plan_form')
+
+<!-- Include the care plan table -->
+@include('inpatient::admissions.evaluation.partials.care.care_plan_table')
 
 @endsection

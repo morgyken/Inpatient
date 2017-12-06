@@ -43,7 +43,7 @@ use Ignite\Users\Entities\User;
  */
 class NursingCarePlan extends Model
 {
-    protected $fillable = ['admission_id', 'visit_id', 'diagnosis', 'expected_outcome', 'intervention', 'reasons', 'evaluation'];
+    protected $fillable = ['admission_id', 'visit_id', 'user_id', 'assessment', 'diagnosis', 'expected_outcome', 'intervention', 'reasons', 'evaluation'];
 
     protected $table = "inpatient_nursing_care_plan";
 
