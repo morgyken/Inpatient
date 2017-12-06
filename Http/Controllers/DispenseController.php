@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Ignite\Inpatient\Repositories\PrescriptionRepository;
+use Ignite\Inpatient\Entities\AdministerDrug;
+use Auth;
 
 class DispenseController extends AdminBaseController
 {
@@ -23,7 +25,6 @@ class DispenseController extends AdminBaseController
 
     /**
      * Display a listing of the resource.
-     * @return Response
      */
     public function index($visitId)
     {
@@ -40,15 +41,6 @@ class DispenseController extends AdminBaseController
         return view('inpatient::admissions.evaluation.dispense-drugs', $data);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     * @return Response
-     */
-    public function create()
-    {
-        return view('inpatient::create');
-    }
-
     /*
      * Dispense the drugs into the database
      */
@@ -59,38 +51,19 @@ class DispenseController extends AdminBaseController
         return redirect()->back()->with('success', 'drugs dispensed successfully');
     }
 
-    /**
-     * Show the specified resource.
-     * @return Response
-     */
-    public function show()
+    /*
+    * Administer the drugs that have been dispensed
+    */
+    public function administer()
     {
-        return view('inpatient::show');
-    }
+        collect(request()->get('prescriptions'))->each(function($prescription){
 
-    /**
-     * Show the form for editing the specified resource.
-     * @return Response
-     */
-    public function edit()
-    {
-        return view('inpatient::edit');
-    }
+            $prescription['user_id'] = Auth::user()->id;
 
-    /**
-     * Update the specified resource in storage.
-     * @param  Request $request
-     * @return Response
-     */
-    public function update(Request $request)
-    {
-    }
+            AdministerDrug::create($prescription);
 
-    /**
-     * Remove the specified resource from storage.
-     * @return Response
-     */
-    public function destroy()
-    {
+        });
+
+        return redirect()->back()->with('success', 'drugs administered successfully');
     }
 }

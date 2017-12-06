@@ -41,7 +41,7 @@ trait PrescriptionsTrait
 
             'to_dispense' => $this->toDispense($prescription),
 
-            // 'administered' => $this->administered($prescription),
+            'administered' => $this->administered($prescription),
 
             'is_dispensed' => $prescription->payment
         ];
@@ -52,8 +52,9 @@ trait PrescriptionsTrait
     */
     public function administered($prescription)
     {
-        dd($prescription->administered->pluck('administered')->sum());
-        // dd($prescription);
+        $administeredRecords = $prescription->load('administered');
+
+        return $administeredRecords->administered->pluck('administered')->sum();
     }
 
     /*
@@ -165,7 +166,7 @@ trait PrescriptionsTrait
                 $prescription['dispensed'],
                 $prescription['stopped'],
                 $prescription['remaining'],
-                0,
+                $prescription['administered'],
                 $button
             ];
 
