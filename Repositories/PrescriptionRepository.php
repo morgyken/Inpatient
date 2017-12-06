@@ -150,16 +150,16 @@ class PrescriptionRepository
 
         $stock->save();
 
-        $adjustment = InventoryStockAdjustment::where('product', $productId)->latest()->first();
+        // $adjustment = InventoryStockAdjustment::where('product', $productId)->latest()->first();
 
-        InventoryStockAdjustment::create([
-            'product' => $productId,
-            'opening_qty' => $adjustment->quantity,
-            'quantity' => $adjustment->quantity - $quantity,
-            'new_stock' => $quantity,
-            'method' => '-',
-            'type' => 'consumable',
-            'user' => \Auth::user()->id,
-        ]);
+        // InventoryStockAdjustment::create([
+        //     'product' => $productId,
+        //     'opening_qty' => $adjustment->quantity,
+        //     'quantity' => $adjustment->quantity - $quantity,
+        //     'new_stock' => $quantity,
+        //     'method' => '-',
+        //     'type' => 'consumable',
+        //     'user' => \Auth::user()->id,
+        // ]);
     }
 }
