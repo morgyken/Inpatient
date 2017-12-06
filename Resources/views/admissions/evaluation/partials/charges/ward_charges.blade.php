@@ -5,14 +5,14 @@
     <div class="panel-body">
         <table class="table table-stripped table-condensed">
             <thead>
-                <th>Name</th>
+                <th width="35%">Name</th>
                 <th>Unit (Days)</th>
                 <th>Price</th>
                 <th>Total (Kshs)</th>
             </thead>
             <tbody>
                 <tr>
-                    <td>{{ $wards['name'] }}</td>
+                    <td width="35%">{{ $wards['name'] }}</td>
                     <td>{{ $wards['days'] }}</td>
                     <td>{{ $wards['cost'] }}</td>
                     <td>{{ $wards['price'] }}</td>

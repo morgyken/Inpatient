@@ -7,6 +7,7 @@ use Ignite\Inpatient\Entities\Ward;
 use Ignite\Inpatient\Entities\Charge;
 use Ignite\Evaluation\Entities\Dispensing;
 use Ignite\Inpatient\Entities\InpatientConsumable;
+use Ignite\Evaluation\Entities\Investigations;
 
 /**
  * Ignite\Inpatient\Entities\ChargeSheet
@@ -74,5 +75,13 @@ class ChargeSheet extends Model
     public function dispense()
     {
         return $this->belongsTo(Dispensing::class, 'dispensing_id');
+    }
+
+    /*
+    * Relationship between an investigation and the charge sheet
+    */
+    public function investigation()
+    {
+        return $this->belongsTo(Investigations::class, 'investigation_id');
     }
 }

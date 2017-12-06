@@ -33,9 +33,9 @@ class ChargeSheetEvaluation implements EvaluationInterface
 
             'prescriptions' => $this->prescriptions(),
 
-            'doctor_procedures' => $this->procedures('doctor'),
+            'investigations' => $this->investigations(),
 
-            'nurse_procedures' => $this->procedures('nurse')
+            'procedures' => $this->procedures()
         ];
     }
 
@@ -185,10 +185,88 @@ class ChargeSheetEvaluation implements EvaluationInterface
     }
 
     /*
-    * Get Procedures
+    * Get Investigations
     */
-    public function procedures($procedureType)
+    public function investigations()
+    {   
+        $charges = $this->visit->chargeSheet->load('investigation');
+
+        $charges = $charges->filter(function($charge){
+
+            return ($charge->investigation_id && strpos($charge->investigation->type, 'inpatient') !== false) ;
+        });
+
+        $diagnostics = $this->getInvestigations($charges, 'diagnostics');
+
+        $laboratory = $this->getInvestigations($charges, 'laboratory');
+
+        $radiology = $this->getInvestigations($charges, 'radiology');
+
+        $total = $radiology['total'] + $laboratory['total'] + $diagnostics['total'];
+
+        return compact('diagnostics', 'laboratory', 'radiology', 'total');
+    }
+
+    /*
+    * GetProcedures
+    */
+    public function procedures()
+    {   
+        $charges = $this->visit->chargeSheet->load('investigation');
+
+        $charges = $charges->filter(function($charge){
+
+            return ($charge->investigation_id && strpos($charge->investigation->type, 'inpatient') !== false) ;
+        });
+
+        $doctor = $this->getInvestigations($charges, 'treatment');
+
+        $nursing = $this->getInvestigations($charges, 'nursing');
+
+        $total = $doctor['total'] + $nursing['total'];
+
+        return compact('doctor', 'nursing', 'total');
+    }
+
+
+    public function getInvestigations($charges, $type)
     {
-        
+        $charges = $charges->filter(function($charge) use($type){
+            
+            return (strpos($charge->investigation->type, $type) !== false) ;
+
+        });
+
+        $charges = $charges->map(function($charge){
+
+            $investigation = $charge->investigation;
+
+            $procedure = $investigation->procedures;
+            
+            return [
+                'name' => $procedure->name, 
+                'units' => $investigation->quantity, 
+                'cost' => $investigation->price, 
+                'price' => $investigation->amount, 
+            ];
+
+        });
+
+        $charges = $charges->groupBy('name')->map(function($charge, $key){
+
+            $units = $charge->pluck('units')->sum();
+            $cost = $charge->pluck('cost')->first();
+
+            return [
+                'name' => $charge->pluck('name')->first(),
+                'units' => $units, 
+                'cost' =>  $cost, 
+                'price' => $units * $cost, 
+            ];
+        });
+
+        $charges['total'] = $charges->pluck('price')->sum();
+
+        return $charges;
     }
 }

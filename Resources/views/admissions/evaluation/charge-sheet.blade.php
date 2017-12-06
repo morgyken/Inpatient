@@ -19,7 +19,9 @@
 
 @include('inpatient::admissions.evaluation.partials.charges.prescription_charges')
 
+@include('inpatient::admissions.evaluation.partials.charges.investigation_charges')
 
+@include('inpatient::admissions.evaluation.partials.charges.procedure_charges')
 
 
 @endsection

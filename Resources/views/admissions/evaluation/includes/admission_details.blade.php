@@ -21,5 +21,17 @@
                 <strong>Deposit:</strong> Ksh. {{ $admission->patient->account ? $admission->patient->account->balance : 0 }}<br>
             </div>
         </div>
+
+        <hr>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <strong>Charge Sheet:</strong> Ksh. {{ 0 }} <br>
+                <strong>Balance:</strong> Ksh. {{ 0 }} <br>
+            </div>
+            <div class="col-lg-6">
+                <strong>Settled:</strong> Ksh. {{ 0 }} <br>
+            </div>
+        </div>
     </div>
 </div>
