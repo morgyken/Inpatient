@@ -76,10 +76,16 @@ class PrescriptionRepository
     public function dispenseDrugs($visitId)
     {
         $prescriptions = collect(request()->get('prescriptions'));
+
+        $prescriptions = $prescriptions->filter(function($prescription){
+
+            return isset($prescription['quantity']);
+
+        });
         
         $dispenses = $prescriptions->filter(function($prescription, $key){
 
-            return ($prescription['stopped'] != "stopped" and $prescription['quantity']);
+            return ($prescription['stopped'] != "stopped");
 
         })->map(function($prescription) use($visitId){   
 
