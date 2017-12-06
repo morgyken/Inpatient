@@ -20,7 +20,6 @@
 <!-- Start Scripts - Define end points for both the form and the table here -->
 {{-- @push('scripts') --}}
     <script>
-        var PRESCRIPTIONS_ENDPOINT = "{{ url('inpatient/evaluations/'.$visit->id.'/prescriptions') }}";
         var CANCEL_PRESCRIPTION_ENDOINT = "{{ url('inpatient/evaluations/'.$visit->id.'/prescriptions/update') }}";
     </script>
 {{-- @endpush --}}

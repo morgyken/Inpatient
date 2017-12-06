@@ -109,14 +109,14 @@
     <div class="mb10">
         <div class="linear len-xl">
             <label for="">PATIENT(S) ADDRESS</label>
-            <span class="present" style="width: 360px;"></span>
+            <span class="present" style="width: 360px;">{{ $patient->address }}</span>
         </div>
     </div>
 
     <div class="mb10">
         <div class="linear len-xl">
             <label for="">TELEPHONE NUMBERS</label>
-            <span class="present" style="width: 348px;"></span>
+            <span class="present" style="width: 348px;">{{ $patient->mobile }}</span>
         </div>
     </div>
 

@@ -34,17 +34,21 @@ class PrescriptionsEvaluation implements EvaluationInterface
     */
     public function data()
     {
-        $prescriptions = $this->visit->prescriptions->filter(function($prescription){
+        $data = array();
 
-            return $prescription->facility_id == $this->facility->id;
+        foreach($this->visit->prescriptions as $prescription)
+        {
+            if($prescription->facility_id == $this->facility->id)
+            {
+                array_push($data, $prescription);
+            }
+        }
 
-        })->map(function($prescription){
+        $prescriptions = collect($data)->map(function($prescription){
             
             return $this->transform($prescription);
 
         });
-
-        // dd($prescriptions);
 
         return compact('prescriptions');
     }
