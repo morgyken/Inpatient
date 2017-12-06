@@ -5,7 +5,7 @@
     <div class="panel-body">
         <table class="table table-stripped table-condensed">
             <thead>
-                <th>Name</th>
+                <th width="35%">Name</th>
                 <th>Units</th>
                 <th>Price (Kshs)</th>
                 <th>Total (Kshs)</th>
@@ -13,7 +13,7 @@
             <tbody>
                 @foreach($charges as $charge)
                     <tr>
-                        <td>{{ $charge['name'] }}</td>
+                        <td width="35%">{{ $charge['name'] }}</td>
                         <td>1</td>
                         <td>{{ $charge['price'] }}</td>
                         <td>{{ $charge['price'] }}</td>
