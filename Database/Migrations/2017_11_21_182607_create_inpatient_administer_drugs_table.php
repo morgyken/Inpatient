@@ -21,7 +21,7 @@ class CreateInpatientAdministerDrugsTable extends Migration
 
             $table->integer('administered');
 
-            $table->timestamp('user_id');
+            $table->integer('user_id');
 
             $table->timestamps();
         

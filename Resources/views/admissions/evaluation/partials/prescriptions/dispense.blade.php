@@ -74,7 +74,7 @@
                         {{ $prescription['remaining'] }}
                     </div>
                     <div class="col-md-1">
-                        {{ $prescription['remaining'] }}
+                        {{ $prescription['administered'] }}
                     </div>
                     <!-- <div class="col-md-1">
                         {{ $prescription['price'] }}
