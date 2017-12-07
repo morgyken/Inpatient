@@ -183,7 +183,7 @@ trait AdmissionRequestTrait
 
         $cancel = "<a class='btn btn-danger btn-xs' href='". url('inpatient/admissions/cancel/'.$admissionRequest['patient']['id']) ."'>Cancel</a>";
     
-        return "${authorize} ${payment} ${admit} ${cancel} ${print}";
+        return "${authorize} ${payment} ${admit} ${cancel}";
     }
 }
 

@@ -96,9 +96,9 @@
                         
                         <div class="form-group">
                             <div class="col-md-12">
-                                <button class="btn btn-primary btn-sm col-md-4">
+                                <!-- <button class="btn btn-primary btn-sm col-md-4">
                                     <i class="fa fa-upload"></i> Upload Admission Form
-                                </button>
+                                </button> -->
 
                                 <button class="btn btn-success btn-sm col-md-offset-5 col-md-3">
                                     <i class="fa fa-ambulance"></i> Admit Patient
