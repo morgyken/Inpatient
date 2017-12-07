@@ -17,6 +17,6 @@ trait DrugsTrait
 
         $product = InventoryProducts::findOrFail($data['drug']);
 
-        return $visit->scheme ? $product->insurance_p : $product->cash_price;
+        return count($visit->scheme) > 0 ? $product->insurance_p : $product->cash_price;
     }
 }
