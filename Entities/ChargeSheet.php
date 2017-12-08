@@ -23,7 +23,11 @@ use Ignite\Evaluation\Entities\Investigations;
  * @property float $price
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\Ignite\Inpatient\Entities\Ward[] $wards
+ * @property-read \Ignite\Inpatient\Entities\Charge|null $charge
+ * @property-read \Ignite\Inpatient\Entities\InpatientConsumable|null $consumable
+ * @property-read \Ignite\Evaluation\Entities\Dispensing|null $dispense
+ * @property-read \Ignite\Evaluation\Entities\Investigations|null $investigation
+ * @property-read \Ignite\Inpatient\Entities\Ward|null $ward
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\ChargeSheet whereChargeId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\ChargeSheet whereConsumableId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\ChargeSheet whereCreatedAt($value)
