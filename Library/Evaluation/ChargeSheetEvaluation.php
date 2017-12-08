@@ -246,7 +246,7 @@ class ChargeSheetEvaluation implements EvaluationInterface
                 'units' => $investigation->quantity,
                 'cost' => $investigation->price,
                 'price' => $investigation->amount,
-                'paid' => true
+                'paid' => $investigation->is_paid || $investigation->invoiced
             ];
 
         });
