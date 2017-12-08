@@ -14,7 +14,7 @@ $visit = \Ignite\Inpatient\Entities\Visit::findOrNew($admission->visit_id);
                     <div>
                         <ul class="accordion-header single-btn">
                             <li class="title"><b>{{ $admission->patient->full_name }}</b> ({{ $patient->age }} yrs old)
-                                at Bed {{ $admission->bed->number }}, {{ $admission->ward->name }} Ward
+                                at Bed {{ @$admission->bed->number }}, {{ @$admission->ward->name }} Ward
                             </li>
                             <li class="options">
                                 <span class="input-group-btn">
@@ -36,13 +36,13 @@ $visit = \Ignite\Inpatient\Entities\Visit::findOrNew($admission->visit_id);
                             <strong>Name: </strong> {{ $admission->patient->full_name }}<br>
                             <strong>Number:</strong> @if($patient->patient_no != null) {{ $admission->patient->patient_no }} @else
                                 No Number Assigned @endif<br>
-                            <strong>Ward Name:</strong> {{ $admission->ward->name }}<br>
+                            <strong>Ward Name:</strong> {{ @$admission->ward->name }}<br>
                             <strong>Account Balance:</strong> Ksh. {{ $admission->patient->account->balance }} <br>
                         </div>
                         <div class="col-lg-6">
                             <strong>Age: </strong> {{ $patient->age }} years<br>
                             <strong>Admission Date:</strong> {{ date_format($admission->created_at,'l dS M, Y') }}<br>
-                            <strong>Bed Number:</strong> {{ $admission->bed->number }}<br>
+                            <strong>Bed Number:</strong> {{ @$admission->bed->number }}<br>
                             <strong>Deposit:</strong> Ksh. {{ $admission->patient->account->balance }}<br>
                         </div>
                     </div>

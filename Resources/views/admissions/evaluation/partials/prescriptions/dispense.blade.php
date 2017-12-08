@@ -6,8 +6,8 @@
         {{ $patient->dob->age }} yr old, {{ $patient->sex }}
 
         <b class="pull-right">
-            <i class="fa fa-h-square"></i> {{ $admission->ward->name }} | 
-            <i class="fa fa-bed"></i> {{ $admission->bed->number }}
+            <i class="fa fa-h-square"></i> {{ @$admission->ward->name }} |
+            <i class="fa fa-bed"></i> {{ @$admission->bed->number }}
         </b>
     </div>
     <div class="panel-body">
