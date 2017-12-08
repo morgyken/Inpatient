@@ -2,15 +2,16 @@
 
 namespace Ignite\Inpatient\Library\Evaluation;
 
+use Carbon\Carbon;
 use Ignite\Evaluation\Entities\Investigations;
 use Ignite\Evaluation\Entities\Visit;
-use Ignite\Inpatient\Entities\ChargeSheet;
 use Ignite\Inpatient\Library\Interfaces\EvaluationInterface;
-
-use Carbon\Carbon;
 
 class ChargeSheetEvaluation implements EvaluationInterface
 {
+    /**
+     * @var Visit
+     */
     protected $visit;
 
     /*
@@ -241,12 +242,14 @@ class ChargeSheetEvaluation implements EvaluationInterface
             $investigation = $charge->investigation;
 
             $procedure = $investigation->procedures;
+            $paid = $investigation->is_paid || $investigation->invoiced;
             return [
                 'name' => $procedure->name,
                 'units' => $investigation->quantity,
                 'cost' => $investigation->price,
                 'price' => $investigation->amount,
-                'paid' => $investigation->is_paid || $investigation->invoiced
+                'paid' => $paid,
+                'label' => payment_label($paid, !$this->visit->is_cash)
             ];
 
         });
