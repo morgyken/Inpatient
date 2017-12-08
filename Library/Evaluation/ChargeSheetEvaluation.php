@@ -249,25 +249,24 @@ class ChargeSheetEvaluation implements EvaluationInterface
                 'cost' => $investigation->price,
                 'price' => $investigation->amount,
                 'paid' => $paid,
-                'label' => payment_label($paid, !$this->visit->is_cash)
+                'payment_label' => payment_label($paid, !$this->visit->is_cash)
             ];
 
         });
         $charges = $charges->groupBy('name')->map(function ($charge, $key) {
-
             $units = $charge->pluck('units')->sum();
             $cost = $charge->pluck('cost')->first();
-
             return [
                 'name' => $charge->pluck('name')->first(),
                 'units' => $units,
                 'cost' => $cost,
                 'price' => $units * $cost,
+                'paid' => $charge->pluck('paid')->first(),
+                'payment_label' => $charge->pluck('payment_label')->first(),
             ];
         });
 
         $charges['total'] = $charges->pluck('price')->sum();
-
         return $charges;
     }
 }

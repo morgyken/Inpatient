@@ -5,7 +5,7 @@
         <th>Unit (Days)</th>
         <th>Price</th>
         <th>Total (Kshs)</th>
-        <th>Paid</th>
+        <th>Status</th>
     </tr>
     </thead>
     <tbody>
@@ -15,6 +15,7 @@
             <td>{{ $investigation['units'] }}</td>
             <td>{{ $investigation['cost'] }}</td>
             <td>{{ $investigation['price'] }}</td>
+            <td>{!! $investigation['payment_label'] !!}</td>
         </tr>
     @endforeach
     </tbody>
