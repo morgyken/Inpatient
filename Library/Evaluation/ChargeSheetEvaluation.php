@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Ignite\Evaluation\Entities\Investigations;
 use Ignite\Evaluation\Entities\Visit;
 use Ignite\Inpatient\Library\Interfaces\EvaluationInterface;
+use Illuminate\Support\Collection;
 
 class ChargeSheetEvaluation implements EvaluationInterface
 {
@@ -225,11 +226,14 @@ class ChargeSheetEvaluation implements EvaluationInterface
         $nursing = $this->getInvestigations($charges, 'nursing');
 
         $total = $doctor['total'] + $nursing['total'];
-
         return compact('doctor', 'nursing', 'total');
     }
 
-
+    /**
+     * @param Collection $charges
+     * @param string $type
+     * @return mixed
+     */
     public function getInvestigations($charges, $type)
     {
         $charges = $charges->filter(function ($charge) use ($type) {
