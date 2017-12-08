@@ -4,6 +4,7 @@
         <th>Unit (Days)</th>
         <th>Price</th>
         <th>Total (Kshs)</th>
+        <th>Status</th>
     </thead>
     <tbody>
         @foreach($investigations['laboratory'] as $investigation)
@@ -12,6 +13,7 @@
                 <td>{{ $investigation['units'] }}</td>
                 <td>{{ $investigation['cost'] }}</td>
                 <td>{{ $investigation['price'] }}</td>
+                <td>{!! $investigation['payment_label'] !!}</td>
             </tr>
         @endforeach
     </tbody>
