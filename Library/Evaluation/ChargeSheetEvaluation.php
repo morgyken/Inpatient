@@ -78,12 +78,24 @@ class ChargeSheetEvaluation implements EvaluationInterface
 
             return $charge->charge_id;
 
+        })->groupBy('charge_id')->map(function($charge){
+
+            $name = $charge->first()->charge->name;
+            $units = $charge->count();
+            $cost = $charge->pluck('price')->first();
+            $total = $units * $cost;
+
+            return [
+                'name' => $name, 
+                'units' => $units, 
+                'cost' => $cost, 
+                'total' => $total, 
+            ];
+
         });
 
-        foreach ($charges as $charge) {
-            $charge->name = $charge->charge->name;
-        }
-
+        $charges['total'] = $charges->pluck('total')->sum();
+        
         return $charges;
     }
 

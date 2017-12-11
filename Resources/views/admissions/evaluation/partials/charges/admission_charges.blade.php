@@ -1,6 +1,6 @@
 <div class="panel panel-info">
     <div class="panel-heading">
-        Admission Charges
+        Admission Charges <b class="pull-right">TOTAL: Kshs {{ $charges['total'] }}</b>
     </div>
     <div class="panel-body">
         <table class="table table-stripped table-condensed">
@@ -14,9 +14,9 @@
                 @foreach($charges as $charge)
                     <tr>
                         <td width="35%">{{ $charge['name'] }}</td>
-                        <td>1</td>
-                        <td>{{ $charge['price'] }}</td>
-                        <td>{{ $charge['price'] }}</td>
+                        <td>{{ $charge['units'] }}</td>
+                        <td>{{ $charge['cost'] }}</td>
+                        <td>{{ $charge['total'] }}</td>
                     </tr>
                 @endforeach
             </tbody>
