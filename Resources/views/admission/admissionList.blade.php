@@ -39,8 +39,8 @@
                                         @else
                                         <td>{{ $admission->doctor->profile->first_name }} {{ $admission->doctor->profile->last_name }}</td>
                                         @endif
-                                    <td>{{ $admission->ward->name }}</td>
-                                    <td>{{ $admission->bed->number }}</td>
+                                    <td>{{ @$admission->ward->name }}</td>
+                                    <td>{{ @$admission->bed->number }}</td>
                                     <td>{{ $admission->cost }}</td>
                                     <td>{{ $admission->created_at }}</td>
                                     <td>

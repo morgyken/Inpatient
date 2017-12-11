@@ -40,8 +40,8 @@
                                         @else
                                         <td>{{ $admission->doctor->profile->first_name }} {{ $admission->doctor->profile->last_name }}</td>
                                         @endif
-                                    <td>{{ $admission->ward->name }}</td>
-                                    <td>{{ $admission->bed->number }}</td>
+                                    <td>{{ @$admission->ward->name }}</td>
+                                    <td>{{ @$admission->bed->number }}</td>
                                     <td>{{ $admission->cost }}</td>
                                     <td>{{ $admission->created_at->format('H:i a d/m/Y') }}</td>
                                     <td>{{ \Carbon\Carbon::parse($admission->wardAssigned->discharged_at)->format('H:i a d/m/Y') }}</td>
