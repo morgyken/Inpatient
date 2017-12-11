@@ -4,6 +4,7 @@ namespace Ignite\Inpatient\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
+use Ignite\Inpatient\Console\InpatientChargesCommand;
 
 class InpatientServiceProvider extends ServiceProvider
 {
@@ -34,7 +35,9 @@ class InpatientServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->commands([
+            InpatientChargesCommand::class,
+        ]);
     }
 
     /**

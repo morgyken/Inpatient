@@ -1,6 +1,6 @@
 <div class="panel panel-info">
     <div class="panel-heading">
-        Ward Charges
+        Ward Charges <b class="pull-right">TOTAL: Kshs {{ $wards['price'] }}</b>
     </div>
     <div class="panel-body">
         <table class="table table-stripped table-condensed">
