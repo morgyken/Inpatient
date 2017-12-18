@@ -26,6 +26,7 @@ use Ignite\Evaluation\Entities\Investigations;
  * @property-read \Ignite\Inpatient\Entities\Charge|null $charge
  * @property-read \Ignite\Inpatient\Entities\InpatientConsumable|null $consumable
  * @property-read \Ignite\Evaluation\Entities\Dispensing|null $dispense
+ * @property-read mixed $desc
  * @property-read \Ignite\Evaluation\Entities\Investigations|null $investigation
  * @property-read \Ignite\Inpatient\Entities\Ward|null $ward
  * @method static \Illuminate\Database\Eloquent\Builder|\Ignite\Inpatient\Entities\ChargeSheet whereChargeId($value)
@@ -98,6 +99,6 @@ class ChargeSheet extends Model
         if ($this->charge_id) {
             $x .= $this->charge->name;
         }
-        return $x;
+        return ucwords($x);
     }
 }
