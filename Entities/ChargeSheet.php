@@ -44,7 +44,7 @@ use Ignite\Evaluation\Entities\Investigations;
 class ChargeSheet extends Model
 {
     protected $fillable = [
-        'visit_id', 'dispensing_id', 'consumable_id', 'charge_id', 'ward', 'price',  'ward_id'
+        'visit_id', 'dispensing_id', 'consumable_id', 'charge_id', 'ward', 'price', 'ward_id'
     ];
 
     protected $table = "inpatient_charge_sheet";
@@ -53,7 +53,7 @@ class ChargeSheet extends Model
     * Relationship between a charge and a ward
     */
     public function ward()
-    {   
+    {
         return $this->belongsTo(Ward::class, 'ward_id');
     }
 
@@ -61,7 +61,7 @@ class ChargeSheet extends Model
     * Relationship between a charge and an inventory consumable item
     */
     public function consumable()
-    {   
+    {
         return $this->belongsTo(InpatientConsumable::class, 'consumable_id');
     }
 
@@ -87,5 +87,17 @@ class ChargeSheet extends Model
     public function investigation()
     {
         return $this->belongsTo(Investigations::class, 'investigation_id');
+    }
+
+    public function getDescAttribute()
+    {
+        $x = null;
+        if ($this->ward_id) {
+            $x .= $this->ward->name;
+        }
+        if ($this->charge_id) {
+            $x .= $this->charge->name;
+        }
+        return $x;
     }
 }
