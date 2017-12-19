@@ -13,4 +13,16 @@
 <!-- Discharge summary sheet -->
 @include('inpatient::admissions.evaluation.partials.discharge.discharge_sheet')
 
+<!-- Discharge prescription form -->
+@include('inpatient::admissions.evaluation.partials.discharge.discharge_prescriptions_form')
+
+<!-- Discharge prescription table -->
+@include('inpatient::admissions.evaluation.partials.discharge.discharge_prescriptions_table')
+
+{{-- @push('scripts') --}}
+<script>
+    var PRESCRIPTIONS_ENDPOINT = "{{ url('inpatient/evaluations/'.$visit->id.'/prescriptions') }}";
+</script>
+{{-- @endpush --}}
+
 @endsection
