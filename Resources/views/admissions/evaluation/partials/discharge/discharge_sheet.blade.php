@@ -3,8 +3,7 @@
         <h5>Discharge Request Form</h5>
     </div>
     <div class="panel-body">
-        
-        {!! Form::open(['url' => "inpatient/evaluations/$visit->id/discharge"]) !!}
+        {!! Form::open(['url' => "inpatient/evaluations/$visit->id/discharge", 'id'=>"discharge-form"]) !!}
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
@@ -60,12 +59,12 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
+                <!-- <div class="col-md-6">
                     <div class="form-group">
                         {!! Form::label('medication', 'Medication at Discharge') !!}
                         {!! Form::textarea('medication', null, ['id' => 'medication', 'class' => 'form-control', 'rows' => '5', 'placeholder' => 'Medication ...']) !!}
                     </div>
-                </div>
+                </div> -->
             </div>
 
             <div class="row">
@@ -79,8 +78,6 @@
                     </div>
                 </div>
             </div>
-            
-
         {!! Form::close() !!}
     </div>
 </div>
