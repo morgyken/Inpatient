@@ -25,7 +25,12 @@
                         <td>{{ (strlen($plan->expected_outcome) > 0) ? substr($plan->expected_outcome, 0, 20) : 'None' }}</td>
                         <td>{{ (strlen($plan->reasons) > 0) ? substr($plan->reasons, 0, 20) : 'None' }}</td>
                         <td>{{ $plan->user->profile->fullName }}</td>
-                        <td>Options</td>
+                        <td>
+                            <a class="btn btn-xs btn-success"
+                               href="{{ url('inpatient/evaluations/1/care-plan?plan='.$plan->id) }}">
+                                <i class="fa fa-eye"></i> view
+                            </a>
+                        </td>
                     </tr>
                 @endforeach
             </tbody>

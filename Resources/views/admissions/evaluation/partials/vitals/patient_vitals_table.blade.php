@@ -12,6 +12,7 @@
                 <th>BP Systolic</th>
                 <th>BP Diastolic</th>
                 <th>Respiration</th>
+                <th>Pulse Rate</th>
                 <th>Oxygen (%)</th>
                 <th>Recorded At</th>
             </tr>
@@ -25,6 +26,7 @@
                         <td>{{ $vital->bp_systolic }}</td>
                         <td>{{ $vital->bp_diastolic }}</td>
                         <td>{{ $vital->respiration }}</td>
+                        <td>{{ $vital->pulse }}</td>
                         <td>{{ $vital->oxygen }}</td>
                         <td>{{ \Carbon\Carbon::parse($vital->created_at)->toDateTimeString() }}</td>
                     </tr>

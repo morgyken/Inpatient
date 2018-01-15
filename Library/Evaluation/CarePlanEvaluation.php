@@ -22,9 +22,18 @@ class CarePlanEvaluation implements EvaluationInterface
     */
     public function data()
     {
+        $plan = null;
+
+        if(request()->has('plan'))
+        {
+            $planId = request('plan');
+
+            $plan = NursingCarePlan::find($planId);
+        }
+
         $plans = NursingCarePlan::where('visit_id', $this->visit->id)->get();
 
-        return compact('plans');
+        return compact('plans', 'plan');
     }
 
     /*
@@ -32,8 +41,17 @@ class CarePlanEvaluation implements EvaluationInterface
     */
     public function persist()
     {
-        $record = request()->except('_token');
+        if(request()->has('plan_id'))
+        {
+            $record = request()->except(['_token', 'plan_id']);
 
-        NursingCarePlan::create($record);
+            NursingCarePlan::find(request('plan_id'))->update($record);
+        }
+        else
+        {
+            $record = request()->except('_token');
+
+            NursingCarePlan::create($record);
+        }
     }
 }

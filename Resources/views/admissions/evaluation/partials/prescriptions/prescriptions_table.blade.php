@@ -12,6 +12,7 @@
                 <th>Status</th>
                 <th>Remaining</th>
                 <th>Administered</th>
+                <th>Date</th>
                 <th>Actions</th>
             </thead>
             <tbody>

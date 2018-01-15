@@ -5,6 +5,7 @@ namespace Ignite\Inpatient\Library\Traits;
 use Ignite\Evaluation\Entities\DispensingDetails;
 
 use Ignite\Inpatient\Entities\AdministerDrug;
+use Carbon\Carbon;
 
 trait PrescriptionsTrait
 {
@@ -43,7 +44,9 @@ trait PrescriptionsTrait
 
             'administered' => $this->administered($prescription),
 
-            'is_dispensed' => $prescription->payment
+            'is_dispensed' => $prescription->payment,
+
+            'created_at' => Carbon::parse($prescription->created_at)->toDateTimeString()
         ];
     } 
 
@@ -167,6 +170,7 @@ trait PrescriptionsTrait
                 $prescription['stopped'],
                 $prescription['remaining'],
                 $prescription['administered'],
+                $prescription['created_at'],
                 $button
             ];
 

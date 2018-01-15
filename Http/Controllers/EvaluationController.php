@@ -43,7 +43,7 @@ class EvaluationController extends AdminBaseController
     }
 
     /*
-    * Update an exising evaluation object
+    * Update an existing evaluation object
     */
     public function update($visit, $key)
     {
