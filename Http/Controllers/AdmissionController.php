@@ -52,6 +52,8 @@ class AdmissionController extends AdminBaseController
     {
         $admissions = $this->admissionRepository->all();
 
+        dd($admissions);
+
         return view('inpatient::admissions.index', compact('admissions'));
     }
 

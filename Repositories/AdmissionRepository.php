@@ -18,15 +18,14 @@ class AdmissionRepository
     */
     public function create($fields)
     {
-        
         return Admission::firstOrCreate($fields);
     }
 
     /*
-    * Fethch all the admissions from the database
+    * Fetch all the admissions from the database
     */
     public function all()
     {
-        return Admission::orderBy('created_at', 'DESC')->get();
+        return Admission::latest()->get();
     }
 }
