@@ -14,7 +14,7 @@ class Evaluator
 
         'namespace' => "Ignite\Inpatient\Library\Evaluation",
 
-        'view' => "inpatient::admissions.evaluation"
+        'view' => "inpatient::admissions.evaluation",
 
     ];
 

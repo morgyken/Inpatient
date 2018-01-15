@@ -147,6 +147,8 @@ Route::group(['as' => 'inpatient.'], function() {
 
         Route::post('/{visit}/{evaluation}', ['uses' => 'EvaluationController@store']);
 
+        Route::get('/{visit}/{evaluation}/update', ['uses' => 'EvaluationController@edit']);
+
         Route::post('/{visit}/{evaluation}/update', ['uses' => 'EvaluationController@update']);
 
     });

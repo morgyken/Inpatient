@@ -32,6 +32,7 @@ class NursesEvaluation implements EvaluationInterface
                                 where('visit_id', $this->visit->id)->
                                 orderBy('created_at', 'DESC')->get()->map(function($note){
             return [
+                'id' => $note->id,
                 'title' => $note->title ? $note->title : 'Nurses Note',
                 'body' => $note->notes,
                 'date' => Carbon::parse($note->created_at)->toDateTimeString()
@@ -51,6 +52,16 @@ class NursesEvaluation implements EvaluationInterface
         $notes['type'] = 1;
 
         return InpatientNote::create($notes);
+    }
+
+    /*
+    * Updates a nurses note
+    */
+    public function modify()
+    {
+        $details = array_filter(request()->except(['_token', 'noteId']));
+
+        return InpatientNote::find(request('noteId'))->update($details);
     }
 }
 

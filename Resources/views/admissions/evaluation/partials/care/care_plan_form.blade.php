@@ -11,47 +11,49 @@
 
                 {!! Form::hidden('user_id', Auth::user()->id) !!}
 
-                {!! Form::hidden('admission_id', $visit->admission->id) !!}   
+                {!! Form::hidden('admission_id', $visit->admission->id) !!}
+
+                {!! Form::hidden('plan_id', $plan['id']) !!}
 
                 <div class="col-md-6">
                     <div class="form-group">
                         {!! Form::label('Nursing Diagnosis') !!}
-                        {!! Form::textarea('diagnosis', null, ['class'=>'form-control', 'rows'=>'4']) !!}
+                        {!! Form::textarea('diagnosis', $plan ? $plan['diagnosis'] : null, ['class'=>'form-control', 'rows'=>'4']) !!}
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div class="form-group">
                         {!! Form::label('Nursing Assesment') !!}
-                        {!! Form::textarea('assessment', null, ['class'=>'form-control', 'rows'=>'4']) !!}
+                        {!! Form::textarea('assessment', $plan ? $plan['assessment'] : null, ['class'=>'form-control', 'rows'=>'4']) !!}
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div class="form-group">
                         {!! Form::label('Expected Outcome') !!}
-                        {!! Form::textarea('expected_outcome', null, ['class'=>'form-control', 'rows'=>'4']) !!}
+                        {!! Form::textarea('expected_outcome', $plan ? $plan['expected_outcome'] : null, ['class'=>'form-control', 'rows'=>'4']) !!}
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div class="form-group">
                         {!! Form::label('Interventon/Implementation') !!}
-                        {!! Form::textarea('intervention', null, ['class'=>'form-control',  'rows'=>'4']) !!}
+                        {!! Form::textarea('intervention', $plan ? $plan['intervention'] : null, ['class'=>'form-control',  'rows'=>'4']) !!}
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div class="form-group">
                         {!! Form::label('Scientific Rationale/Reasons') !!}
-                        {!! Form::textarea('reasons', null, ['class'=>'form-control', 'rows'=>'4']) !!}
+                        {!! Form::textarea('reasons', $plan ? $plan['reasons'] : null, ['class'=>'form-control', 'rows'=>'4']) !!}
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div class="form-group">
                         {!! Form::label('Evaluation') !!}
-                        {!! Form::textarea('evaluation', null, ['class'=>'form-control', 'rows'=>'4']) !!}
+                        {!! Form::textarea('evaluation', $plan ? $plan['evaluation'] : null, ['class'=>'form-control', 'rows'=>'4']) !!}
                     </div>
                 </div>
                 
