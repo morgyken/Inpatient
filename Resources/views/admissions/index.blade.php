@@ -15,22 +15,26 @@
                         <caption>Patient Admissions: All admitted patients in the hospital</caption>
                         <thead>
                             <tr>
+                                <td>#</td>
                                 <th>Patient Name</th>
                                 <th>Admission Doctor</th>
                                 <th>Ward</th>
                                 <th>Bed Number</th>
+                                <th>Admitted On</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody> 
                             @foreach($admissions as $admission)
                                 <tr>
+                                    <td>{{ $admission->patient->id }}</td>
                                     <td>{{ $admission->patient->full_name }}</td>
                                     <td>
                                         {{ $admission->doctor ? $admission->doctor->profile->name : $admission->external_doctor }}
                                     </td>
                                     <td>{{ @$admission->ward->name }}</td>
                                     <td>{{ @$admission->bed->number }}</td>
+                                    <td>{{ @$admission->created_at }}</td>
                                     <td>
                                         <a href="{{ url('inpatient/evaluations/'.$admission->visit_id.'/doctors') }}" class="btn btn-primary btn-xs">Manage</a>
                                         <!-- <button class="btn btn-danger btn-xs">Delete</button> -->
