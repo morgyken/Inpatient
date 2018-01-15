@@ -28,7 +28,7 @@ class NursesEvaluation implements EvaluationInterface
     */
     public function data()
     {
-        $notes = InpatientNote::where('type', 'nurse')->
+        $notes = InpatientNote::where('type', 1)->
                                 where('visit_id', $this->visit->id)->
                                 orderBy('created_at', 'DESC')->get()->map(function($note){
             return [
@@ -48,7 +48,7 @@ class NursesEvaluation implements EvaluationInterface
     {
         $notes = request()->all();
         $notes['visit_id'] = $this->visit->id;
-        $notes['type'] = 'nurse';
+        $notes['type'] = 1;
 
         return InpatientNote::create($notes);
     }
