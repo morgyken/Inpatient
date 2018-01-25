@@ -31,7 +31,7 @@
                         <h4 class="modal-title">Edit Nurses's Note</h4>
                     </div>
                     <div class="modal-body">
-                        {!! Form::open(['url' => "inpatient/evaluations/$visit->id/nurse/update" ]) !!}
+                        {!! Form::open(['url' => "inpatient/evaluations/$visit->id/nurses/update" ]) !!}
                         <input name="noteId" type="hidden" id="note-id" />
 
                         <div class="form-group">
