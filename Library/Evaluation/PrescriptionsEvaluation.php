@@ -11,6 +11,8 @@ use Ignite\Inpatient\Library\Traits\DrugsTrait;
 use Ignite\Inpatient\Library\Traits\PrescriptionsTrait;
 
 use Ignite\Inpatient\Library\Interfaces\EvaluationInterface;
+use Ignite\Inventory\Entities\StoreDepartment;
+use Ignite\Inventory\Entities\StorePrescription;
 
 class PrescriptionsEvaluation implements EvaluationInterface
 {
@@ -50,7 +52,9 @@ class PrescriptionsEvaluation implements EvaluationInterface
 
         });
 
-        return compact('prescriptions');
+        $clinics = StoreDepartment::all();
+
+        return compact('prescriptions', 'clinics');
     }
 
     /*
@@ -62,17 +66,27 @@ class PrescriptionsEvaluation implements EvaluationInterface
 
         $cost = $this->getProductPrice(request()->only(['visit', 'drug']));
 
-        $prescription = request()->except('_token');
+        $prescription = request()->except('_token', 'clinic', 'store_id');
 
         $prescription['facility_id'] = $this->facility->id;
 
-        Prescriptions::create($prescription)->payment()->create([
+        $prescription = Prescriptions::create($prescription);
+
+        $prescription->payment()->create([
 
             'price' => $cost, 'cost' => $cost * $quantity, 'quantity' => $quantity,
 
         ]);
         
         $this->check_in_at('pharmacy');
+
+        StorePrescription::create([
+            'product_id' => request('drug'),
+            'store_id' => request('store_id'),
+            'prescription_id' => $prescription->id,
+            'quantity' => (int) $quantity,
+            'facility' => 'inpatient'
+        ]);
 
         return true;
     }
