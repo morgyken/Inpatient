@@ -12,14 +12,30 @@
 
             {!! Form::hidden('admission_id', $admission->id) !!}
 
+            <input type="hidden" id="store_id" name="store_id" />
+
             <!-- End Hidden Fields -->
+
+            <div class="form-group">
+                <div class="col-md-3">
+                    <label for="drug">Department</label>
+                </div>
+                <div class="col-md-9">
+                    <select name="clinic" id="clinic" class="form-control" required>
+                        <option value="" disabled selected>Select a department</option>
+                        @foreach($clinics as $clinic)
+                            <option value="{{ $clinic->id }}">{{ $clinic->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
 
             <div class="form-group">   
                 <div class="col-md-3">
                     <label for="drug">Drug to Prescribe</label>  
                 </div> 
                 <div class="col-md-9">
-                    <select name="drug" id="item_0" class="form-control select2-single" required></select>
+                    <select name="drug" id="item_0" class="form-control select2-single drug-select" required></select>
                 </div> 
             </div>
 
@@ -76,7 +92,7 @@
     <script>
         var INSURANCE = false;
         var STOCK_URL = "{{route('api.inventory.getstock')}}";
-        var PRODUCTS_URL = "{{route('api.inventory.get.products')}}";
+        var PRODUCTS_URL = "{{route('api.inventory.get.storeproducts')}}";
         var VISIT_ID = "{{ $admission->visit_id }}";
         var ADMISSION_ID = "{{ $admission->id }}";
         var USER_ID = "{{ Auth::user()->id }}";
@@ -194,6 +210,12 @@
                 }
             });
         }
+
+        $('.drug-select').on('select2:select', function (event) {
+
+            $('#store_id').val(event.params.data.store);
+
+        });
         
         //End of saving prescription
     </script>

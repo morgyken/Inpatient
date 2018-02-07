@@ -10,6 +10,8 @@ use Ignite\Inpatient\Entities\ChargeSheet;
 use Carbon\Carbon;
 use Ignite\Evaluation\Entities\Facility;
 use Ignite\Inpatient\Entities\AdministerDrug;
+use Ignite\Inventory\Entities\StorePrescription;
+use Ignite\Inventory\Entities\StoreProducts;
 
 class PrescriptionRepository
 {
@@ -120,6 +122,21 @@ class PrescriptionRepository
             $this->adjustStock($dispense['product'], $dispense['quantity']);
 
             $this->addToChargeSheet($dispensing->id, $total, $visitId);
+
+            //remove prescribed, dispensed drugs from store
+            $storePrescription = StorePrescription::where('prescription_id', $dispensing['prescription'])->first();
+
+            $storeId = $storePrescription->store_id;
+
+            $storeProducts = StoreProducts::where('store_id', $storeId)->where('product_id', $details['product'])->first();
+
+            $storeProducts->quantity = $storeProducts->quantity - $details['quantity'];
+
+            $storePrescription->dispensed = $storePrescription->dispensed + $details['quantity'];
+
+            $storeProducts->save();
+
+            $storePrescription->save();
             
         });
     }
@@ -149,17 +166,5 @@ class PrescriptionRepository
         $stock->quantity = $stock->quantity - $quantity;
 
         $stock->save();
-
-        // $adjustment = InventoryStockAdjustment::where('product', $productId)->latest()->first();
-
-        // InventoryStockAdjustment::create([
-        //     'product' => $productId,
-        //     'opening_qty' => $adjustment->quantity,
-        //     'quantity' => $adjustment->quantity - $quantity,
-        //     'new_stock' => $quantity,
-        //     'method' => '-',
-        //     'type' => 'consumable',
-        //     'user' => \Auth::user()->id,
-        // ]);
     }
 }
